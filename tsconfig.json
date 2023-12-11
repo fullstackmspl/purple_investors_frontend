@@ -14,6 +14,7 @@
     "typeRoots": [
       "node_modules/@types"
     ],
+    "types": ["node", "googlemaps"],
     "lib": [
       "es2016",
       "dom"

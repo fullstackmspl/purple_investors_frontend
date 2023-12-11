@@ -93,6 +93,7 @@
     "@angular/compiler-cli": "14.2.0",
     "@angular/language-service": "14.2.0",
     "@types/core-js": "2.5.3",
+    "@types/googlemaps": "^3.43.3",
     "@types/jasmine": "~3.6.0",
     "@types/node": "13.9.1",
     "codelyzer": "6.0.0",

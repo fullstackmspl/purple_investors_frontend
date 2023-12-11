@@ -71,7 +71,8 @@ export function createTranslateLoader(http: HttpClient) {
       }
     }),
     AgmCoreModule.forRoot({
-      apiKey: "AIzaSyCERobClkCv1U4mDijGm1FShKva_nxsGJY"
+      apiKey: "AIzaSyBhVQKXquGT9zTznHXq1A6YJCcrrC5HWv8",
+      libraries: ['places']
     }),
     PerfectScrollbarModule
   ],
