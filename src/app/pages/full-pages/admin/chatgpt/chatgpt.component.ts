@@ -26,7 +26,7 @@ export class ChatgptComponent implements OnInit {
   sendMessage() {
     if (this.newMessage.trim() !== '') {
       this.messages.push({ sender: 'You', text: this.newMessage, isMe: true });
-      this.apiService.chatgptSearch('657701801890f7a87b8e0b00',this.user._id,this.newMessage).subscribe((res:any)=>{
+      this.apiService.chatgptSearch('6578625ec5e9c2b1c8909c58',this.user._id,this.newMessage).subscribe((res:any)=>{
         if(res?.isSuccess){
           this.ngZone.run(() => {
             const data = res?.data[0]?.message?.content;
