@@ -148,10 +148,23 @@
                       [items]="gender_List"
                       bindLabel="name"
                       bindValue="name"
-                      placeholder="Select  Gender"
+                      placeholder="Select Gender"
                       [(ngModel)]="select_gender"
                       [ngModelOptions]="{ standalone: true }"
                       (change)="getGenderId($event)"
+                    >
+                    </ng-select>
+                  </fieldset>
+                  <fieldset class="mt-2">
+                    <label>Role</label>
+                    <ng-select
+                      [items]="role_List"
+                      bindLabel="name"
+                      bindValue="_id"
+                      placeholder="Select Role"
+                      [(ngModel)]="select_role"
+                      [ngModelOptions]="{ standalone: true }"
+                      (change)="getRoleId($event)"
                     >
                     </ng-select>
                   </fieldset>
@@ -208,7 +221,7 @@
                 </form>
               </div>
               <div class="buttons-box">
-                <button class="btn btn-secondary mx-1">Cancel</button>
+                <button class="btn btn-secondary mx-1" [routerLink]="['/login']">Cancel</button>
                 <button class="btn btn-primary mx-1" (click)="submit()">Submit</button>
               </div>
 

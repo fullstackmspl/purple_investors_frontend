@@ -17,8 +17,10 @@
     "types": ["node", "googlemaps"],
     "lib": [
       "es2016",
-      "dom"
-    ]
+      "dom",
+      "esnext.asynciterable"
+    ],
+    "allowSyntheticDefaultImports": true
   },
   "angularCompilerOptions": {
     "preserveWhitespaces": false

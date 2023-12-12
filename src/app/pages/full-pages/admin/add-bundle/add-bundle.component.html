@@ -1,0 +1,148 @@
+<div class="row">
+  <div class="col-12">
+    <div class="content-header">Add Bundle Form</div>
+  </div>
+</div>
+<!-- Basic Inputs start -->
+<section id="basic-input">
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <!-- <div class="card-header">
+					<h4 class="card-title">Basic</h4>
+				</div> -->
+        <div class="card-content">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md">
+                <form [formGroup]="addBundleForm">
+                  <fieldset class="form-group">
+                    <label for="name">Name</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="name"
+                      id="name"
+                      placeholder="Enter name"
+                      [ngClass]="{
+                        'is-invalid': addBundleFormSubmitted && rf.name.invalid,
+                        'is-valid': addBundleFormSubmitted && !rf.name.invalid
+                      }"
+                      required
+                    />
+                    <div
+                      *ngIf="
+                        rf.name.touched &&
+                        (rf.name.invalid || rf.name.errors?.required)
+                      "
+                      class="help-block mt-1 text-danger"
+                    >
+                      <i class="ft-alert-circle align-middle"></i> Name is
+                      required
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <label>Status</label>
+                    <ng-select
+                    [items]="status_List"
+                    bindLabel="name"
+                    bindValue="name"
+                    placeholder="Select  Gender"
+                    [(ngModel)]="selected_status"
+                    [ngModelOptions]="{ standalone: true }"
+                    (change)="getStatusId($event)"
+                  >
+                  </ng-select>
+                  </fieldset>
+                  
+                  <fieldset class="form-group">
+                    <label>description</label>
+                    <textarea
+                      formControlName="description"
+                      id="hidden-label-form-6"
+                      rows="3"
+                      class="form-control"
+                      name="comment2"
+                      placeholder="Enter description"
+                    ></textarea>
+                  </fieldset>
+                </form>
+              </div>
+              <div class="col-md">
+                <form [formGroup]="addBundleForm">
+                  <fieldset class="form-group">
+                    <label>Market Place</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      formControlName="marketplace"
+                      id="marketplace"
+                      placeholder="Enter market place"
+                      [ngClass]="{
+                        'is-invalid':
+                          addBundleFormSubmitted && rf.marketplace.invalid,
+                        'is-valid': addBundleFormSubmitted && !rf.marketplace.invalid
+                      }"
+                      required
+                    />
+                    <div
+                      *ngIf="
+                        rf.marketplace.touched &&
+                        (rf.marketplace.invalid ||
+                          rf.marketplace.errors?.required)
+                      "
+                      class="help-block mt-1 text-danger"
+                    >
+                      <i class="ft-alert-circle align-middle"></i> market place
+                      is required
+                    </div>
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <label for="notes">notes</label>
+                    <textarea
+                      formControlName="notes"
+                      id="hidden-label-form-6"
+                      rows="2"
+                      class="form-control"
+                      name="comment2"
+                      placeholder="Enter notes"
+                    ></textarea>
+                  </fieldset>
+                  <fieldset class="form-group">
+                    <label for="admin_notes">admin notes</label>
+                    <textarea
+                      formControlName="admin_notes"
+                      id="hidden-label-form-6"
+                      rows="2"
+                      class="form-control"
+                      name="comment2"
+                      placeholder="Enter admin notes"
+                    ></textarea>
+                  </fieldset>
+                  <div
+                    class="col-12 d-flex flex-sm-row flex-column justify-content-end mt-3 mt-sm-2"
+                  >
+                    <button
+                      type="submit"
+                      class="btn btn-primary mb-2 mb-sm-0 mr-sm-2"
+                      (click)="submit()"
+                    >
+                      Submit
+                    </button>
+                    <button
+                      type="reset"
+                      class="btn btn-secondary"
+                      (click)="back()"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

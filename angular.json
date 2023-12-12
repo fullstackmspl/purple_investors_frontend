@@ -159,6 +159,7 @@
       }
     }
   },
+  "defaultProject": "matngular",
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",

@@ -29,6 +29,7 @@ import { FullLayoutComponent } from "./layouts/full/full-layout.component";
 import { AuthService } from "./shared/auth/auth.service";
 import { AuthGuard } from "./shared/auth/auth-guard.service";
 import { WINDOW_PROVIDERS } from './shared/services/window.service';
+import { MarkdownModule } from "ngx-markdown";
 
 var firebaseConfig = {
   apiKey: "AIzaSyC9XfnIpwNoSv7cyAsoccFQ5EYPd7lZXrk", //YOUR_API_KEY
@@ -74,7 +75,8 @@ export function createTranslateLoader(http: HttpClient) {
       apiKey: "AIzaSyBhVQKXquGT9zTznHXq1A6YJCcrrC5HWv8",
       libraries: ['places']
     }),
-    PerfectScrollbarModule
+    PerfectScrollbarModule,
+    MarkdownModule.forRoot()
   ],
   providers: [
     AuthService,

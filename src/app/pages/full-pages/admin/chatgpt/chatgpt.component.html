@@ -1,0 +1,17 @@
+<div class="chat-container">
+  <div *ngFor="let message of messages" class="message" [ngClass]="{'user-message': message.isMe || !message.isMe}">
+    <span class="message-sender mr-1">{{ message.sender }} :</span>
+    <span class="message-text" [innerHTML]=" message.text "></span>
+
+  </div>
+  <div >
+
+  </div>
+  <div *ngIf="messages.length<1">
+    <h6 class="text-center">How can I help you today?</h6>
+  </div>
+  <div class="message-input">
+    <input class="form-control" [(ngModel)]="newMessage" placeholder="Type your message..." (keydown.enter)="sendMessage()" />
+    <button class="btn btn-primary" (click)="sendMessage()" >Send</button>
+  </div>
+</div>

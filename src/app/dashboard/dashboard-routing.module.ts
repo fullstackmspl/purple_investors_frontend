@@ -7,6 +7,11 @@ import { Dashboard2Component } from "./dashboard2/dashboard2.component";
 const routes: Routes = [
   {
     path: '',
+    redirectTo: 'dashboard/dashboard1',
+    pathMatch: 'full',
+  },
+  {
+    path: '',
     children: [
       {
         path: 'dashboard1',

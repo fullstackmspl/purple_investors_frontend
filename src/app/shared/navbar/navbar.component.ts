@@ -227,6 +227,6 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   logout(){
     localStorage.clear()
-    this.router.navigate(['/pages/login'])
+    this.router.navigate(['/login'])
   }
 }

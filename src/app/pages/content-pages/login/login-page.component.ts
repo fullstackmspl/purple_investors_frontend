@@ -55,7 +55,7 @@ export class LoginPageComponent implements OnInit {
       if(res?.isSuccess === true){
         localStorage.setItem('user',JSON.stringify(res?.data))
         localStorage.setItem('token',JSON.stringify(res?.data?.token))
-        this.toastr.success('user registered successfull!')
+        this.toastr.success('user logged in successfull!')
         this.route.navigate(['/dashboard/dashboard1']);
       }
       else this.toastr.error(res?.error)

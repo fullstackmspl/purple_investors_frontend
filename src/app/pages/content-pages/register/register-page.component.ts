@@ -29,7 +29,14 @@ export class RegisterPageComponent implements OnInit {
     {name:'male'},
     {name:'female'}
   ]
+  role_List =[
+    {name:'SuperAdmin' ,_id:'superadmin'},
+    {name:'Admin' ,_id:'admin'},
+    {name:'MTurkers' ,_id:'mturkers'},
+  ]
   select_gender = null
+  select_role = null
+
   constructor(private formBuilder: FormBuilder,
     public toastr: ToastrService,
     private mapsAPILoader: MapsAPILoader,
@@ -76,12 +83,12 @@ export class RegisterPageComponent implements OnInit {
       gender: this.select_gender,
       phone_number: this.userForm.value.phone_number,
       password: this.userForm.value.password,
-      phone_code: '+91'
+      roles: this.select_role
     }
       this.apiService.addUser(body).subscribe((res:any)=>{
         if(res?.isSuccess === true){
           this.toastr.success('user registered successfull!')
-          this.route.navigate(['/pages/login']);
+          this.route.navigate(['/login']);
         }
         else this.toastr.error(res?.error)
       })
@@ -89,6 +96,9 @@ export class RegisterPageComponent implements OnInit {
   }
   getGenderId(event){
     this.select_gender
+  }
+  getRoleId(event){
+    this.select_role
   }
   // locationAutoComplete() {
   //   this.mapsAPILoader.load().then(() => {

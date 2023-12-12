@@ -10,7 +10,6 @@ const routes: Routes = [
   {
     path: '',
     children: [
-
       
       {
         path: 'profile',
@@ -40,9 +39,15 @@ const routes: Routes = [
         data: {
           title: 'Edit'
         }
+      },
+      {
+        path :'',
+        loadChildren :() => import('./admin/admin.module').then(m=>m.AdminModule)
       }
+      
     ]
-  }
+  },
+ 
 ];
 
 @NgModule({
