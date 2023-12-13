@@ -144,6 +144,17 @@ getCityById(id:any): Observable<any> {
   });
   return subject.asObservable();
 }
+// ----------------------- Update City ---------------------------------------------------
+updateCity(id:any,data: any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.put(`${this.root}/citymanagement/update/${id}`, data).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
 // ----------------------- Delete User By Id---------------------------------------------------
 deleteCity(id:any): Observable<any> {
   const subject = new Subject<any>();

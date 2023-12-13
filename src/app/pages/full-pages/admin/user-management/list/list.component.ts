@@ -128,8 +128,7 @@ export class ListComponent implements OnInit {
     // this.selected_tag_cat_id ='all'
     // this.getAllTag()
   }
-  editTag(id:any){
-  }
+  
   deleteUser(){
     if(this.row_id){
       this.apiService.deleteUser(this.row_id).subscribe((res:any)=>{
@@ -154,7 +153,7 @@ export class ListComponent implements OnInit {
     }
   }
    // ================== Delete Alert ========================
-   ConfirmColor(id:any) {
+   confirmDelete(id:any) {
     this.row_id=id
     swal.fire({
       title: 'Are you sure?',

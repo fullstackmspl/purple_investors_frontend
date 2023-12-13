@@ -33,12 +33,12 @@
                         <i class="ft-filter text-white cursor-pointer"></i>
                       </button>
                     </div>
-                    <!-- <div class="col-flex-2 mb-1">
+                    <div class="col-flex-2 mb-1">
                       <button type="reset" class="btn btn-primary btn-block users-list-clear glow mb-0"
                       (click)="openModal(myModalContent,'','')" placement="top" ngbTooltip="Add New">
                         +
                       </button>
-                    </div> -->
+                    </div>
                   </div>
                 </div>
               </div>
@@ -86,25 +86,32 @@
               <ngx-datatable-column name="Country" prop="country" [width]="70">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <div class="cell-line-height">
-                    <span *ngIf="row?.country">{{ row?.country}}</span>
+                    {{ row?.country}}
                   </div>
                 </ng-template>
               </ngx-datatable-column>
               <ngx-datatable-column name="State" prop="state" [width]="70">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <div class="cell-line-height">
-                    <span *ngIf="row?.state">{{ row?.state}}</span>
+                    {{ row?.state}}
                   </div>
                 </ng-template>
               </ngx-datatable-column>
-              <!-- <ngx-datatable-column name="Actions" [width]="50">
+              <ngx-datatable-column name="Zip Code" prop="zipcode" [width]="70">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <div class="cell-line-height">
+                    {{ row?.zipcode}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Actions" [width]="50">
                 <ng-template let-row="row" ngx-datatable-cell-template>
                   <i class="ft-edit text-primary cursor-pointer mr-2"
                   (click)="openModal(myModalContent,row?._id,row)"></i>
                   <i class="ft-trash-2 cursor-pointer danger"
-                    (click)="ConfirmColor(row._id)"></i>
+                    (click)="confirmDelete(row._id)"></i>
                 </ng-template>
-              </ngx-datatable-column> -->
+              </ngx-datatable-column>
             </ngx-datatable>
             <!-- ngx-datatable-filter -->
           </div>
@@ -116,4 +123,141 @@
 <!--/ Filter Datatables -->
 <div class="d-flex justify-content-between align-items-center">
   <ngx-spinner></ngx-spinner>
+</div>
+
+<!----- Add City / Update City popup  --------->
+
+<div>
+	<ng-template #myModalContent>
+	  <div class="modal-header">
+		<h4 class="modal-title" *ngIf="row_id">{{row_name}}'s Update</h4>
+    <h4 class="modal-title" *ngIf="!row_id">Add New City</h4>
+		<button type="button" class="close" aria-label="Close" (click)="modalService.dismissAll()">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+	  </div>
+	  <div class="modal-body">
+          <form [formGroup]="cityForm">
+            <fieldset class="form-group">
+              <label>Country</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="country" [(ngModel)]="city_model.country"
+                id="country"
+                placeholder="Enter country"
+                [ngClass]="{
+                  'is-invalid': cityFormSubmitted && rf.country.invalid,
+                  'is-valid': cityFormSubmitted && !rf.country.invalid
+                }"
+                required
+                #country
+              />
+              <div
+                *ngIf="rf.country.touched && rf.country.errors?.required"
+                class="help-block mt-1 text-danger"
+              >
+                <i class="ft-alert-circle align-middle"></i> country is
+                required
+              </div>
+            </fieldset>
+
+            <fieldset class="form-group">
+              <label>state</label>
+              <input
+                type="state"
+                class="form-control"
+                formControlName="state" [(ngModel)]="city_model.state"
+                id="state"
+                placeholder="Enter state"
+                [ngClass]="{
+                  'is-invalid': cityFormSubmitted && rf.state.invalid,
+                  'is-valid': cityFormSubmitted && !rf.state.invalid
+                }"
+                required
+                #state
+              />
+              <div
+                *ngIf="rf.state.touched && rf.state?.errors?.required"
+                class="help-block mt-1 text-danger"
+              >
+                <i class="ft-alert-circle align-middle"></i> state is
+                required
+              </div>
+              <div
+                *ngIf="rf.state.errors?.state"
+                class="help-block mt-1 text-danger"
+              >
+                <i class="ft-alert-circle align-middle"></i> Please enter
+                a valid state address
+              </div>
+            </fieldset>
+            <fieldset class="form-group">
+              <label>city</label>
+              <input
+                type="city"
+                class="form-control"
+                formControlName="city" [(ngModel)]="city_model.city"
+                id="city"
+                placeholder="Enter city"
+                [ngClass]="{
+                  'is-invalid': cityFormSubmitted && rf.city.invalid,
+                  'is-valid': cityFormSubmitted && !rf.city.invalid
+                }"
+                required
+                #city
+              />
+              <div
+                *ngIf="rf.city.touched && rf.city?.errors?.required"
+                class="help-block mt-1 text-danger"
+              >
+                <i class="ft-alert-circle align-middle"></i> city is
+                required
+              </div>
+              <div
+                *ngIf="rf.city.errors?.city"
+                class="help-block mt-1 text-danger"
+              >
+                <i class="ft-alert-circle align-middle"></i> Please enter
+                a valid city address
+              </div>
+            </fieldset>
+            <fieldset class="form-group">
+              <label>zipcode</label>
+              <input
+                type="zipcode"
+                class="form-control"
+                formControlName="zipcode" [(ngModel)]="city_model.zipcode"
+                id="zipcode"
+                placeholder="Enter zipcode"
+                [ngClass]="{
+                  'is-invalid': zipcodeFormSubmitted && rf.zipcode.invalid,
+                  'is-valid': zipcodeFormSubmitted && !rf.zipcode.invalid
+                }"
+                required
+                #zipcode
+              />
+              <div
+                *ngIf="rf.zipcode.touched && rf.zipcode?.errors?.required"
+                class="help-block mt-1 text-danger"
+              >
+                <i class="ft-alert-circle align-middle"></i> zipcode is
+                required
+              </div>
+              <div
+                *ngIf="rf.zipcode.errors?.zipcode"
+                class="help-block mt-1 text-danger"
+              >
+                <i class="ft-alert-circle align-middle"></i> Please enter
+                a valid zipcode address
+              </div>
+            </fieldset>
+          </form>
+       
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-secondary" (click)="modalService.dismissAll()">Close</button>
+		<button type="button" class="btn btn-primary" (click)="addCity()">Submit</button>
+	  </div>
+	</ng-template>
 </div>
