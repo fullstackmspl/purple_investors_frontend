@@ -7,7 +7,7 @@ import { AngularFireAuthModule } from "@angular/fire/auth";
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { ToastrModule } from "ngx-toastr";
 import { AgmCoreModule } from "@agm/core";
-import { HttpClientModule, HttpClient } from "@angular/common/http";
+import { HttpClientModule, HttpClient, HTTP_INTERCEPTORS } from "@angular/common/http";
 import { TranslateModule, TranslateLoader } from "@ngx-translate/core";
 import { TranslateHttpLoader } from "@ngx-translate/http-loader";
 import { StoreModule } from "@ngrx/store";
@@ -27,9 +27,13 @@ import { ContentLayoutComponent } from "./layouts/content/content-layout.compone
 import { FullLayoutComponent } from "./layouts/full/full-layout.component";
 
 import { AuthService } from "./shared/auth/auth.service";
-import { AuthGuard } from "./shared/auth/auth-guard.service";
+import { AuthGuard, LoginGuard } from "./shared/auth/auth-guard.service";
 import { WINDOW_PROVIDERS } from './shared/services/window.service';
 import { MarkdownModule } from "ngx-markdown";
+import { ErrorInterceptor } from "./shared/interceptor/error";
+import { HeaderInterceptor } from "./shared/interceptor/header";
+import { LocalStorageService } from "./shared/services/local-storage.service";
+import { NgxDatatableModule } from "@swimlane/ngx-datatable";
 
 var firebaseConfig = {
   apiKey: "AIzaSyC9XfnIpwNoSv7cyAsoccFQ5EYPd7lZXrk", //YOUR_API_KEY
@@ -76,11 +80,16 @@ export function createTranslateLoader(http: HttpClient) {
       libraries: ['places']
     }),
     PerfectScrollbarModule,
-    MarkdownModule.forRoot()
+    MarkdownModule.forRoot(),
+    NgxDatatableModule
   ],
   providers: [
     AuthService,
     AuthGuard,
+    LoginGuard,
+    LocalStorageService,
+    { provide: HTTP_INTERCEPTORS, useClass: HeaderInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
     DragulaService,
     {
       provide: PERFECT_SCROLLBAR_CONFIG,

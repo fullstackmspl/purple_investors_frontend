@@ -56,8 +56,6 @@ export class RegisterPageComponent implements OnInit {
       confirmPassword: ['', Validators.required],
       acceptTerms: [false, Validators.requiredTrue],
       phone_code: ['+91', Validators.required]
-    }, {
-      validator: MustMatch('password', 'confirmPassword')
     });
   }
 
@@ -103,7 +101,7 @@ export class RegisterPageComponent implements OnInit {
   // locationAutoComplete() {
   //   this.mapsAPILoader.load().then(() => {
   //     this.geoCoder = new google.maps.Geocoder;
-  
+
   //     let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef?.nativeElement);
   //     autocomplete.addListener('place_changed', () => {
   //       this.ngZone.run(() => {
@@ -114,7 +112,7 @@ export class RegisterPageComponent implements OnInit {
   //         if (place.geometry === undefined || place.geometry === null) {
   //           return;
   //         }
-  
+
   //         // set latitude, longitude and zoom
   //         this.latitude = place.geometry.location.lat();
   //         this.longitude = place.geometry.location.lng();
@@ -133,5 +131,5 @@ export class RegisterPageComponent implements OnInit {
   //     });
   //   });
   // }
- 
+
 }

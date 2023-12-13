@@ -9,12 +9,18 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ChatgptComponent } from './chatgpt/chatgpt.component';
 import { MarkdownModule } from 'ngx-markdown';
 import { PipeModule } from 'app/shared/pipes/pipe.module';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { ProviderComponent } from './provider/provider.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { CityManagementComponent } from './city-management/city-management.component';
 
 
 @NgModule({
   declarations: [
     AddBundleComponent,
-    ChatgptComponent
+    ChatgptComponent,
+    ProviderComponent,
+    CityManagementComponent
   ],
   imports: [
     CommonModule,
@@ -23,7 +29,9 @@ import { PipeModule } from 'app/shared/pipes/pipe.module';
     ReactiveFormsModule,
     NgbModule,
     NgSelectModule,
-    PipeModule
+    PipeModule,
+    NgxDatatableModule,
+    NgxSpinnerModule
 
   ]
 })

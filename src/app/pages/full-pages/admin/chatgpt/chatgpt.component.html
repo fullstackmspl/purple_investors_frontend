@@ -1,9 +1,12 @@
 <div class="chat-container">
   <div *ngFor="let message of messages" class="message" [ngClass]="{'user-message': message.isMe || !message.isMe}">
     <span class="message-sender mr-1">{{ message.sender }} :</span>
-    <span class="message-text" [innerHTML]=" message.text "></span>
-
+    <span class="message-text" [innerHTML]=" message.text"></span>
+    <div class="d-flex justify-content-end" >
+      <button class="btn btn-primary" *ngIf="message.text && ! message.isMe" (click)="confirmAdd(message.text)">+</button>
+    </div>
   </div>
+ 
   <div >
 
   </div>

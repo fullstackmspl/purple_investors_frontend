@@ -22,10 +22,10 @@ export class ApiServiceService {
     });
     return subject.asObservable();
 }
-// ----------------------- Login User ---------------------------------------------------
-loginUser(data: any): Observable<any> {
+// ----------------------- Update User ---------------------------------------------------
+updateUser(id:any,data: any): Observable<any> {
   const subject = new Subject<any>();
-  this.http.post(`${this.root}/user/login`, data).subscribe(res => {
+  this.http.put(`${this.root}/user/update/${id}`, data).subscribe(res => {
       this.userResponse = res;
       subject.next(this.userResponse);
   }, error => {
@@ -33,6 +33,40 @@ loginUser(data: any): Observable<any> {
   });
   return subject.asObservable();
 }
+// ----------------------- Get All Users ---------------------------------------------------
+getAllUsers(page_size:any,page_number:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.get(`${this.root}/user/getAll?page_size=${page_size}&page_number=${page_number}`,).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+// ----------------------- Get User By Id---------------------------------------------------
+getUserById(id:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.get(`${this.root}/user/getById/${id}`,).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+// ----------------------- Delete User By Id---------------------------------------------------
+deleteUser(id:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.delete(`${this.root}/user/remove/${id}`,).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+
 // ----------------------- Add Bundle ---------------------------------------------------
 addBundle(data: any): Observable<any> {
   const subject = new Subject<any>();
@@ -66,4 +100,51 @@ chatgptSearch(bundle_id: any,user_id:any,search:any): Observable<any> {
   });
   return subject.asObservable();
 }
+// ----------------------- Add City ---------------------------------------------------
+addCity(data: any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.post(`${this.root}/citymanagement/create`, data).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+// ----------------------- Get All City ---------------------------------------------------
+getAllCity(page_size:any,page_number:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.get(`${this.root}/citymanagement/getAllCity?page_size=${page_size}&page_number=${page_number}`,).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+// ----------------------- Get City By Id---------------------------------------------------
+getCityById(id:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.get(`${this.root}/citymanagement/GetById/${id}`,).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+// ----------------------- Delete User By Id---------------------------------------------------
+deleteCity(id:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.delete(`${this.root}/citymanagement/remove/${id}`,).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+
+
+
 }

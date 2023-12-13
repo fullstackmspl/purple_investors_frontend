@@ -5,19 +5,12 @@ import { Dashboard1Component } from "./dashboard1/dashboard1.component";
 import { Dashboard2Component } from "./dashboard2/dashboard2.component";
 
 const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'dashboard/dashboard1',
-    pathMatch: 'full',
-  },
-  {
-    path: '',
-    children: [
+
       {
-        path: 'dashboard1',
+        path: '',
         component: Dashboard1Component,
         data: {
-          title: 'Dashboard 1'
+          title: 'Dashboard'
         }
       },
       {
@@ -27,8 +20,6 @@ const routes: Routes = [
           title: 'Dashboard 2'
         }
       },
-    ]
-  }
 ];
 
 @NgModule({

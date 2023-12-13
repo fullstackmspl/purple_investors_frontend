@@ -3,7 +3,7 @@ import { RouteInfo } from '../vertical-menu/vertical-menu.metadata';
 export const HROUTES: RouteInfo[] = [
 
   {
-    path: '/dashboard/dashboard1', title: 'Dashboard', icon: 'ft-home', class: 'dropdown nav-item has-sub', isExternalLink: false,
+    path: '/dashboard', title: 'Dashboard', icon: 'ft-home', class: 'dropdown nav-item has-sub', isExternalLink: false,
     submenu: [
     //   { path: '/dashboard/dashboard1', title: 'Dashboard 1', icon: 'ft-arrow-right submenu-icon', class: 'dropdown-item', isExternalLink: false, submenu: [] },
     //   { path: '/dashboard/dashboard2', title: 'Dashboard 2', icon: 'ft-arrow-right submenu-icon', class: 'dropdown-item', isExternalLink: false, submenu: [] }
@@ -11,6 +11,18 @@ export const HROUTES: RouteInfo[] = [
   },
   {
     path: '/chatgpt', title: 'ChatGpt', icon: 'ft-codepen', class: 'dropdown nav-item has-sub', isExternalLink: false,
+    submenu: []
+  },
+  {
+    path: '/all-users', title: 'Users Management', icon: 'ft-codepen', class: 'dropdown nav-item has-sub', isExternalLink: false,
+    submenu: []
+  },
+  {
+    path: '/city-managements', title: 'City Management', icon: 'ft-codepen', class: 'dropdown nav-item has-sub', isExternalLink: false,
+    submenu: []
+  },
+  {
+    path: '/providers', title: 'Providers', icon: 'ft-codepen', class: 'dropdown nav-item has-sub', isExternalLink: false,
     submenu: []
   },
   // {

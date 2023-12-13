@@ -22,13 +22,14 @@ export class LoginPageComponent implements OnInit {
   loginForm : FormGroup
 
   constructor(private router: Router, private authService: AuthService,
-    private spinner: NgxSpinnerService,private apiService: ApiServiceService,private formBuilder: FormBuilder,
+    private spinner: NgxSpinnerService,private formBuilder: FormBuilder,
     public toastr: ToastrService,private route:Router,) {
   }
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
+      rememberMe:[true, ],
     });
   }
   get lf() {
@@ -51,12 +52,10 @@ export class LoginPageComponent implements OnInit {
         fullScreen: true
       });
 
-    this.apiService.loginUser(this.loginForm.value).subscribe((res:any)=>{
+    this.authService.signinUser(this.loginForm.value).subscribe((res:any)=>{
       if(res?.isSuccess === true){
-        localStorage.setItem('user',JSON.stringify(res?.data))
-        localStorage.setItem('token',JSON.stringify(res?.data?.token))
         this.toastr.success('user logged in successfull!')
-        this.route.navigate(['/dashboard/dashboard1']);
+        this.route.navigate(['/dashboard']);
       }
       else this.toastr.error(res?.error)
     })

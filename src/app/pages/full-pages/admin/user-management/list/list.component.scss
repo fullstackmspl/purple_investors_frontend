@@ -1,0 +1,156 @@
+@import '../../../../../../assets/sass/libs/datatables.scss';
+
+.action-menu {
+  display: flex !important;
+  align-items: baseline !important;
+  justify-content: center !important;
+}
+.d-flex:hover .card-overlay-on-hover {
+  display: block;
+}
+
+.card-overlay-on-hover {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 4%;
+  z-index: 999;
+  // box-shadow: 0 0 5px #00000087;
+  box-shadow: 2px 4px 14px 0 rgb(0 0 0 / 40%);
+  background-color: #fff;
+  border-radius: 5px;
+  max-width: 380px;
+}
+.card-overlay-on-hover .card-content {
+  display: flex;
+  align-items: center;
+  padding: 0px 15px;
+}
+.card-overlay-on-hover .card-content .card-img {
+  width: 65px;
+}
+.card-overlay-on-hover .card-content .card-body p {
+  margin-bottom: 0px;
+}
+.avatarImg .avatar-contentImg {
+  width: 52px !important;
+  height: 52px !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+}
+.avatarImg{
+  white-space: nowrap;
+  background-color: #E0E0E0;
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+  color: #fff;
+  display: inline-flex;
+  font-size: 1.75rem;
+  text-align: center;
+  vertical-align: middle;
+}
+#ngx-datatable-filter .pagination-body .datatable-body {
+  display: none;
+}
+#ngx-datatable-filter datatable-footer.datatable-footer {
+  overflow: unset;
+}
+// #ngx-datatable-filter .pagination-body.header-body datatable-footer.datatable-footer datatable-pager.datatable-pager ul.pager {
+//     justify-content: flex-start;
+// }
+#ngx-datatable-filter .page-count {
+  padding: 0px;
+}
+
+// .ngx-datatable-filter datatable-footer.datatable-footer datatable-pager.datatable-pager ul.pager{
+//     justify-content: flex-end;
+// }
+.search-btn{
+  right: 5px;
+  border-color: #975AFF;
+  background-color: #975AFF;
+  top: 4px;
+}
+.form-control-sm {
+  padding: 1.1rem 0.5rem;
+}
+.searchInput {
+  padding: 1.4rem 1rem;
+}
+
+
+// bottom text show on text
+.hover-txt-show{cursor: pointer;}
+.hover-txt-show:hover + .hover-txt-show-bottom {display: block;}
+.hover-txt-show-bottom {
+  display: none;
+  position: absolute;
+  z-index: 999;
+  box-shadow: 2px 4px 14px 0 rgb(0 0 0 / 40%);
+  background-color: #fff;
+  border-radius: 5px;
+  max-width: 380px;
+  padding: 0px 15px;
+}
+
+
+/* Responsive Media Query */
+@media (min-width: 768px){
+  .row-flex {justify-content: right;align-items: center;}
+}
+@media (min-width: 576px){
+  .row-flex {display: flex;column-gap: 10px;}
+  .width-cs-300 {width: 300px !important;}
+}
+// @media (max-width: 767px){
+//     .enrollment-list-btn-info {display: block;}
+//     .enrollment-list-btn-info button.btn {border-radius: 0px;margin-bottom: 5px;}
+// }
+@media (max-width: 505px){
+  button.mlt-btn {margin-top: 10px;}
+}
+@media (max-width: 400px){
+  .form-group .btn-group button.btn {padding: 5px 5px;}
+}
+.datatable-row-center.datatable-row-group.ng-star-inserted:hover {
+  background-color: #eee;
+}
+.avatar .avatar-content {
+  width: 42px;
+  height: 42px;
+}
+.btn-box {
+  margin-left: 15px;
+}
+
+.text-gry {
+  color: #808080;
+}
+
+.dropdown-menu.show {
+  height: 212px;
+  overflow-y: auto;
+}
+button.btn.btn-outline-primary.btn2 {
+  width: max-content;
+}
+input[type="file"] { 
+  z-index: -1;
+  position: absolute;
+  opacity: 0;
+  display: none;
+}
+
+input:focus + label {
+  outline: 2px solid;
+}
+p.notes-content {
+  overflow-wrap: anywhere;
+}
+::ng-deep.ng-dropdown-panel {
+  max-height: 300px;
+  overflow-y: auto;
+}
