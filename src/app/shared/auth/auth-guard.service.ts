@@ -16,7 +16,7 @@ export class AuthGuard implements CanActivate {
       return true;
     }
     console.log('Could not authenticate');
-    this.router.navigate(['/landing'], { queryParams: { 'next': state.url } });
+    this.router.navigate(['/login'], { queryParams: { 'next': state.url } });
     return false;
   }
 }
@@ -31,6 +31,7 @@ export class LoginGuard implements CanActivate {
         this.router.navigate(['/dashboard']);
         return false;
       }
+      else this.router.navigate(['/login']);
     }
     return true;
   }
