@@ -83,30 +83,28 @@
                   </div>
                 </ng-template>
               </ngx-datatable-column>
-              <ngx-datatable-column name="Email" prop="email" [width]="70">
+              <ngx-datatable-column name="Country" prop="country" [width]="70">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <div class="cell-line-height">
-                    <span *ngIf="row?.email">{{ row?.email}}</span>
-                    <span *ngIf="!row?.email">Not available</span>
+                    <span *ngIf="row?.country">{{ row?.country}}</span>
                   </div>
                 </ng-template>
               </ngx-datatable-column>
-              <ngx-datatable-column name="Phone" prop="phone_number" [width]="70">
+              <ngx-datatable-column name="State" prop="state" [width]="70">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <div class="cell-line-height">
-                    <span *ngIf="row?.phone_number">{{ row?.phone_number}}</span>
-                    <span *ngIf="!row?.phone_number">Not available</span>
+                    <span *ngIf="row?.state">{{ row?.state}}</span>
                   </div>
                 </ng-template>
               </ngx-datatable-column>
-              <ngx-datatable-column name="Actions" [width]="50">
+              <!-- <ngx-datatable-column name="Actions" [width]="50">
                 <ng-template let-row="row" ngx-datatable-cell-template>
                   <i class="ft-edit text-primary cursor-pointer mr-2"
                   (click)="openModal(myModalContent,row?._id,row)"></i>
                   <i class="ft-trash-2 cursor-pointer danger"
                     (click)="ConfirmColor(row._id)"></i>
                 </ng-template>
-              </ngx-datatable-column>
+              </ngx-datatable-column> -->
             </ngx-datatable>
             <!-- ngx-datatable-filter -->
           </div>

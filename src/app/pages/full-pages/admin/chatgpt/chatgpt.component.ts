@@ -17,6 +17,7 @@ export class ChatgptComponent implements OnInit {
   newMessage: string = '';
   user:any
   message_data: any;
+  json_data:any
   constructor(public apiService:ApiServiceService,private ngZone: NgZone,private cdr: ChangeDetectorRef,
               private route:Router,public toastr: ToastrService) {
                 this.user = JSON.parse(localStorage.getItem('user'))
@@ -26,17 +27,17 @@ export class ChatgptComponent implements OnInit {
   }
   sendMessage() {
     if (this.newMessage.trim() !== '') {
-      const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations - from Open AI API in json format`
+      const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng) - from Open AI API in json format`
       this.messages.push({ sender: 'You', text: this.newMessage, isMe: true });
       this.apiService.chatgptSearch('6578625ec5e9c2b1c8909c58',this.user._id,exactMsg).subscribe((res:any)=>{
         if(res?.isSuccess){
           this.ngZone.run(() => {
             const data = res?.data[0]?.message?.content;
-            let jsonString = data.replace('```json', '').replace('```', '');
-
-            console.log('=>>',JSON.parse(jsonString))
+            this.json_data = data
             this.messages.push({ sender: 'ChatGpt', text:  data, isMe: false });
-            this.newMessage = '';         });
+            this.newMessage = ''; 
+          });
+
             this.cdr.detectChanges();
 
         }
@@ -74,23 +75,29 @@ export class ChatgptComponent implements OnInit {
     });
   }
   details(data){
-    console.log('=>>',JSON.parse(data))
-    // let body={
-    //   fullname: ,
-    //   email: ,
-    //   dob: ,
-    //   gender:,
-    //   phone_number: ,
-    //   password:,
-    //   roles: 'purpleprovider'
-    // }
-
-      // this.apiService.addUser(body).subscribe((res:any)=>{
-      //   if(res?.isSuccess === true){
-      //     this.toastr.success('provider registered successfull!')
-      //   }
-      //   else this.toastr.error(res?.error)
-      // })
+    let jsonString = data.replace(/^```json/, '').replace(/```$/, '');
+    // console.log('=>>',JSON.parse( this.json_data))
+    // alert(JSON.stringify(JSON.parse( this.json_data)))
+    this.json_data = JSON.parse( jsonString)
+    
+    let body={
+      fullname: this.json_data.name,
+      email: this.json_data.email,
+      phone_number: this.json_data.phoneNumber ,
+      location: {
+        coordinates: [
+          this.json_data.locations[0].lng,this.json_data.locations[0].lat
+        ]
+      },
+      address:  this.json_data.locations[0].address,
+      roles: 'purpleprovider'
+    }
+      this.apiService.addUser(body).subscribe((res:any)=>{
+        if(res?.isSuccess === true){
+          this.toastr.success('provider registered successfull!')
+        }
+        else this.toastr.error(res?.error)
+      })
   }
 
 }

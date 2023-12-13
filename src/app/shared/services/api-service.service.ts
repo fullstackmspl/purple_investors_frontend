@@ -55,6 +55,17 @@ getUserById(id:any): Observable<any> {
   });
   return subject.asObservable();
 }
+// ----------------------- Get All Providers ---------------------------------------------------
+getAllProviders(): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.get(`${this.root}/user/getProviders`,).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
 // ----------------------- Delete User By Id---------------------------------------------------
 deleteUser(id:any): Observable<any> {
   const subject = new Subject<any>();

@@ -62,7 +62,7 @@ export class ProviderComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllUsers(this.limitRef,this.page.pageNumber + 1).subscribe((res: any) => {
+    this.apiService.getAllProviders().subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.data
       this.page.totalPages = res?.data?.TotalCount
