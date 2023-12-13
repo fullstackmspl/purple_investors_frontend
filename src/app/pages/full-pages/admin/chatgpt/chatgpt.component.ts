@@ -32,9 +32,9 @@ export class ChatgptComponent implements OnInit {
         if(res?.isSuccess){
           this.ngZone.run(() => {
             const data = res?.data[0]?.message?.content;
-            let jsonString = data.content.replace('```json', '').replace('```', '');
+            // let jsonString = data.replace('```json', '').replace('```', '');
 
-            console.log('=>>',JSON.parse(data))
+            // console.log('=>>',JSON.parse(jsonString))
             this.messages.push({ sender: 'ChatGpt', text:  data, isMe: false });
             this.newMessage = '';         });
             this.cdr.detectChanges();
