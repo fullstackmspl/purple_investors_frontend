@@ -85,7 +85,7 @@
                   </div>
                 </ng-template>
               </ngx-datatable-column>
-              <ngx-datatable-column name="Actions" [width]="50">
+              <ngx-datatable-column name="Actions" [width]="10">
                 <ng-template let-row="row" ngx-datatable-cell-template>
                   <i class="ft-eye text-primary cursor-pointer mr-2"
                   (click)="openModal(myModalContent,row)"></i>
@@ -148,15 +148,42 @@
           </div>
           <div>
             <th>Top Google Reviews &nbsp;</th>
-            <td>{{row_data?.topGoogleReviews}}</td>
+            <td *ngIf="row_data?.topGoogleReviews">
+              <div *ngFor="let item of row_data?.topGoogleReviews[0]">
+                <div>
+                  <td id="box-width"> <b>Rating :</b> {{item?.rating}}</td>
+                </div>
+                <div>
+                  <td> <b>Text :</b> {{item?.text}}</td>
+                </div>
+              </div></td>
           </div>
           <div>
             <th>Bottom Google Reviews &nbsp;</th>
-            <td>{{row_data?.bottomGoogleReviews}}</td>
+            <td *ngIf="row_data?.bottomGoogleReviews">
+              <div *ngFor="let item of row_data?.bottomGoogleReviews[0]">
+                <div>
+                  <td id="box-width"> <b>Rating :</b> {{item?.rating}}</td>
+                </div>
+                <div>
+                  <td> <b>Text :</b> {{item?.text}}</td>
+                </div>
+                
+              </div>
+            </td>
           </div>
           <div>
             <th>Most Recent Google Reviews &nbsp;</th>
-            <td>{{row_data?.mostRecentGoogleReviews}}</td>
+            <td *ngIf="row_data?.mostRecentGoogleReviews">
+              <div *ngFor="let item of row_data?.mostRecentGoogleReviews">
+                <div>
+                  <td id="box-width"> <b>Rating :</b> {{item?.rating}}</td>
+                </div>
+                <div>
+                  <td> <b>Text :</b> {{item?.text}}</td>
+                </div>
+              </div>
+            </td>
           </div>
           <div>
             <th>Facebook URL &nbsp;</th>
@@ -184,15 +211,43 @@
           </div>
           <div>
             <th>Yelp Top Reviews &nbsp;</th>
-            <td>{{row_data?.yelpTopReviews}}</td>
+            <td *ngIf="row_data?.yelpTopReviews">
+              <div *ngFor="let item of row_data?.yelpTopReviews[0]">
+                <div>
+                  <td id="box-width"> <b>Rating :</b> {{item?.rating}}</td>
+                </div>
+                <div>
+                  <td> <b>Text :</b> {{item?.text}}</td>
+                </div>
+              </div>
+            </td>
+
           </div>
           <div>
             <th>Yelp Bottom Reviews &nbsp;</th>
-            <td>{{row_data?.yelpBottomReviews}}</td>
+            <td *ngIf="row_data?.yelpBottomReviews">
+              <div *ngFor="let item of row_data?.yelpBottomReviews[0]">
+                <div>
+                  <td id="box-width"> <b>Rating :</b> {{item?.rating}}</td>
+                </div>
+                <div>
+                  <td> <b>Text :</b> {{item?.text}}</td>
+                </div>
+              </div>
+            </td>
           </div>
           <div>
             <th>Yelp Most Recent Reviews &nbsp;</th>
-            <td>{{row_data?.yelpMostRecentReviews}}</td>
+            <td *ngIf="row_data?.yelpMostRecentReviews">
+              <div *ngFor="let item of row_data?.yelpMostRecentReviews[0]">
+                <div>
+                  <td id="box-width"> <b>Rating :</b> {{item?.rating}}</td>
+                </div>
+                <div>
+                  <td> <b>Text :</b> {{item?.text}}</td>
+                </div>
+              </div>
+            </td>
           </div>
           <div>
             <th>Instagram Profile Link &nbsp;</th>

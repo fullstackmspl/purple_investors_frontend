@@ -98,7 +98,7 @@ export class ProviderComponent implements OnInit {
   openModal(content,data) {
     this.row_data = data
     const modalOptions: NgbModalOptions = {
-      size: 'lg', // 'sm', 'lg', or 'xl'
+      size: 'xl', // 'sm', 'lg', or 'xl'
       backdrop: 'static',
     };
     const modalRef = this.modalService.open(content,modalOptions);
