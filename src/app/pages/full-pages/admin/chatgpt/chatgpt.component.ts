@@ -27,7 +27,8 @@ export class ChatgptComponent implements OnInit {
   }
   sendMessage() {
     if (this.newMessage.trim() !== '') {
-      const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng) - from Open AI API in json format`
+      const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng),Google Reviews URL,Number of Google Reviews,Average Google Rating,3 Top (Highest rated) Google reviews,3 Bottom (Lowest rated) Google reviews,3 Most Recent Google Reviews, Facebook URL,Facebook Number of Followers,Facebook Number of likes,Yelp Profile URL,Number of Yelp ratings,Average Yelp rating, 3 Yelp Top (Highest rated) reviews,3 Yelp Bottom (Lowest rated) reviews,3 Yelp Most Recent Reviews,Instagram Profile Link,Number of Instagram Followers - from Open AI API in json format and i need fields as it is`
+      const exactMsg2 =`${this.newMessage}  Average Google Rating `
       this.messages.push({ sender: 'You', text: this.newMessage, isMe: true });
       this.apiService.chatgptSearch('6578625ec5e9c2b1c8909c58',this.user._id,exactMsg).subscribe((res:any)=>{
         if(res?.isSuccess){
@@ -75,11 +76,10 @@ export class ChatgptComponent implements OnInit {
     });
   }
   details(data){
+   try {
     let jsonString = data.replace(/^```json/, '').replace(/```$/, '');
-    // console.log('=>>',JSON.parse( this.json_data))
-    // alert(JSON.stringify(JSON.parse( this.json_data)))
     this.json_data = JSON.parse( jsonString)
-    
+    console.log('==>>',this.json_data)
     let body={
       fullname: this.json_data.name,
       email: this.json_data.email,
@@ -90,14 +90,37 @@ export class ChatgptComponent implements OnInit {
         ]
       },
       address:  this.json_data.locations[0].address,
-      roles: 'purpleprovider'
+      roles: 'purpleprovider',
+      averageGoogleRating : this.json_data.averageGoogleRating,
+      averageYelpRating : this.json_data.averageYelpRating,
+      bottomGoogleReviews : [this.json_data.bottomGoogleReviews],
+      facebookNumberOfFollowers : this.json_data.facebookNumberOfFollowers,
+      facebookNumberOfLikes : this.json_data.facebookNumberOfLikes,
+      facebookURL : this.json_data.facebookURL,
+      googleReviewsURL : this.json_data.googleReviewsURL,
+      instagramProfileLink : this.json_data.instagramProfileLink,
+      mostRecentGoogleReviews :  this.json_data.mostRecentGoogleReviews,
+      numberOfGoogleReviews :  this.json_data.numberOfGoogleReviews,
+      numberOfInstagramFollowers : this.json_data.numberOfInstagramFollowers,
+      numberOfYelpRatings : this.json_data.numberOfYelpRatings,
+      topGoogleReviews : [this.json_data.topGoogleReviews],
+      yelpBottomReviews :  [this.json_data.yelpBottomReviews],
+      yelpMostRecentReviews : [this.json_data.yelpMostRecentReviews],
+      yelpTopReviews :  [this.json_data.yelpTopReviews],
+      yelpProfileURL : this.json_data.yelpProfileURL
+
     }
+    // console.log('==>>',body)
       this.apiService.addUser(body).subscribe((res:any)=>{
         if(res?.isSuccess === true){
           this.toastr.success('provider registered successfull!')
         }
         else this.toastr.error(res?.error)
       })
+    
+   } catch (error) {
+    console.error('Error parsing JSON:', error);
+   }
   }
 
 }

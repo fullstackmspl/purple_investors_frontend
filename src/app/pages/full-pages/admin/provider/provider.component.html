@@ -50,39 +50,16 @@
               <ngx-datatable-column name="Name" prop="fullname" [width]="60">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <div class="d-flex align-items-center">
-                    <!-- <img
-                      class="rounded-circle mr-1"
-                      *ngIf="row.image"
-                      [src]="imageUrl + row.image"
-                      height="32"
-                      width="32"
-                    /> -->
                     <div *ngIf="!row.image" class="avatar mr-1 ml-0 bg-primary">
                       <div class="avatar-content">
-                        <span *ngIf="row?.fullname">
                           {{ row?.fullname| shortName }}
-                        </span>
-                        <span *ngIf="row?.firstName">
-                          {{ row?.firstName| shortName }}
-                        </span>
                       </div>
                     </div>
-
-                    <!-- <div class="cell-line-height">
-                      <a
-                        class="line-height-1 mb-0"
-                        [routerLink]="['/tags/tag-view', row._id]"
-                        (click)="editTag(row._id)"
-                        >{{ row.tagName }}</a
-                      >
-                    </div> -->
                     <div class="cell-line-height cursor-pointer">
-                      <p class="font-medium-1 line-height-1 mb-0" *ngIf="row?.fullname">
+                      <p class="font-medium-1 line-height-1 mb-0">
                         {{ row?.fullname }}
                       </p>
-                      <p class="font-medium-1 line-height-1 mb-0" *ngIf="row?.firstName">
-                        {{ row?.firstName }}
-                      </p>
+                     
                     </div>
                   </div>
                 </ng-template>
@@ -90,16 +67,14 @@
               <ngx-datatable-column name="Email" prop="email" [width]="70">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <div class="cell-line-height">
-                    <span *ngIf="row?.email">{{ row?.email}}</span>
-                    <span *ngIf="!row?.email">Not available</span>
+                    {{ row?.email}}
                   </div>
                 </ng-template>
               </ngx-datatable-column>
-              <ngx-datatable-column name="Phone" prop="phone_number" [width]="70">
+              <ngx-datatable-column name="Phone" prop="phone_number" [width]="30">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <div class="cell-line-height">
-                    <span *ngIf="row?.phone_number">{{ row?.phone_number}}</span>
-                    <span *ngIf="!row?.phone_number">Not available</span>
+                    {{ row?.phone_number}}
                   </div>
                 </ng-template>
               </ngx-datatable-column>
@@ -110,14 +85,14 @@
                   </div>
                 </ng-template>
               </ngx-datatable-column>
-              <!-- <ngx-datatable-column name="Actions" [width]="50">
+              <ngx-datatable-column name="Actions" [width]="50">
                 <ng-template let-row="row" ngx-datatable-cell-template>
-                  <i class="ft-edit text-primary cursor-pointer mr-2"
-                  (click)="openModal(myModalContent,row?._id,row)"></i>
-                  <i class="ft-trash-2 cursor-pointer danger"
-                    (click)="ConfirmColor(row._id)"></i>
+                  <i class="ft-eye text-primary cursor-pointer mr-2"
+                  (click)="openModal(myModalContent,row)"></i>
+                  <!-- <i class="ft-trash-2 cursor-pointer danger"
+                    (click)="ConfirmColor(row._id)"></i> -->
                 </ng-template>
-              </ngx-datatable-column> -->
+              </ngx-datatable-column>
             </ngx-datatable>
             <!-- ngx-datatable-filter -->
           </div>
@@ -129,4 +104,110 @@
 <!--/ Filter Datatables -->
 <div class="d-flex justify-content-between align-items-center">
   <ngx-spinner></ngx-spinner>
+</div>
+
+<!----- Providers Details Popup  --------->
+
+<div>
+	<ng-template #myModalContent>
+	  <div class="modal-header">
+		<h4 class="modal-title" >{{row_data?.fullname}}'s Details</h4>
+		<button type="button" class="close" aria-label="Close" (click)="modalService.dismissAll()">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+	  </div>
+	  <div class="modal-body">
+         <table>
+          <div>
+            <th>Name &nbsp;</th>
+            <td>{{row_data?.fullname}}</td>
+          </div>
+          <div>
+            <th>Email &nbsp;</th>
+            <td>{{row_data?.email}}</td>
+          </div>
+          <div>
+            <th>Phone &nbsp;</th>
+            <td>{{row_data?.phone_number}}</td>
+          </div>
+          <div>
+            <th>Address &nbsp;</th>
+            <td>{{row_data?.address}}</td>
+          </div>
+          <div>
+            <th>Google Reviews URL &nbsp;</th>
+            <td>{{row_data?.googleReviewsURL}}</td>
+          </div>
+          <div>
+            <th>Number Of Google Reviews &nbsp;</th>
+            <td>{{row_data?.numberOfGoogleReviews}}</td>
+          </div>
+          <div>
+            <th>Average Google Rating &nbsp;</th>
+            <td>{{row_data?.averageGoogleRating}}</td>
+          </div>
+          <div>
+            <th>Top Google Reviews &nbsp;</th>
+            <td>{{row_data?.topGoogleReviews}}</td>
+          </div>
+          <div>
+            <th>Bottom Google Reviews &nbsp;</th>
+            <td>{{row_data?.bottomGoogleReviews}}</td>
+          </div>
+          <div>
+            <th>Most Recent Google Reviews &nbsp;</th>
+            <td>{{row_data?.mostRecentGoogleReviews}}</td>
+          </div>
+          <div>
+            <th>Facebook URL &nbsp;</th>
+            <td>{{row_data?.facebookURL}}</td>
+          </div>
+          <div>
+            <th>Facebook Number Of Followers &nbsp;</th>
+            <td>{{row_data?.facebookNumberOfFollowers}}</td>
+          </div>
+          <div>
+            <th>Facebook Number Of Likes &nbsp;</th>
+            <td>{{row_data?.facebookNumberOfLikes}}</td>
+          </div>
+          <div>
+            <th>Yelp Profile URL &nbsp;</th>
+            <td>{{row_data?.yelpProfileURL}}</td>
+          </div>
+          <div>
+            <th>Number Of Yelp Ratings &nbsp;</th>
+            <td>{{row_data?.numberOfYelpRatings}}</td>
+          </div>
+          <div>
+            <th>Average Yelp Rating &nbsp;</th>
+            <td>{{row_data?.averageYelpRating}}</td>
+          </div>
+          <div>
+            <th>Yelp Top Reviews &nbsp;</th>
+            <td>{{row_data?.yelpTopReviews}}</td>
+          </div>
+          <div>
+            <th>Yelp Bottom Reviews &nbsp;</th>
+            <td>{{row_data?.yelpBottomReviews}}</td>
+          </div>
+          <div>
+            <th>Yelp Most Recent Reviews &nbsp;</th>
+            <td>{{row_data?.yelpMostRecentReviews}}</td>
+          </div>
+          <div>
+            <th>Instagram Profile Link &nbsp;</th>
+            <td>{{row_data?.instagramProfileLink}}</td>
+          </div>
+          <div>
+            <th>Number Of Instagram Followers &nbsp;</th>
+            <td>{{row_data?.numberOfInstagramFollowers}}</td>
+          </div>
+         </table>
+       
+	  </div>
+	  <!-- <div class="modal-footer">
+		<button type="button" class="btn btn-secondary" (click)="modalService.dismissAll()">Close</button>
+		<button type="button" class="btn btn-primary" (click)="addCity()">Submit</button>
+	  </div> -->
+	</ng-template>
 </div>

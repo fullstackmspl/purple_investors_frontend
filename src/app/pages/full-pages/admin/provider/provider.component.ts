@@ -40,7 +40,7 @@ export class ProviderComponent implements OnInit {
 
   imageUrl='';
 
- 
+  row_data:any
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
@@ -95,6 +95,18 @@ export class ProviderComponent implements OnInit {
     // this.getAllTag()
   }
  
- 
+  openModal(content,data) {
+    this.row_data = data
+    const modalOptions: NgbModalOptions = {
+      size: 'lg', // 'sm', 'lg', or 'xl'
+      backdrop: 'static',
+    };
+    const modalRef = this.modalService.open(content,modalOptions);
+    modalRef.result.then((result) => {
+      
+    }, (reason) => {
+    });
+  }
+
 
 }
