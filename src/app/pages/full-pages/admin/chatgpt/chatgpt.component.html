@@ -3,7 +3,7 @@
     <span class="message-sender mr-1">{{ message.sender }} :</span>
     <span class="message-text" [innerHTML]=" message.text"></span>
     <div class="d-flex justify-content-end" >
-      <button class="btn btn-primary" *ngIf="message.text && ! message.isMe" (click)="confirmAdd(message.text)">+</button>
+      <button class="btn btn-primary" *ngIf="message.text && ! message.isMe" (click)="openModal(myModalContent)">+</button>
     </div>
   </div>
  
@@ -17,4 +17,113 @@
     <input class="form-control" [(ngModel)]="newMessage" placeholder="Type your message..." (keydown.enter)="sendMessage()" />
     <button class="btn btn-primary" (click)="sendMessage()" >Send</button>
   </div>
+</div>
+
+<!-- =======================  provider info ===================================== -->
+<div>
+	<ng-template #myModalContent>
+	  <div class="modal-header">
+    <h4 class="modal-title">Add Provider</h4>
+		<button type="button" class="close" aria-label="Close" (click)="modalService.dismissAll()">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+	  </div>
+	  <div class="modal-body">
+          <!-- <form [formGroup]="cityForm"> -->
+            <!-- <fieldset class="form-group">
+              <label>Country</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="country" [(ngModel)]="city_model.country"
+                id="country"
+                placeholder="Enter country"
+                [ngClass]="{
+                  'is-invalid': cityFormSubmitted && rf.country.invalid,
+                  'is-valid': cityFormSubmitted && !rf.country.invalid
+                }"
+                required
+                #country
+              />
+              <div
+                *ngIf="rf.country.touched && rf.country.errors?.required"
+                class="help-block mt-1 text-danger"
+              >
+                <i class="ft-alert-circle align-middle"></i> country is
+                required
+              </div>
+            </fieldset> -->
+
+            <fieldset class="form-group">
+              <label>Name</label>
+              <input
+                type="state"
+                class="form-control"
+                 [(ngModel)]="provider.fullname"
+                id="state"
+                placeholder="Enter state"
+                [ngClass]="{
+                  'is-invalid': !provider.fullname,
+                  'is-valid': provider.fullname
+                }"
+                required
+                #state
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Email</label>
+              <input
+                type="state"
+                class="form-control"
+                 [(ngModel)]="provider.email"
+                id="state"
+                placeholder="Enter state"
+                [ngClass]="{
+                  'is-invalid': !provider.email,
+                  'is-valid': provider.email
+                }"
+                required
+                #state
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Phone number</label>
+              <input
+                type="state"
+                class="form-control"
+                 [(ngModel)]="provider.phone_number"
+                id="state"
+                placeholder="Enter state"
+                [ngClass]="{
+                  'is-invalid': !provider.phone_number,
+                  'is-valid': provider.phone_number
+                }"
+                required
+                #state
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Address</label>
+              <input
+                type="state"
+                class="form-control"
+                 [(ngModel)]="provider.address"
+                id="state"
+                placeholder="Enter state"
+                [ngClass]="{
+                  'is-invalid': !provider.address,
+                  'is-valid': provider.address
+                }"
+                required
+                #state
+              />
+            </fieldset>
+          <!-- </form> -->
+       
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-secondary" (click)="modalService.dismissAll()">Close</button>
+		<button type="button" class="btn btn-primary" (click)="details(data)">Submit</button>
+	  </div>
+	</ng-template>
 </div>

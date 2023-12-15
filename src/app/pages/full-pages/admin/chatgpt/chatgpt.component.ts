@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { ApiServiceService } from 'app/shared/services/api-service.service';
 import { ToastrService } from 'ngx-toastr';
 import swal from 'sweetalert2';
@@ -18,8 +19,16 @@ export class ChatgptComponent implements OnInit {
   user:any
   message_data: any;
   json_data:any
+  provider={
+    fullname:'',
+    email: '',
+    phone_number: '',
+    location:{coordinates:[]},
+    address: '',
+    roles: 'purpleprovider',
+  }
   constructor(public apiService:ApiServiceService,private ngZone: NgZone,private cdr: ChangeDetectorRef,
-              private route:Router,public toastr: ToastrService) {
+              private route:Router,public toastr: ToastrService,private modalService: NgbModal,) {
                 this.user = JSON.parse(localStorage.getItem('user'))
                }
   ngOnInit(): void {
@@ -27,8 +36,8 @@ export class ChatgptComponent implements OnInit {
   }
   sendMessage() {
     if (this.newMessage.trim() !== '') {
-      const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng), - from Open AI API in json format`
-      const exactMsg2 =`${this.newMessage}  Google Reviews URL,Number of Google Reviews,Average Google Rating,3 Top (Highest rated) Google reviews,3 Bottom (Lowest rated) Google reviews,3 Most Recent Google Reviews, Facebook URL,Facebook Number of Followers,Facebook Number of likes,Yelp Profile URL,Number of Yelp ratings,Average Yelp rating, 3 Yelp Top (Highest rated) reviews,3 Yelp Bottom (Lowest rated) reviews,3 Yelp Most Recent Reviews,Instagram Profile Link,Number of Instagram Followers  and i need fields as it is `
+      const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng), - from Open AI API in json format with fields as it is "fullname, email, phone_number, location, address"`
+      const exactMsg2 =`${this.newMessage}  Google Reviews URL,Number of Google Reviews,Average Google Rating,3 Top (Highest rated) Google reviews,3 Bottom (Lowest rated) Google reviews,3 Most Recent Google Reviews, Facebook URL,Facebook Number of Followers,Facebook Number of likes,Yelp Profile URL,Number of Yelp ratings,Average Yelp rating, 3 Yelp Top (Highest rated) reviews,3 Yelp Bottom (Lowest rated) reviews,3 Yelp Most Recent Reviews,Instagram Profile Link,Number of Instagram Followers  and i need fields as it is "fullname, email, phone_number, location, address, roles, averageGoogleRating, averageYelpRating, bottomGoogleReviews, facebookNumberOfFollowers, facebookNumberOfLikes, facebookURL, googleReviewsURL, instagramProfileLink, mostRecentGoogleReviews, numberOfGoogleReviews, numberOfInstagramFollowers, numberOfYelpRatings, topGoogleReviews, yelpBottomReviews, yelpMostRecentReviews, yelpTopReviews, yelpProfileURL"`
       this.messages.push({ sender: 'You', text: this.newMessage, isMe: true });
       this.apiService.chatgptSearch('6578625ec5e9c2b1c8909c58',this.user._id,exactMsg).subscribe((res:any)=>{
         if(res?.isSuccess){
@@ -40,11 +49,14 @@ export class ChatgptComponent implements OnInit {
           });
 
             this.cdr.detectChanges();
-
         }
         else this.toastr.error(res?.error)
       })
     }
+  }
+  setProvider(){
+    let jsonString = this.json_data.replace(/^```json/, '').replace(/```$/, '');
+    this.provider = JSON.parse( jsonString)
   }
   confirmAdd(data) {
     swal.fire({
@@ -73,6 +85,18 @@ export class ChatgptComponent implements OnInit {
           },
         })
       }
+    });
+  }
+  openModal(content,id,data) {
+    this.setProvider()
+    const modalOptions: NgbModalOptions = {
+      size: 'lg', // 'sm', 'lg', or 'xl'
+      backdrop: 'static',
+    };
+    const modalRef = this.modalService.open(content,modalOptions);
+    modalRef.result.then((result) => {
+
+    }, (reason) => {
     });
   }
   details(data){
@@ -111,7 +135,7 @@ export class ChatgptComponent implements OnInit {
 
     }
     // console.log('==>>',body)
-      this.apiService.addUser(body).subscribe((res:any)=>{
+      this.apiService.addUser(this.provider).subscribe((res:any)=>{
         if(res?.isSuccess === true){
           this.toastr.success('provider registered successfull!')
         }
