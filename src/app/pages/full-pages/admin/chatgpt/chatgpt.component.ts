@@ -101,8 +101,8 @@ export class ChatgptComponent implements OnInit {
   }
   details(data){
    try {
-    let jsonString = data.replace(/^```json/, '').replace(/```$/, '');
-    this.json_data = JSON.parse( jsonString)
+    // let jsonString = data.replace(/^```json/, '').replace(/```$/, '');
+    // this.json_data = JSON.parse( jsonString)
     // console.log('==>>',this.json_data)
     let body={
       fullname: this.json_data.name,
