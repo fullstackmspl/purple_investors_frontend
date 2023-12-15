@@ -43,7 +43,7 @@ export class TaskComponent implements OnInit {
   task_model={
     name: '',
     description: '',
-    task_date: '',
+    task_date: new Date(),
     notes: '',
     admin_notes: '',
     working_hour: '',
@@ -143,18 +143,21 @@ export class TaskComponent implements OnInit {
     });
   }
 
-  addCity(){
+  addTask(){
     let body={
-      country: this.taskForm.value.country,
-      state: this.taskForm.value.state,
-      city: this.taskForm.value.city,
-      zipcode: this.taskForm.value.zipcode,
+      name: this.taskForm.value.name,
+      description: this.taskForm.value.description,
+      task_date: new Date(),
+      notes: this.taskForm.value.notes,
+      admin_notes: this.taskForm.value.admin_notes,
+      working_hour: this.taskForm.value.working_hour,
+      budget: this.taskForm.value.budget
 
     }
      if(!this.row_id){
-      this.apiService.addCity(body).subscribe((res:any)=>{
+      this.apiService.addTask(body).subscribe((res:any)=>{
         if(res?.isSuccess === true){
-          this.toastr.success('city added successfull!')
+          this.toastr.success('task added successfull!')
           this.modalService.dismissAll()
           this.getAllTask();
         }
@@ -162,9 +165,9 @@ export class TaskComponent implements OnInit {
       })
     }
     if(this.row_id){
-      this.apiService.updateCity(this.row_id,this.task_model).subscribe((res:any)=>{
+      this.apiService.updateTask(this.row_id,this.task_model).subscribe((res:any)=>{
         if(res?.isSuccess === true){
-          this.toastr.success('city update successfull!')
+          this.toastr.success('task update successfull!')
           this.modalService.dismissAll()
           this.getAllTask();
         }
@@ -172,9 +175,9 @@ export class TaskComponent implements OnInit {
       })
     }
   }
-  deleteCity(){
+  deleteTask(){
     if(this.row_id){
-      this.apiService.deleteCity(this.row_id).subscribe((res:any)=>{
+      this.apiService.deleteTask(this.row_id).subscribe((res:any)=>{
         if(res?.statusCode ===200){
           swal.fire({
             icon: "success",
@@ -213,7 +216,7 @@ export class TaskComponent implements OnInit {
       buttonsStyling: false,
     }).then( (result)=> {
       if (result.value) {
-        this.deleteCity()
+        this.deleteTask()
       } else if (result.dismiss === swal.DismissReason.cancel) {
         swal.fire({
           title: 'Cancelled',

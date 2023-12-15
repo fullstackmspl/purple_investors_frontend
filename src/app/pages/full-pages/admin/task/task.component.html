@@ -106,8 +106,8 @@
               </ngx-datatable-column> -->
               <ngx-datatable-column name="Actions" [width]="50">
                 <ng-template let-row="row" ngx-datatable-cell-template>
-                  <!-- <i class="ft-edit text-primary cursor-pointer mx-1"
-                  (click)="openModal(myModalContent,row?._id,row)"></i> -->
+                  <i class="ft-edit text-primary cursor-pointer mx-1"
+                  (click)="openModal(myModalContent,row?._id,row)"></i>
                   <i class="ft-trash-2 cursor-pointer danger mx-1"
                     (click)="confirmDelete(row._id)"></i>
                   <i class="ft-eye text-primary cursor-pointer mx-1"
@@ -133,7 +133,7 @@
 	<ng-template #myModalContent>
 	  <div class="modal-header">
 		<h4 class="modal-title" *ngIf="row_id">{{row_name}}'s Update</h4>
-    <h4 class="modal-title" *ngIf="!row_id">Add New City</h4>
+    <h4 class="modal-title" *ngIf="!row_id">Add New Task</h4>
 		<button type="button" class="close" aria-label="Close" (click)="modalService.dismissAll()">
 		  <span aria-hidden="true">&times;</span>
 		</button>
@@ -163,77 +163,44 @@
                 required
               </div>
             </fieldset>
-
             <fieldset class="form-group">
               <label>description</label>
-              <textarea name="description" formControlName="description" [(ngModel)]="task_model.description" id="description" cols="30" rows="3"></textarea>
+              <textarea name="description" class="form-control" formControlName="description" [(ngModel)]="task_model.description" id="description" cols="30" rows="3"></textarea>
             </fieldset>
             <fieldset class="form-group">
-              <label>city</label>
-              <input
-                type="city"
-                class="form-control"
-                formControlName="city" [(ngModel)]="task_model.city"
-                id="city"
-                placeholder="Enter city"
-                [ngClass]="{
-                  'is-invalid': taskFormSubmitted && rf.city.invalid,
-                  'is-valid': taskFormSubmitted && !rf.city.invalid
-                }"
-                required
-                #city
-              />
-              <div
-                *ngIf="rf.city.touched && rf.city?.errors?.required"
-                class="help-block mt-1 text-danger"
-              >
-                <i class="ft-alert-circle align-middle"></i> city is
-                required
-              </div>
-              <div
-                *ngIf="rf.city.errors?.city"
-                class="help-block mt-1 text-danger"
-              >
-                <i class="ft-alert-circle align-middle"></i> Please enter
-                a valid city address
-              </div>
+              <label>Notes</label>
+              <textarea name="notes" class="form-control" formControlName="notes" [(ngModel)]="task_model.notes" id="notes" cols="30" rows="3"></textarea>
             </fieldset>
             <fieldset class="form-group">
-              <label>zipcode</label>
+              <label>Admin Notes</label>
+              <textarea name="admin_notes" class="form-control" formControlName="admin_notes" [(ngModel)]="task_model.admin_notes" id="admin_notes" cols="30" rows="3"></textarea>
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Working Hour</label>
               <input
-                type="zipcode"
+                type="text"
                 class="form-control"
-                formControlName="zipcode" [(ngModel)]="task_model.zipcode"
-                id="zipcode"
-                placeholder="Enter zipcode"
-                [ngClass]="{
-                  'is-invalid': zipcodeFormSubmitted && rf.zipcode.invalid,
-                  'is-valid': zipcodeFormSubmitted && !rf.zipcode.invalid
-                }"
-                required
-                #zipcode
+                formControlName="working_hour" [(ngModel)]="task_model.working_hour"
+                id="working_hour"
+                placeholder="Enter working hour"
               />
-              <div
-                *ngIf="rf.zipcode.touched && rf.zipcode?.errors?.required"
-                class="help-block mt-1 text-danger"
-              >
-                <i class="ft-alert-circle align-middle"></i> zipcode is
-                required
-              </div>
-              <div
-                *ngIf="rf.zipcode.errors?.zipcode"
-                class="help-block mt-1 text-danger"
-              >
-                <i class="ft-alert-circle align-middle"></i> Please enter
-                a valid zipcode address
-              </div>
+            </fieldset>
+            <fieldset class="form-group">
+              <label>budget</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="budget" [(ngModel)]="task_model.budget"
+                id="budget"
+                placeholder="Enter budget"
+              />
             </fieldset>
           </form>
        
 	  </div>
 	  <div class="modal-footer">
 		<button type="button" class="btn btn-secondary" (click)="modalService.dismissAll()">Close</button>
-		<button type="button" class="btn btn-primary" (click)="addCity()">Submit</button>
+		<button type="button" class="btn btn-primary" (click)="addTask()">Submit</button>
 	  </div>
 	</ng-template>
 </div>
@@ -243,7 +210,7 @@
 <div>
 	<ng-template #myModalContentView>
 	  <div class="modal-header">
-		<h4 class="modal-title" >{{row_data?.city}}'s Details</h4>
+		<h4 class="modal-title" >{{row_data?.name}}'s Details</h4>
 		<button type="button" class="close" aria-label="Close" (click)="modalService.dismissAll()">
 		  <span aria-hidden="true">&times;</span>
 		</button>
@@ -255,17 +222,29 @@
             <td>{{row_data?.name}}</td>
           </div>
           <div>
-            <th>Description &nbsp;</th>
-            <td>{{row_data?.description}}</td>
-          </div>
-          <!-- <div>
-            <th>Country &nbsp;</th>
-            <td>{{row_data?.country}}</td>
+            <th>Task Date &nbsp;</th>
+            <td>{{row_data?.task_date | date:'mediumDate'}}</td>
           </div>
           <div>
-            <th>Zip Code &nbsp;</th>
-            <td>{{row_data?.zipcode}}</td>
-          </div> -->
+            <th>Description &nbsp;</th>
+            <td [innerText]="row_data?.description"></td>
+          </div>
+          <div>
+            <th>Budget &nbsp;</th>
+            <td>{{row_data?.budget}}</td>
+          </div>
+          <div>
+            <th>Working Hour &nbsp;</th>
+            <td>{{row_data?.working_hour}}</td>
+          </div>
+          <div>
+            <th>Notes &nbsp;</th>
+            <td [innerText]="row_data?.notes"></td>
+          </div>
+          <div>
+            <th>Admin Notes &nbsp;</th>
+            <td [innerText]="row_data?.admin_notes"></td>
+          </div>
         </table>
 
       </div>
