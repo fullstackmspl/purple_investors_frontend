@@ -14,7 +14,7 @@
                   [footerHeight]="40" rowHeight="auto" [limit]="limitRef" [rows]="rows" [externalPaging]="true"
                   [count]="page.totalPages" [offset]="page.pageNumber" (page)="pageChangeData($event)"></ngx-datatable>
                 </div>
-                
+
                 <div class="col-12 col-sm-12 col-md-9 col-lg-9 mt-2 mb-1">
                   <div class="row-flex">
                     <div class="col-flex-2 filter">
@@ -59,7 +59,7 @@
                       <p class="font-medium-1 line-height-1 mb-0">
                         {{ row?.fullname }}
                       </p>
-                     
+
                     </div>
                   </div>
                 </ng-template>
@@ -91,8 +91,8 @@
                   (click)="openModal(myModalContent,row)"></i>
                   <!-- <i class="ft-trash-2 cursor-pointer danger"
                     (click)="ConfirmColor(row._id)"></i> -->
-                </ng-template>
-              </ngx-datatable-column>
+                </ng-template>=
+                              </ngx-datatable-column>
             </ngx-datatable>
             <!-- ngx-datatable-filter -->
           </div>
@@ -168,7 +168,7 @@
                 <div>
                   <td> <b>Text :</b> {{item?.text}}</td>
                 </div>
-                
+
               </div>
             </td>
           </div>
@@ -258,7 +258,7 @@
             <td>{{row_data?.numberOfInstagramFollowers}}</td>
           </div>
          </table>
-       
+
 	  </div>
 	  <!-- <div class="modal-footer">
 		<button type="button" class="btn btn-secondary" (click)="modalService.dismissAll()">Close</button>
