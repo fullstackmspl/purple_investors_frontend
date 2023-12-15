@@ -56,7 +56,9 @@ export class ChatgptComponent implements OnInit {
   }
   setProvider(){
     let jsonString = this.json_data.replace(/^```json/, '').replace(/```$/, '');
-    this.provider = JSON.parse( jsonString)
+    this.provider = JSON.parse(jsonString)
+    this.provider.roles = 'purpleprovider'
+    
   }
   confirmAdd(data) {
     swal.fire({
@@ -137,7 +139,20 @@ export class ChatgptComponent implements OnInit {
     // console.log('==>>',body)
       this.apiService.addUser(this.provider).subscribe((res:any)=>{
         if(res?.isSuccess === true){
+          let body={
+            name: this.provider.fullname,
+            description: '',
+            task_date: '',
+            notes: '',
+            admin_notes: '',
+            working_hour: '',
+            budget: ''
+        }
+        this.apiService.addTask(body).subscribe((res:any)=>{
+
+        })
           this.toastr.success('provider registered successfull!')
+          this.modalService.dismissAll
         }
         else this.toastr.error(res?.error)
       })

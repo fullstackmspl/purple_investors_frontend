@@ -15,10 +15,10 @@ import swal from 'sweetalert2';
 })
 export class TaskComponent implements OnInit {
 
- 
+
   @ViewChild(DatatableComponent) table: DatatableComponent;
 
-  cityForm:FormGroup
+  taskForm:FormGroup
 
   page = {
     pageNumber:0,
@@ -40,35 +40,42 @@ export class TaskComponent implements OnInit {
 
 
   imageUrl='';
-  city_model={
-    country: '',
-    state: '',
-    city: '',
-    zipcode: '',
+  task_model={
+    name: '',
+    description: '',
+    task_date: '',
+    notes: '',
+    admin_notes: '',
+    working_hour: '',
+    budget: ''
   }
- 
+
   row_id:any
   row_name:any
+  row_data:any
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
-               private spinner: NgxSpinnerService,private formBuilder : FormBuilder) { 
+               private spinner: NgxSpinnerService,private formBuilder : FormBuilder) {
                 }
 
   ngOnInit(): void {
-    this.getAllCity()
-    this.cityForm = this.formBuilder.group({
-      country: ['', Validators.required],
-      state: ['', [Validators.required, Validators.email]],
-      city: ['', Validators.required],
-      zipcode: ['', [Validators.required]],
+    this.getAllTask()
+    this.taskForm = this.formBuilder.group({
+      name: ['', Validators.required],
+      description: ['', ],
+      task_date: ['', ],
+      notes: ['', ],
+      admin_notes: ['', ],
+      working_hour: ['', ],
+      budget: ['', ]
     });
-   
+
   }
   get rf() {
-    return this.cityForm.controls;
+    return this.taskForm.controls;
   }
-  getAllCity(){
+  getAllTask(){
     this.spinner.show(undefined,
       {
         type: 'ball-triangle-path',
@@ -77,17 +84,16 @@ export class TaskComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllCity(this.limitRef,this.page.pageNumber + 1).subscribe((res: any) => {
+    this.apiService.getAllTask(this.limitRef,this.page.pageNumber + 1).subscribe((res: any) => {
       this.spinner.hide();
-      this.rows = res?.data?.user
-      this.rows.reverse()
+      this.rows = res?.data?.data
       this.page.totalPages = res?.data?.TotalCount
-     
+
     })
   }
-    
+
   pageChangeData(page:any){
-    this.apiService.getAllCity(this.limitRef,page.offset +1).subscribe((res: any) => {
+    this.apiService.getAllTask(this.limitRef,page.offset +1).subscribe((res: any) => {
       this.rows = res?.data?.user
       this.rows.reverse()
       this.page.totalPages = res?.data?.TotalCount
@@ -112,13 +118,17 @@ export class TaskComponent implements OnInit {
   openModal(content,id,data) {
     if(id){
       this.row_id = id
-      this.row_name = data.city
+      this.row_name = data.name
       // ============================
-      this.city_model.country = data.country
-      this.city_model.state = data.state
-      this.city_model.city = data.city
-      this.city_model.zipcode = data.zipcode
-     
+      this.task_model.name = data.name
+      this.task_model.description = data.description
+      this.task_model.task_date = data.task_date
+      this.task_model.working_hour = data.working_hour
+      this.task_model.budget = data.budget
+      this.task_model.notes = data.notes
+      this.task_model.admin_notes = data.admin_notes
+
+
     }
     const modalOptions: NgbModalOptions = {
       size: 'lg', // 'sm', 'lg', or 'xl'
@@ -126,7 +136,7 @@ export class TaskComponent implements OnInit {
     };
     const modalRef = this.modalService.open(content,modalOptions);
     modalRef.result.then((result) => {
-      
+
       this.row_id = null
     }, (reason) => {
       this.row_id = null
@@ -135,28 +145,28 @@ export class TaskComponent implements OnInit {
 
   addCity(){
     let body={
-      country: this.cityForm.value.country,
-      state: this.cityForm.value.state,
-      city: this.cityForm.value.city,
-      zipcode: this.cityForm.value.zipcode,
-      
+      country: this.taskForm.value.country,
+      state: this.taskForm.value.state,
+      city: this.taskForm.value.city,
+      zipcode: this.taskForm.value.zipcode,
+
     }
      if(!this.row_id){
       this.apiService.addCity(body).subscribe((res:any)=>{
         if(res?.isSuccess === true){
           this.toastr.success('city added successfull!')
           this.modalService.dismissAll()
-          this.getAllCity();
+          this.getAllTask();
         }
         else this.toastr.error(res?.error)
       })
     }
     if(this.row_id){
-      this.apiService.updateCity(this.row_id,this.city_model).subscribe((res:any)=>{
+      this.apiService.updateCity(this.row_id,this.task_model).subscribe((res:any)=>{
         if(res?.isSuccess === true){
           this.toastr.success('city update successfull!')
           this.modalService.dismissAll()
-          this.getAllCity();
+          this.getAllTask();
         }
         else this.toastr.error(res?.error)
       })
@@ -174,11 +184,11 @@ export class TaskComponent implements OnInit {
               confirmButton: 'btn btn-success'
             },
           })
-          this.getAllCity()
+          this.getAllTask()
         }
         else{
           this.toastr.error(res.error)
-        } 
+        }
         })
     }
     else{
@@ -202,8 +212,8 @@ export class TaskComponent implements OnInit {
       },
       buttonsStyling: false,
     }).then( (result)=> {
-      if (result.value) {  
-        this.deleteCity()      
+      if (result.value) {
+        this.deleteCity()
       } else if (result.dismiss === swal.DismissReason.cancel) {
         swal.fire({
           title: 'Cancelled',
@@ -216,8 +226,19 @@ export class TaskComponent implements OnInit {
       }
     });
   }
-  
+  openModalView(content,data) {
+    this.row_data = data
+    const modalOptions: NgbModalOptions = {
+      size: 'lg', // 'sm', 'lg', or 'xl'
+      backdrop: 'static',
+    };
+    const modalRef = this.modalService.open(content,modalOptions);
+    modalRef.result.then((result) => {
+
+    }, (reason) => {
+    });
+  }
+
 
 }
- 
- 
+

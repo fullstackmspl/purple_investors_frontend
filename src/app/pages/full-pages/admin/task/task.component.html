@@ -47,7 +47,7 @@
               [footerHeight]="50" rowHeight="auto" [limit]="limitRef" [rows]="rows" [scrollbarH]="true"
               [columns]="columns" [externalPaging]="true" [count]="page.totalPages" [offset]="page.offset"
               (page)="pageChangeData($event)">
-              <ngx-datatable-column name="City" prop="city" [width]="60">
+              <ngx-datatable-column name="Name" prop="name" [width]="60">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <div class="d-flex align-items-center">
                     <!-- <img
@@ -59,8 +59,8 @@
                     /> -->
                     <div *ngIf="!row.image" class="avatar mr-1 ml-0 bg-primary">
                       <div class="avatar-content">
-                        <span *ngIf="row?.city">
-                          {{ row?.city| shortName }}
+                        <span *ngIf="row?.name">
+                          {{ row?.name| shortName }}
                         </span>
                         
                       </div>
@@ -75,15 +75,15 @@
                       >
                     </div> -->
                     <div class="cell-line-height cursor-pointer">
-                      <p class="font-medium-1 line-height-1 mb-0" *ngIf="row?.city">
-                        {{ row?.city }}
+                      <p class="font-medium-1 line-height-1 mb-0">
+                        {{ row?.name }}
                       </p>
                       
                     </div>
                   </div>
                 </ng-template>
               </ngx-datatable-column>
-              <ngx-datatable-column name="Country" prop="country" [width]="70">
+              <!-- <ngx-datatable-column name="Country" prop="country" [width]="70">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <div class="cell-line-height">
                     {{ row?.country}}
@@ -103,13 +103,15 @@
                     {{ row?.zipcode}}
                   </div>
                 </ng-template>
-              </ngx-datatable-column>
+              </ngx-datatable-column> -->
               <ngx-datatable-column name="Actions" [width]="50">
                 <ng-template let-row="row" ngx-datatable-cell-template>
-                  <i class="ft-edit text-primary cursor-pointer mr-2"
-                  (click)="openModal(myModalContent,row?._id,row)"></i>
-                  <i class="ft-trash-2 cursor-pointer danger"
+                  <!-- <i class="ft-edit text-primary cursor-pointer mx-1"
+                  (click)="openModal(myModalContent,row?._id,row)"></i> -->
+                  <i class="ft-trash-2 cursor-pointer danger mx-1"
                     (click)="confirmDelete(row._id)"></i>
+                  <i class="ft-eye text-primary cursor-pointer mx-1"
+                  (click)="openModalView(myModalContentView,row)"></i>
                 </ng-template>
               </ngx-datatable-column>
             </ngx-datatable>
@@ -137,72 +139,46 @@
 		</button>
 	  </div>
 	  <div class="modal-body">
-          <form [formGroup]="cityForm">
+          <form [formGroup]="taskForm">
             <fieldset class="form-group">
-              <label>Country</label>
+              <label>Name</label>
               <input
                 type="text"
                 class="form-control"
-                formControlName="country" [(ngModel)]="city_model.country"
-                id="country"
-                placeholder="Enter country"
+                formControlName="name" [(ngModel)]="task_model.name"
+                id="name"
+                placeholder="Enter name"
                 [ngClass]="{
-                  'is-invalid': cityFormSubmitted && rf.country.invalid,
-                  'is-valid': cityFormSubmitted && !rf.country.invalid
+                  'is-invalid': taskFormSubmitted && rf.name.invalid,
+                  'is-valid': taskFormSubmitted && !rf.name.invalid
                 }"
                 required
-                #country
+                #name
               />
               <div
-                *ngIf="rf.country.touched && rf.country.errors?.required"
+                *ngIf="rf.name.touched && rf.name.errors?.required"
                 class="help-block mt-1 text-danger"
               >
-                <i class="ft-alert-circle align-middle"></i> country is
+                <i class="ft-alert-circle align-middle"></i> name is
                 required
               </div>
             </fieldset>
 
             <fieldset class="form-group">
-              <label>state</label>
-              <input
-                type="state"
-                class="form-control"
-                formControlName="state" [(ngModel)]="city_model.state"
-                id="state"
-                placeholder="Enter state"
-                [ngClass]="{
-                  'is-invalid': cityFormSubmitted && rf.state.invalid,
-                  'is-valid': cityFormSubmitted && !rf.state.invalid
-                }"
-                required
-                #state
-              />
-              <div
-                *ngIf="rf.state.touched && rf.state?.errors?.required"
-                class="help-block mt-1 text-danger"
-              >
-                <i class="ft-alert-circle align-middle"></i> state is
-                required
-              </div>
-              <div
-                *ngIf="rf.state.errors?.state"
-                class="help-block mt-1 text-danger"
-              >
-                <i class="ft-alert-circle align-middle"></i> Please enter
-                a valid state address
-              </div>
+              <label>description</label>
+              <textarea name="description" formControlName="description" [(ngModel)]="task_model.description" id="description" cols="30" rows="3"></textarea>
             </fieldset>
             <fieldset class="form-group">
               <label>city</label>
               <input
                 type="city"
                 class="form-control"
-                formControlName="city" [(ngModel)]="city_model.city"
+                formControlName="city" [(ngModel)]="task_model.city"
                 id="city"
                 placeholder="Enter city"
                 [ngClass]="{
-                  'is-invalid': cityFormSubmitted && rf.city.invalid,
-                  'is-valid': cityFormSubmitted && !rf.city.invalid
+                  'is-invalid': taskFormSubmitted && rf.city.invalid,
+                  'is-valid': taskFormSubmitted && !rf.city.invalid
                 }"
                 required
                 #city
@@ -227,7 +203,7 @@
               <input
                 type="zipcode"
                 class="form-control"
-                formControlName="zipcode" [(ngModel)]="city_model.zipcode"
+                formControlName="zipcode" [(ngModel)]="task_model.zipcode"
                 id="zipcode"
                 placeholder="Enter zipcode"
                 [ngClass]="{
@@ -260,4 +236,42 @@
 		<button type="button" class="btn btn-primary" (click)="addCity()">Submit</button>
 	  </div>
 	</ng-template>
+</div>
+
+<!----- Task Details Popup  --------->
+
+<div>
+	<ng-template #myModalContentView>
+	  <div class="modal-header">
+		<h4 class="modal-title" >{{row_data?.city}}'s Details</h4>
+		<button type="button" class="close" aria-label="Close" (click)="modalService.dismissAll()">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+	  </div>
+	  <div class="modal-body">
+         <table>
+          <div>
+            <th>Name &nbsp;</th>
+            <td>{{row_data?.name}}</td>
+          </div>
+          <div>
+            <th>Description &nbsp;</th>
+            <td>{{row_data?.description}}</td>
+          </div>
+          <!-- <div>
+            <th>Country &nbsp;</th>
+            <td>{{row_data?.country}}</td>
+          </div>
+          <div>
+            <th>Zip Code &nbsp;</th>
+            <td>{{row_data?.zipcode}}</td>
+          </div> -->
+        </table>
+
+      </div>
+      <!-- <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modalService.dismissAll()">Close</button>
+      <button type="button" class="btn btn-primary" (click)="addCity()">Submit</button>
+      </div> -->
+    </ng-template>
 </div>

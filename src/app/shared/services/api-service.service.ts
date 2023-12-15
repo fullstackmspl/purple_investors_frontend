@@ -167,6 +167,60 @@ deleteCity(id:any): Observable<any> {
   return subject.asObservable();
 }
 
-
+// ----------------------- Add Task ---------------------------------------------------
+addTask(data: any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.post(`${this.root}/task/create`, data).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+// ----------------------- Get All Task ---------------------------------------------------
+getAllTask(page_size:any,page_number:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.get(`${this.root}/task/getAll?page_size=${page_size}&page_number=${page_number}`,).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+// ----------------------- Get TAsk By Id---------------------------------------------------
+getTaskById(id:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.get(`${this.root}/task/getById/${id}`,).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+// ----------------------- Update Task ---------------------------------------------------
+updateTask(id:any,data: any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.put(`${this.root}/task/update/${id}`, data).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+// ----------------------- Delete User By Id---------------------------------------------------
+deleteTask(id:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.delete(`${this.root}/task/remove/${id}`,).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
 
 }
