@@ -104,36 +104,36 @@ export class ChatgptComponent implements OnInit {
     // let jsonString = data.replace(/^```json/, '').replace(/```$/, '');
     // this.json_data = JSON.parse( jsonString)
     // console.log('==>>',this.json_data)
-    let body={
-      fullname: this.json_data.name,
-      email: this.json_data.email,
-      phone_number: this.json_data.phoneNumber ,
-      location: {
-        coordinates: [
-          this.json_data.locations[0].lng,this.json_data.locations[0].lat
-        ]
-      },
-      address:  this.json_data.locations[0].address,
-      roles: 'purpleprovider',
-      averageGoogleRating : this.json_data.averageGoogleRating,
-      averageYelpRating : this.json_data.averageYelpRating,
-      bottomGoogleReviews : [this.json_data.bottomGoogleReviews],
-      facebookNumberOfFollowers : this.json_data.facebookNumberOfFollowers,
-      facebookNumberOfLikes : this.json_data.facebookNumberOfLikes,
-      facebookURL : this.json_data.facebookURL,
-      googleReviewsURL : this.json_data.googleReviewsURL,
-      instagramProfileLink : this.json_data.instagramProfileLink,
-      mostRecentGoogleReviews :  this.json_data.mostRecentGoogleReviews,
-      numberOfGoogleReviews :  this.json_data.numberOfGoogleReviews,
-      numberOfInstagramFollowers : this.json_data.numberOfInstagramFollowers,
-      numberOfYelpRatings : this.json_data.numberOfYelpRatings,
-      topGoogleReviews : [this.json_data.topGoogleReviews],
-      yelpBottomReviews :  [this.json_data.yelpBottomReviews],
-      yelpMostRecentReviews : [this.json_data.yelpMostRecentReviews],
-      yelpTopReviews :  [this.json_data.yelpTopReviews],
-      yelpProfileURL : this.json_data.yelpProfileURL
+    // let body={
+    //   fullname: this.json_data.name,
+    //   email: this.json_data.email,
+    //   phone_number: this.json_data.phoneNumber ,
+    //   location: {
+    //     coordinates: [
+    //       this.json_data.locations[0].lng,this.json_data.locations[0].lat
+    //     ]
+    //   },
+    //   address:  this.json_data.locations[0].address,
+    //   roles: 'purpleprovider',
+    //   averageGoogleRating : this.json_data.averageGoogleRating,
+    //   averageYelpRating : this.json_data.averageYelpRating,
+    //   bottomGoogleReviews : [this.json_data.bottomGoogleReviews],
+    //   facebookNumberOfFollowers : this.json_data.facebookNumberOfFollowers,
+    //   facebookNumberOfLikes : this.json_data.facebookNumberOfLikes,
+    //   facebookURL : this.json_data.facebookURL,
+    //   googleReviewsURL : this.json_data.googleReviewsURL,
+    //   instagramProfileLink : this.json_data.instagramProfileLink,
+    //   mostRecentGoogleReviews :  this.json_data.mostRecentGoogleReviews,
+    //   numberOfGoogleReviews :  this.json_data.numberOfGoogleReviews,
+    //   numberOfInstagramFollowers : this.json_data.numberOfInstagramFollowers,
+    //   numberOfYelpRatings : this.json_data.numberOfYelpRatings,
+    //   topGoogleReviews : [this.json_data.topGoogleReviews],
+    //   yelpBottomReviews :  [this.json_data.yelpBottomReviews],
+    //   yelpMostRecentReviews : [this.json_data.yelpMostRecentReviews],
+    //   yelpTopReviews :  [this.json_data.yelpTopReviews],
+    //   yelpProfileURL : this.json_data.yelpProfileURL
 
-    }
+    // }
     // console.log('==>>',body)
       this.apiService.addUser(this.provider).subscribe((res:any)=>{
         if(res?.isSuccess === true){
