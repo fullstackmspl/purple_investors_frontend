@@ -15,7 +15,7 @@ import swal from 'sweetalert2';
 export class ChatgptComponent implements OnInit {
 
   messages: { sender: string; text: string; isMe: boolean  }[] = [];
-  newMessage: string = '';
+  newMessage: string = 'https://academyofexcellencepreschool.com/';
   user:any
   message_data: any;
   json_data:any
@@ -41,12 +41,12 @@ export class ChatgptComponent implements OnInit {
       this.messages.push({ sender: 'You', text: this.newMessage, isMe: true });
       this.apiService.chatgptSearch('6578625ec5e9c2b1c8909c58',this.user._id,exactMsg).subscribe((res:any)=>{
         if(res?.isSuccess){
-          this.ngZone.run(() => {
+          // this.ngZone.run(() => {
             const data = res?.data[0]?.message?.content;
             this.json_data = data
-            this.messages.push({ sender: 'ChatGpt', text:  data, isMe: false });
+            this.messages.push({ sender: 'ChatGpt', text:  data.match(/\{.*\}/s)&&data.match(/\{.*\}/s).length?this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])):data , isMe: false });
             this.newMessage = ''; 
-          });
+          // });
 
             this.cdr.detectChanges();
         }
@@ -54,11 +54,36 @@ export class ChatgptComponent implements OnInit {
       })
     }
   }
+ 
+  generateHTML(data): string {
+    let html = '<div>';
+
+    for (let key in data) {
+      if (data.hasOwnProperty(key)) {
+        let value = data[key];
+
+        if (typeof value === 'object') {
+          // Handle location separately
+          if (key === 'location' && value.coordinates && value.coordinates.length === 2) {
+            html += `<div><strong>${key}:</strong>: {lng: ${value.coordinates[0]}, lat: ${value.coordinates[1]}}</div>`;
+          } else {
+            html += `<div><strong>${key}:</strong>: ${this.generateHTML(value)}</div>`;
+          }
+        } else {
+          html += `<div><strong>${key}:</strong> ${value}</div>`;
+        }
+      }
+    }
+
+    html += '</div>';
+    return html;
+  }
+
   setProvider(){
-    let jsonString = this.json_data.replace(/^```json/, '').replace(/```$/, '');
+    let jsonString = this.json_data.match(/\{.*\}/s)[0];
     this.provider = JSON.parse(jsonString)
     this.provider.roles = 'purpleprovider'
-    
+    console.log("provider",this.provider)
   }
   confirmAdd(data) {
     swal.fire({
@@ -152,9 +177,10 @@ export class ChatgptComponent implements OnInit {
 
         })
           this.toastr.success('provider registered successfull!')
-          this.modalService.dismissAll
+          this.modalService.dismissAll()
         }
         else this.toastr.error(res?.error)
+        this.modalService.dismissAll();
       })
     
    } catch (error) {
