@@ -47,7 +47,7 @@
               [footerHeight]="50" rowHeight="auto" [limit]="limitRef" [rows]="rows" [scrollbarH]="true"
               [columns]="columns" [externalPaging]="true" [count]="page.totalPages" [offset]="page.offset"
               (page)="pageChangeData($event)">
-              <ngx-datatable-column name="Name" prop="fullname" [width]="60">
+              <ngx-datatable-column name="City" prop="city" [width]="60">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <div class="d-flex align-items-center">
                     <!-- <img
@@ -59,12 +59,10 @@
                     /> -->
                     <div *ngIf="!row.image" class="avatar mr-1 ml-0 bg-primary">
                       <div class="avatar-content">
-                        <span *ngIf="row?.fullname">
-                          {{ row?.fullname| shortName }}
+                        <span *ngIf="row?.city">
+                          {{ row?.city| shortName }}
                         </span>
-                        <span *ngIf="row?.firstName">
-                          {{ row?.firstName| shortName }}
-                        </span>
+                        
                       </div>
                     </div>
 
@@ -77,29 +75,32 @@
                       >
                     </div> -->
                     <div class="cell-line-height cursor-pointer">
-                      <p class="font-medium-1 line-height-1 mb-0" *ngIf="row?.fullname">
-                        {{ row?.fullname }}
+                      <p class="font-medium-1 line-height-1 mb-0" *ngIf="row?.city">
+                        {{ row?.city }}
                       </p>
-                      <p class="font-medium-1 line-height-1 mb-0" *ngIf="row?.firstName">
-                        {{ row?.firstName }}
-                      </p>
+                      
                     </div>
                   </div>
                 </ng-template>
               </ngx-datatable-column>
-              <ngx-datatable-column name="Email" prop="email" [width]="70">
+              <ngx-datatable-column name="Country" prop="country" [width]="70">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <div class="cell-line-height">
-                    <span *ngIf="row?.email">{{ row?.email}}</span>
-                    <span *ngIf="!row?.email">Not available</span>
+                    {{ row?.country}}
                   </div>
                 </ng-template>
               </ngx-datatable-column>
-              <ngx-datatable-column name="Phone" prop="phone_number" [width]="70">
+              <ngx-datatable-column name="State" prop="state" [width]="70">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <div class="cell-line-height">
-                    <span *ngIf="row?.phone_number">{{ row?.phone_number}}</span>
-                    <span *ngIf="!row?.phone_number">Not available</span>
+                    {{ row?.state}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Zip Code" prop="zipcode" [width]="70">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <div class="cell-line-height">
+                    {{ row?.zipcode}}
                   </div>
                 </ng-template>
               </ngx-datatable-column>
@@ -124,230 +125,139 @@
   <ngx-spinner></ngx-spinner>
 </div>
 
-<!----- Add User / Update User popup  --------->
+<!----- Add City / Update City popup  --------->
 
 <div>
 	<ng-template #myModalContent>
 	  <div class="modal-header">
 		<h4 class="modal-title" *ngIf="row_id">{{row_name}}'s Update</h4>
-    <h4 class="modal-title" *ngIf="!row_id">Add New User</h4>
+    <h4 class="modal-title" *ngIf="!row_id">Add New City</h4>
 		<button type="button" class="close" aria-label="Close" (click)="modalService.dismissAll()">
 		  <span aria-hidden="true">&times;</span>
 		</button>
 	  </div>
 	  <div class="modal-body">
-      <div class="row">
-        <div class="col-lg-6 col-md-12 px-4 py-3">
-          <form [formGroup]="userForm">
+          <form [formGroup]="cityForm">
             <fieldset class="form-group">
-              <label for="name">Name</label>
+              <label>Country</label>
               <input
                 type="text"
                 class="form-control"
-                formControlName="fullname" [(ngModel)]="user_model.fullname"
-                id="fullname"
-                placeholder="Enter name"
+                formControlName="country" [(ngModel)]="city_model.country"
+                id="country"
+                placeholder="Enter country"
                 [ngClass]="{
-                  'is-invalid': userFormSubmitted && rf.fullname.invalid,
-                  'is-valid': userFormSubmitted && !rf.fullname.invalid
+                  'is-invalid': cityFormSubmitted && rf.country.invalid,
+                  'is-valid': cityFormSubmitted && !rf.country.invalid
                 }"
                 required
-                #fullname
+                #country
               />
               <div
-                *ngIf="rf.fullname.touched && rf.fullname.errors?.required"
+                *ngIf="rf.country.touched && rf.country.errors?.required"
                 class="help-block mt-1 text-danger"
               >
-                <i class="ft-alert-circle align-middle"></i> name is
+                <i class="ft-alert-circle align-middle"></i> country is
                 required
               </div>
             </fieldset>
 
             <fieldset class="form-group">
-              <label for="Email">Email</label>
+              <label>state</label>
               <input
-                type="email"
+                type="state"
                 class="form-control"
-                formControlName="email" [(ngModel)]="user_model.email"
-                id="Email"
-                placeholder="Enter email"
+                formControlName="state" [(ngModel)]="city_model.state"
+                id="state"
+                placeholder="Enter state"
                 [ngClass]="{
-                  'is-invalid': userFormSubmitted && rf.email.invalid,
-                  'is-valid': userFormSubmitted && !rf.email.invalid
+                  'is-invalid': cityFormSubmitted && rf.state.invalid,
+                  'is-valid': cityFormSubmitted && !rf.state.invalid
                 }"
-                required readonly
-                #email
+                required
+                #state
               />
               <div
-                *ngIf="rf.email.touched && rf.email?.errors?.required"
+                *ngIf="rf.state.touched && rf.state?.errors?.required"
                 class="help-block mt-1 text-danger"
               >
-                <i class="ft-alert-circle align-middle"></i> Email is
+                <i class="ft-alert-circle align-middle"></i> state is
                 required
               </div>
               <div
-                *ngIf="rf.email.errors?.email"
+                *ngIf="rf.state.errors?.state"
                 class="help-block mt-1 text-danger"
               >
                 <i class="ft-alert-circle align-middle"></i> Please enter
-                a valid email address
+                a valid state address
               </div>
             </fieldset>
-
             <fieldset class="form-group">
-              <label>Phone</label>
+              <label>city</label>
               <input
-              type="text"
-              placeholder="e.g. (555) 555 5555" mask="(000) 000-0000" minlength="10"
-                formControlName="phone_number" [(ngModel)]="user_model.phone_number"
+                type="city"
                 class="form-control"
-                id="phone_number"
-                placeholder="Enter phone"
+                formControlName="city" [(ngModel)]="city_model.city"
+                id="city"
+                placeholder="Enter city"
                 [ngClass]="{
-                  'is-invalid':
-                    userFormSubmitted && rf.phone_number.invalid,
-                  'is-valid':
-                    userFormSubmitted && !rf.phone_number.invalid
+                  'is-invalid': cityFormSubmitted && rf.city.invalid,
+                  'is-valid': cityFormSubmitted && !rf.city.invalid
                 }"
                 required
-                #phone_number
+                #city
               />
               <div
-                *ngIf="
-                  rf.phone_number.touched && rf.phone_number.errors?.required
-                "
+                *ngIf="rf.city.touched && rf.city?.errors?.required"
                 class="help-block mt-1 text-danger"
               >
-                <i class="ft-alert-circle align-middle"></i>
-                phone is required
+                <i class="ft-alert-circle align-middle"></i> city is
+                required
+              </div>
+              <div
+                *ngIf="rf.city.errors?.city"
+                class="help-block mt-1 text-danger"
+              >
+                <i class="ft-alert-circle align-middle"></i> Please enter
+                a valid city address
               </div>
             </fieldset>
-            <!-- <fieldset class="form-group">
-              <label for="address">Address</label>
-              <input
-                type="text"
-                (keydown.enter)="$event.preventDefault()"
-                autocorrect="off"
-                autocapitalize="off"
-                spellcheck="off"
-                class="form-control"
-                formControlName="location"
-                id="location"
-                placeholder="Enter location"
-              #search/>
-            </fieldset> -->
             <fieldset class="form-group">
-              <label>DOB</label>
+              <label>zipcode</label>
               <input
-                type="date"
-                formControlName="dob" [(ngModel)]="user_model.dob"
-                [ngModel]="user_model.dob | date: 'yyyy-MM-dd'" [disabled]="false"
+                type="zipcode"
                 class="form-control"
-                id="dob"
-                placeholder="Enter dob"
+                formControlName="zipcode" [(ngModel)]="city_model.zipcode"
+                id="zipcode"
+                placeholder="Enter zipcode"
                 [ngClass]="{
-                  'is-invalid': userFormSubmitted && rf.dob.invalid,
-                  'is-valid': userFormSubmitted && !rf.dob.invalid
+                  'is-invalid': zipcodeFormSubmitted && rf.zipcode.invalid,
+                  'is-valid': zipcodeFormSubmitted && !rf.zipcode.invalid
                 }"
                 required
+                #zipcode
               />
               <div
-                *ngIf="rf.dob.touched && rf.dob.errors?.required"
+                *ngIf="rf.zipcode.touched && rf.zipcode?.errors?.required"
                 class="help-block mt-1 text-danger"
               >
-                <i class="ft-alert-circle align-middle"></i> dob is
+                <i class="ft-alert-circle align-middle"></i> zipcode is
                 required
+              </div>
+              <div
+                *ngIf="rf.zipcode.errors?.zipcode"
+                class="help-block mt-1 text-danger"
+              >
+                <i class="ft-alert-circle align-middle"></i> Please enter
+                a valid zipcode address
               </div>
             </fieldset>
           </form>
-        </div>
-
-        <div class="col-lg-6 col-md-12 px-4 py-3">
-          <form [formGroup]="userForm">
-            
-            <fieldset>
-              <label >Gender</label>
-              <ng-select
-                [items]="gender_List"
-                bindLabel="name"
-                bindValue="name"
-                placeholder="Select Gender"
-                [(ngModel)]="select_gender"
-                [ngModelOptions]="{ standalone: true }"
-                (change)="getGenderId($event)"
-              >
-              </ng-select>
-            </fieldset>
-            <fieldset class="mt-2">
-              <label>Role</label>
-              <ng-select
-                [items]="role_List"
-                bindLabel="name"
-                bindValue="_id"
-                placeholder="Select Role"
-                [(ngModel)]="select_role"
-                [ngModelOptions]="{ standalone: true }"
-                (change)="getRoleId($event)"
-                [disabled]="true">
-              </ng-select>
-            </fieldset>
-            <fieldset class="form-group mt-3" *ngIf="!row_id">
-              <label>Password</label>
-              <input
-                type="password"
-                formControlName="password"
-                class="form-control"
-                id="password"
-                placeholder="e.g. Test@123"
-                [ngClass]="{
-                  'is-invalid': userFormSubmitted && rf.password.invalid,
-                  'is-valid': userFormSubmitted && !rf.password.invalid
-                }"
-                required
-              />
-              <div
-                *ngIf="rf.password.touched && rf.password.errors?.required"
-                class="help-block mt-1 text-danger"
-              >
-                <i class="ft-alert-circle align-middle"></i> password is
-                required
-              </div>
-            </fieldset>
-            <fieldset class="form-group mt-2" *ngIf="!row_id">
-              <label>Confirm Password</label>
-              <input
-                type="password"
-                formControlName="confirmPassword"
-                class="form-control"
-                id="confirmPassword"
-                placeholder="Enter password"
-                [ngClass]="{
-                  'is-invalid': userFormSubmitted && rf.confirmPassword.invalid,
-                  'is-valid': userFormSubmitted && !rf.confirmPassword.invalid
-                }"
-                required
-              />
-              <div
-                *ngIf="rf.confirmPassword.touched && rf.confirmPassword.errors?.required"
-                class="help-block mt-1 text-danger"
-              >
-                <i class="ft-alert-circle align-middle"></i> confirm Password is
-                required
-              </div>
-              <div
-                *ngIf="rf.password.value !== rf.confirmPassword.value"
-                class="help-block mt-1 text-danger"
-              >
-                <i class="ft-alert-circle align-middle"></i> confirm Password and Passowrd not same!
-              </div>
-            </fieldset>
-          </form>
-        </div>
-      </div>
+       
 	  </div>
 	  <div class="modal-footer">
 		<button type="button" class="btn btn-secondary" (click)="modalService.dismissAll()">Close</button>
-		<button type="button" class="btn btn-primary" (click)="addUser()">Submit</button>
+		<button type="button" class="btn btn-primary" (click)="addCity()">Submit</button>
 	  </div>
 	</ng-template>
 </div>

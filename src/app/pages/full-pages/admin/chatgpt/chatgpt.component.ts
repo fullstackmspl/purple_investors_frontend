@@ -27,8 +27,8 @@ export class ChatgptComponent implements OnInit {
   }
   sendMessage() {
     if (this.newMessage.trim() !== '') {
-      const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng),Google Reviews URL,Number of Google Reviews,Average Google Rating,3 Top (Highest rated) Google reviews,3 Bottom (Lowest rated) Google reviews,3 Most Recent Google Reviews, Facebook URL,Facebook Number of Followers,Facebook Number of likes,Yelp Profile URL,Number of Yelp ratings,Average Yelp rating, 3 Yelp Top (Highest rated) reviews,3 Yelp Bottom (Lowest rated) reviews,3 Yelp Most Recent Reviews,Instagram Profile Link,Number of Instagram Followers - from Open AI API in json format and i need fields as it is`
-      const exactMsg2 =`${this.newMessage}  Average Google Rating `
+      const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng), - from Open AI API in json format`
+      const exactMsg2 =`${this.newMessage}  Google Reviews URL,Number of Google Reviews,Average Google Rating,3 Top (Highest rated) Google reviews,3 Bottom (Lowest rated) Google reviews,3 Most Recent Google Reviews, Facebook URL,Facebook Number of Followers,Facebook Number of likes,Yelp Profile URL,Number of Yelp ratings,Average Yelp rating, 3 Yelp Top (Highest rated) reviews,3 Yelp Bottom (Lowest rated) reviews,3 Yelp Most Recent Reviews,Instagram Profile Link,Number of Instagram Followers  and i need fields as it is `
       this.messages.push({ sender: 'You', text: this.newMessage, isMe: true });
       this.apiService.chatgptSearch('6578625ec5e9c2b1c8909c58',this.user._id,exactMsg).subscribe((res:any)=>{
         if(res?.isSuccess){
@@ -49,7 +49,7 @@ export class ChatgptComponent implements OnInit {
   confirmAdd(data) {
     swal.fire({
       title: 'Are you sure?',
-      text: "Would you like to add new data to enhance your experience!",
+      text: `${this.json_data} Would you like to add new data to enhance your experience! `,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#2F8BE6',
@@ -79,7 +79,7 @@ export class ChatgptComponent implements OnInit {
    try {
     let jsonString = data.replace(/^```json/, '').replace(/```$/, '');
     this.json_data = JSON.parse( jsonString)
-    console.log('==>>',this.json_data)
+    // console.log('==>>',this.json_data)
     let body={
       fullname: this.json_data.name,
       email: this.json_data.email,

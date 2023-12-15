@@ -13,6 +13,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ProviderComponent } from './provider/provider.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { CityManagementComponent } from './city-management/city-management.component';
+import { TaskComponent } from './task/task.component';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { CityManagementComponent } from './city-management/city-management.compo
     AddBundleComponent,
     ChatgptComponent,
     ProviderComponent,
-    CityManagementComponent
+    CityManagementComponent,
+    TaskComponent
   ],
   imports: [
     CommonModule,

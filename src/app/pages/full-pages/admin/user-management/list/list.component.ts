@@ -22,14 +22,14 @@ export class ListComponent implements OnInit {
   page = {
     pageNumber:0,
     offset: 0,
-    pageSize: 10,
+    pageSize: 100,
     totalPages:0
   };
   // row data
   public rows = [];
   public filterRows=[];
   public ColumnMode = ColumnMode;
-  public limitRef = 100;
+  public limitRef = 10;
   public columns = [
     { name: "Name", prop: "name" },
     { name: "Email", prop: "email" },
@@ -100,17 +100,15 @@ export class ListComponent implements OnInit {
       this.spinner.hide();
       this.rows = res?.data?.data
       this.page.totalPages = res?.data?.TotalCount
-     
     })
   }
   
   
   pageChangeData(page:any){
-    // this.apiService.getTagsList(page.offset +1,page.pageSize).subscribe((res:any)=>{
-    //   this.rows=res.data.items
-    //   this.page.totalPages=res.data.totalCount
-  
-    // })
+    this.apiService.getAllUsers(this.limitRef,page.offset +1).subscribe((res: any) => {
+      this.rows = res?.data?.data
+      this.page.totalPages = res?.data?.TotalCount
+    })
   }
   getTagsFilter(data:any){
     // let search=data

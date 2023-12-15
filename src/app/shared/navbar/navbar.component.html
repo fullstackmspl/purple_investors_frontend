@@ -80,7 +80,7 @@
                   class="font-small-3">German</span></a>
             </div>
           </li> -->
-          <li class="dropdown nav-item" placement="bottom-left" display="static" ngbDropdown >
+          <!-- <li class="dropdown nav-item" placement="bottom-left" display="static" ngbDropdown >
             <a class="nav-link dropdown-toggle dropdown-notification p-0 mt-2" id="drp-notification" href="javascript:;"
               data-toggle="dropdown" ngbDropdownToggle><i class="ft-bell font-medium-3"></i><span
                 class="notification badge badge-pill badge-danger">4</span></a>
@@ -264,12 +264,12 @@
                 </div>
               </li>
             </ul>
-          </li>
+          </li> -->
           <li class="dropdown nav-item mr-1" placement="bottom-left" display="static" ngbDropdown >
             <a class="nav-link dropdown-toggle user-dropdown d-flex align-items-end" id="dropdownBasic2"
               href="javascript:;" data-toggle="dropdown" ngbDropdownToggle>
               <div class="user d-md-flex d-none mr-2">
-                <span class="text-right">John Doe</span><span
+                <span class="text-right">{{user.fullname}}</span><span
                   class="text-right text-muted font-small-3">Available</span>
               </div>
               <img class="avatar" src="assets/img/portrait/small/avatar-s-1.png" alt="avatar" height="35" width="35" />

@@ -25,6 +25,10 @@ export const HROUTES: RouteInfo[] = [
     path: '/providers', title: 'Providers', icon: 'ft-codepen', class: 'dropdown nav-item has-sub', isExternalLink: false,
     submenu: []
   },
+  {
+    path: '/task', title: 'Task', icon: 'ft-codepen', class: 'dropdown nav-item has-sub', isExternalLink: false,
+    submenu: []
+  },
   // {
   //   path: '', title: 'Apps', icon: 'ft-box', class: 'dropdown nav-item has-sub', isExternalLink: false,
   //   submenu: [

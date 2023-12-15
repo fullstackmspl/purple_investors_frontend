@@ -3,8 +3,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { LayoutService } from '../services/layout.service';
 import { Subscription } from 'rxjs';
 import { ConfigService } from '../services/config.service';
-import { DOCUMENT } from '@angular/common';
-import { CustomizerService } from '../services/customizer.service';
 import { UntypedFormControl } from '@angular/forms';
 import { LISTITEMS } from '../data/template-search';
 import { Router } from '@angular/router';
@@ -44,11 +42,13 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
   control = new UntypedFormControl();
 
   public config: any = {};
-
+  user:any
   constructor(public translate: TranslateService,
     private layoutService: LayoutService,
     private router: Router,
     private configService: ConfigService, private cdr: ChangeDetectorRef) {
+    
+      this.user = JSON.parse(localStorage.getItem('user'))
 
     const browserLang: string = translate.getBrowserLang();
     translate.use(browserLang.match(/en|es|pt|de/) ? browserLang : "en");

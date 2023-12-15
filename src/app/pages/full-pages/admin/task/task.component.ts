@@ -8,12 +8,12 @@ import { ToastrService } from 'ngx-toastr';
 import swal from 'sweetalert2';
 
 @Component({
-  selector: 'app-city-management',
-  templateUrl: './city-management.component.html',
-  styleUrls: ['./city-management.component.scss'],
+  selector: 'app-task',
+  templateUrl: './task.component.html',
+  styleUrls: ['./task.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export class CityManagementComponent implements OnInit {
+export class TaskComponent implements OnInit {
 
  
   @ViewChild(DatatableComponent) table: DatatableComponent;

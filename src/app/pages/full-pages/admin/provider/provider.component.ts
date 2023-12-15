@@ -65,6 +65,7 @@ export class ProviderComponent implements OnInit {
     this.apiService.getAllProviders().subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.data
+      this.rows.reverse()
       this.page.totalPages = res?.data?.TotalCount
      
     })
@@ -98,7 +99,7 @@ export class ProviderComponent implements OnInit {
   openModal(content,data) {
     this.row_data = data
     const modalOptions: NgbModalOptions = {
-      size: 'xl', // 'sm', 'lg', or 'xl'
+      size: 'lg', // 'sm', 'lg', or 'xl'
       backdrop: 'static',
     };
     const modalRef = this.modalService.open(content,modalOptions);
