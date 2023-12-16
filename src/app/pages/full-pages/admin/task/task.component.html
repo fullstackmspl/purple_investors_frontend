@@ -50,30 +50,13 @@
               <ngx-datatable-column name="Name" prop="name" [width]="60">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <div class="d-flex align-items-center">
-                    <!-- <img
-                      class="rounded-circle mr-1"
-                      *ngIf="row.image"
-                      [src]="imageUrl + row.image"
-                      height="32"
-                      width="32"
-                    /> -->
                     <div *ngIf="!row.image" class="avatar mr-1 ml-0 bg-primary">
                       <div class="avatar-content">
                         <span *ngIf="row?.name">
                           {{ row?.name| shortName }}
                         </span>
-                        
                       </div>
                     </div>
-
-                    <!-- <div class="cell-line-height">
-                      <a
-                        class="line-height-1 mb-0"
-                        [routerLink]="['/tags/tag-view', row._id]"
-                        (click)="editTag(row._id)"
-                        >{{ row.tagName }}</a
-                      >
-                    </div> -->
                     <div class="cell-line-height cursor-pointer">
                       <p class="font-medium-1 line-height-1 mb-0">
                         {{ row?.name }}
@@ -81,6 +64,51 @@
                       
                     </div>
                   </div>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Task Type" prop="task_type" [width]="10">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  {{row?.task_type}}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Task Assign" prop="user" [width]="10">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  {{row?.user[0]?.fullname}}
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Status" prop="name" [width]="10">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <p *ngIf="row?.status == 'open'" [ngClass]="{'badge badge-pill bg-light-success':row?.status == 'open'}">{{row?.status}}</p>
+      
+                  <p *ngIf="row?.status == 'pending'" [ngClass]="{'badge badge-pill bg-light-danger':row?.status == 'pending'}">{{row?.status}}</p>
+         
+                  <p *ngIf="row?.status == 'Completed'" [ngClass]="{'badge-pill bg-light-warning':row?.status == 'Completed'}">{{row?.status}}</p>
+
+                  <!-- <p [matMenuTriggerFor]="task_status">
+                              <span *ngIf="row?.status == 'completed'" [ngClass]="{'badge badge-pill bg-light-success':row?.status == 'completed'}">{{row?.status}}
+                              </span>
+                              <span *ngIf="row?.status == 'pending'" [ngClass]="{'badge badge-pill bg-light-danger':row?.status == 'pending'}">{{row?.status}}
+                              </span>
+                              <span *ngIf="row?.status == 'in-review'" [ngClass]="{'badge-pill bg-light-warning':row?.status == 'in-review'}">{{row?.status}}
+                              </span>
+                  </p>
+                  <mat-menu #task_status="matMenu">
+                    <div *ngFor="let status of task_list">
+                      <button mat-menu-item *ngIf="status?._id !== row?.isVerified"
+                        (click)="updateStatus(row._id,status._id)">
+                        <span>
+                        <span [ngClass]="{'bg-light-success badge badge-pill':status.name === 'completed'}"
+                          placement="top" *ngIf="status.name === 'completed'">{{status.name}}</span>
+                        <span [ngClass]="{'bg-light-warning badge badge-pill':status.name === 'in-review'}"
+                          placement="top" *ngIf="status.name === 'in-review'">{{status.name}}</span>
+                        <span [ngClass]="{'bg-light-danger badge badge-pill':status.name === 'pending'}"
+                          placement="top"
+                          *ngIf="status.name === 'pending'">{{status.name}}</span>
+                        </span>
+                      </button>
+                      </div>
+                  </mat-menu> -->
+
                 </ng-template>
               </ngx-datatable-column>
               <!-- <ngx-datatable-column name="Country" prop="country" [width]="70">

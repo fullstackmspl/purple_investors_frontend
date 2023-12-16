@@ -53,6 +53,11 @@ export class TaskComponent implements OnInit {
   row_id:any
   row_name:any
   row_data:any
+  task_list=[
+    {name:'pending'},
+    {name:'in-review'},
+    {name:'completed'}
+  ]
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,

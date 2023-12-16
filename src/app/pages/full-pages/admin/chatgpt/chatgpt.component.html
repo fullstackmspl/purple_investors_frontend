@@ -2,8 +2,8 @@
   <div *ngFor="let message of messages" class="message" [ngClass]="{'user-message': message.isMe || !message.isMe}">
     <span class="message-sender mr-1">{{ message.sender }} :</span>
     <span class="message-text" [innerHTML]=" message.text"></span>
-    <div class="d-flex justify-content-end" >
-      <button class="btn btn-primary" *ngIf="message.text && ! message.isMe" (click)="openModal(myModalContent)">+</button>
+    <div class="d-flex justify-content-end" *ngIf="messages.length<3" >
+      <button class="btn btn-primary" *ngIf="message.text && ! message.isMe && showButton" (click)="openModal(myModalContent)">+</button>
     </div>
   </div>
  
@@ -57,70 +57,343 @@
             <fieldset class="form-group">
               <label>Name</label>
               <input
-                type="state"
+                type="text"
                 class="form-control"
                  [(ngModel)]="provider.fullname"
-                id="state"
-                placeholder="Enter state"
+                id="name"
+                placeholder="Enter name"
                 [ngClass]="{
                   'is-invalid': !provider.fullname,
                   'is-valid': provider.fullname
                 }"
                 required
-                #state
+                #name
               />
             </fieldset>
             <fieldset class="form-group">
               <label>Email</label>
               <input
-                type="state"
+                type="email"
                 class="form-control"
                  [(ngModel)]="provider.email"
-                id="state"
-                placeholder="Enter state"
+                id="email"
+                placeholder="Enter email"
                 [ngClass]="{
                   'is-invalid': !provider.email,
                   'is-valid': provider.email
                 }"
                 required
-                #state
+                #email
               />
             </fieldset>
             <fieldset class="form-group">
               <label>Phone number</label>
               <input
-                type="state"
+                type="text"
                 class="form-control"
                  [(ngModel)]="provider.phone_number"
-                id="state"
-                placeholder="Enter state"
+                id="phone_number"
+                placeholder="Enter phone"
                 [ngClass]="{
                   'is-invalid': !provider.phone_number,
                   'is-valid': provider.phone_number
                 }"
                 required
-                #state
+                #phone_number
               />
             </fieldset>
             <fieldset class="form-group">
               <label>Address</label>
               <input
-                type="state"
+                type="text"
                 class="form-control"
                 appGoogleAddress
                 autocomplete="off" 
                 (onSelect)="setAddress($event)"
                  [(ngModel)]="provider.address"
-                id="state"
-                placeholder="Enter state"
+                id="address"
+                placeholder="Enter address"
                 [ngClass]="{
                   'is-invalid': !provider.address,
                   'is-valid': provider.address
                 }"
                 required
-                #state
+                #address
               />
             </fieldset>
+            <!-- <fieldset class="form-group">
+              <label>Average Google Rating</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.averageGoogleRating"
+                id="averageGoogleRating"
+                placeholder="Enter Average Google Rating"
+                [ngClass]="{
+                  'is-invalid': !provider.averageGoogleRating,
+                  'is-valid': provider.averageGoogleRating
+                }"
+                required
+                #averageGoogleRating
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Average Yelp Rating</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.averageYelpRating"
+                id="averageYelpRating"
+                placeholder="Enter Average Yelp Rating"
+                [ngClass]="{
+                  'is-invalid': !provider.averageYelpRating,
+                  'is-valid': provider.averageYelpRating
+                }"
+                required
+                #averageYelpRating
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Bottom Google Reviews</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.bottomGoogleReviews"
+                id="bottomGoogleReviews"
+                placeholder="Enter Bottom Google Reviews"
+                [ngClass]="{
+                  'is-invalid': !provider.bottomGoogleReviews,
+                  'is-valid': provider.bottomGoogleReviews
+                }"
+                required
+                #bottomGoogleReviews
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Facebook Number Of Followers</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.facebookNumberOfFollowers"
+                id="facebookNumberOfFollowers"
+                placeholder="Enter Facebook Number Of Followers"
+                [ngClass]="{
+                  'is-invalid': !provider.facebookNumberOfFollowers,
+                  'is-valid': provider.facebookNumberOfFollowers
+                }"
+                required
+                #facebookNumberOfFollowers
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Facebook Number Of Likes</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.facebookNumberOfLikes"
+                id="facebookNumberOfLikes"
+                placeholder="Enter Facebook Number Of Likes"
+                [ngClass]="{
+                  'is-invalid': !provider.facebookNumberOfLikes,
+                  'is-valid': provider.facebookNumberOfLikes
+                }"
+                required
+                #facebookNumberOfLikes
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Facebook URL</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.facebookURL"
+                id="facebookURL"
+                placeholder="Enter Facebook URL"
+                [ngClass]="{
+                  'is-invalid': !provider.facebookURL,
+                  'is-valid': provider.facebookURL
+                }"
+                required
+                #facebookURL
+              />
+            </fieldset>
+           
+            <fieldset class="form-group">
+              <label>Google Reviews URL</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.googleReviewsURL"
+                id="googleReviewsURL"
+                placeholder="Enter Google Reviews URL"
+                [ngClass]="{
+                  'is-invalid': !provider.googleReviewsURL,
+                  'is-valid': provider.googleReviewsURL
+                }"
+                required
+                #googleReviewsURL
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Instagram Profile Link</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.instagramProfileLink"
+                id="instagramProfileLink"
+                placeholder="Enter Instagram Profile Link"
+                [ngClass]="{
+                  'is-invalid': !provider.instagramProfileLink,
+                  'is-valid': provider.instagramProfileLink
+                }"
+                required
+                #instagramProfileLink
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Most Recent Google Reviews</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.mostRecentGoogleReviews"
+                id="mostRecentGoogleReviews"
+                placeholder="Enter Most Recent Google Reviews"
+                [ngClass]="{
+                  'is-invalid': !provider.mostRecentGoogleReviews,
+                  'is-valid': provider.mostRecentGoogleReviews
+                }"
+                required
+                #mostRecentGoogleReviews
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Number Of Google Reviews</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.numberOfGoogleReviews"
+                id="numberOfGoogleReviews"
+                placeholder="Enter Number Of Google Reviews"
+                [ngClass]="{
+                  'is-invalid': !provider.numberOfGoogleReviews,
+                  'is-valid': provider.numberOfGoogleReviews
+                }"
+                required
+                #numberOfGoogleReviews
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Number Of Instagram Followers</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.numberOfInstagramFollowers"
+                id="numberOfInstagramFollowers"
+                placeholder="Enter Number Of Instagram Followers"
+                [ngClass]="{
+                  'is-invalid': !provider.numberOfInstagramFollowers,
+                  'is-valid': provider.numberOfInstagramFollowers
+                }"
+                required
+                #numberOfInstagramFollowers
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Number Of Yelp Ratings</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.numberOfYelpRatings"
+                id="numberOfYelpRatings"
+                placeholder="Enter Number Of Yelp Ratings"
+                [ngClass]="{
+                  'is-invalid': !provider.numberOfYelpRatings,
+                  'is-valid': provider.numberOfYelpRatings
+                }"
+                required
+                #numberOfYelpRatings
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Top Google Reviews</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.topGoogleReviews"
+                id="topGoogleReviews"
+                placeholder="Enter Top Google Reviews"
+                [ngClass]="{
+                  'is-invalid': !provider.topGoogleReviews,
+                  'is-valid': provider.topGoogleReviews
+                }"
+                required
+                #topGoogleReviews
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Yelp Bottom Reviews</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.yelpBottomReviews"
+                id="yelpBottomReviews"
+                placeholder="Enter Yelp Bottom Reviews"
+                [ngClass]="{
+                  'is-invalid': !provider.yelpBottomReviews,
+                  'is-valid': provider.yelpBottomReviews
+                }"
+                required
+                #yelpBottomReviews
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Yelp Most Recent Reviews</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.yelpMostRecentReviews"
+                id="yelpMostRecentReviews"
+                placeholder="Enter Yelp Most Recent Reviews"
+                [ngClass]="{
+                  'is-invalid': !provider.yelpMostRecentReviews,
+                  'is-valid': provider.yelpMostRecentReviews
+                }"
+                required
+                #yelpMostRecentReviews
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Yelp Top Reviews</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.yelpTopReviews"
+                id="yelpTopReviews"
+                placeholder="Enter Yelp Top Reviews"
+                [ngClass]="{
+                  'is-invalid': !provider.yelpTopReviews,
+                  'is-valid': provider.yelpTopReviews
+                }"
+                required
+                #yelpTopReviews
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Yelp Profile URL</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.yelpProfileURL"
+                id="yelpProfileURL"
+                placeholder="Enter Yelp Profile URL"
+                [ngClass]="{
+                  'is-invalid': !provider.yelpProfileURL,
+                  'is-valid': provider.yelpProfileURL
+                }"
+                required
+                #yelpProfileURL
+              />
+            </fieldset> -->
           <!-- </form> -->
        
 	  </div>

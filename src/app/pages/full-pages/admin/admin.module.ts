@@ -35,7 +35,7 @@ import { SharedModule } from 'app/shared/shared.module';
     PipeModule,
     NgxDatatableModule,
     NgxSpinnerModule,
-    SharedModule
+    SharedModule,
   ]
 })
 export class AdminModule { }
