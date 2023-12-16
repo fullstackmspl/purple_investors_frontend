@@ -16,6 +16,7 @@ import { UsersViewComponent } from "./users/users-view/users-view.component";
 import { UsersEditComponent } from "./users/users-edit/users-edit.component";
 
 import { NgxDatatableModule } from "@swimlane/ngx-datatable";
+import { SharedModule } from "app/shared/shared.module";
 @NgModule({
   imports: [
     CommonModule,
@@ -29,6 +30,7 @@ import { NgxDatatableModule } from "@swimlane/ngx-datatable";
     SwiperModule,
     PipeModule,
     NgxDatatableModule,
+    SharedModule
   ],
   declarations: [
     UserProfilePageComponent,

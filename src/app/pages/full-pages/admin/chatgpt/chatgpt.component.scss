@@ -48,3 +48,6 @@ button {
  span.message-text {
   overflow-wrap: anywhere;
 }
+::ng-deep.pac-container.pac-logo.hdpi {
+  z-index: 1111;
+}

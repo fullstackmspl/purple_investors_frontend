@@ -107,6 +107,9 @@
               <input
                 type="state"
                 class="form-control"
+                appGoogleAddress
+                autocomplete="off" 
+                (onSelect)="setAddress($event)"
                  [(ngModel)]="provider.address"
                 id="state"
                 placeholder="Enter state"

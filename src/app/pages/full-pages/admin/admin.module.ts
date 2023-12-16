@@ -14,6 +14,7 @@ import { ProviderComponent } from './provider/provider.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { CityManagementComponent } from './city-management/city-management.component';
 import { TaskComponent } from './task/task.component';
+import { SharedModule } from 'app/shared/shared.module';
 
 
 @NgModule({
@@ -33,8 +34,8 @@ import { TaskComponent } from './task/task.component';
     NgSelectModule,
     PipeModule,
     NgxDatatableModule,
-    NgxSpinnerModule
-
+    NgxSpinnerModule,
+    SharedModule
   ]
 })
 export class AdminModule { }

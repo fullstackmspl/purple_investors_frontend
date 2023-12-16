@@ -23,7 +23,7 @@ export class ChatgptComponent implements OnInit {
     fullname:'',
     email: '',
     phone_number: '',
-    location:{coordinates:[]},
+    location:{type:"Point",coordinates:[]},
     address: '',
     roles: 'purpleprovider',
   }
@@ -84,6 +84,10 @@ export class ChatgptComponent implements OnInit {
     this.provider = JSON.parse(jsonString)
     this.provider.roles = 'purpleprovider'
     console.log("provider",this.provider)
+  }
+  async setAddress(addressData) {
+      this.provider.location= {type:"Point",coordinates:[addressData[0].lng,addressData[0].lat]}
+      this.provider.address= addressData[1].formatted_address
   }
   confirmAdd(data) {
     swal.fire({
