@@ -60,33 +60,9 @@ export class TaskComponent implements OnInit {
   ]
   users_list=[]
   selected_user=null
-  provider={
-    // fullname:'',
-    // email: '',
-    // phone_number: '',
-    // dob:'',
-    // gender:'',
-    // location:{type:"Point",coordinates:[]},
-    // address: '',
-    roles: 'purpleprovider',
-    // averageGoogleRating:'' ,
-    // averageYelpRating:'' ,
-    bottomGoogleReviews : [],
-    // facebookNumberOfFollowers:'',
-    // facebookNumberOfLikes:'' ,
-    // facebookURL:'' ,
-    // googleReviewsURL:'' ,
-    // instagramProfileLink:'' ,
-    mostRecentGoogleReviews:'', 
-    // numberOfGoogleReviews:'' ,
-    // numberOfInstagramFollowers:'' ,
-    // numberOfYelpRatings:'' ,
-    topGoogleReviews : [],
-    yelpBottomReviews :  [],
-    yelpMostRecentReviews : [], 
-    yelpTopReviews :  [], 
-    // yelpProfileURL:''
-  }
+  provider_data_missing:any
+  provider_data_review:any
+  task_id:any
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
@@ -329,68 +305,78 @@ export class TaskComponent implements OnInit {
       })
     }
   }
-  openModalContentProvider(content,data){
+  openModalTaskType(content,data,id) {
+    this.provider_data_missing = data?.missing_fields
+    this.provider_data_review = data?.add_fields
     this.row_id = data?.user[0]?._id
-    this.row_data =  data?.missing_fields
-    // console.log('data =>',data?.missing_fields)
-    console.log('data',this.row_data)
-
-
-    // this.provider.address = data?.address
-    // this.provider.location = data?.location
-    // this.provider.fullname = data?.fullname
-    // this.provider.email = data?.email
-    // this.provider.phone_number = data?.phone_number
-    // this.provider.dob = '2000-01-01'
-    // this.provider.gender = 'male'
-    // this.provider.roles ='purpleprovider'
-    // this.provider.averageGoogleRating = data?.averageGoogleRating
-    // this.provider.averageYelpRating = data?.averageYelpRating
-    this.provider.bottomGoogleReviews = data?.bottomGoogleReviews
-    // this.provider.facebookNumberOfFollowers = data?.facebookNumberOfFollowers
-    // this.provider.facebookNumberOfLikes = data?.facebookNumberOfLikes
-    // this.provider.facebookURL = data?.facebookURL
-    // this.provider.googleReviewsURL = data?.googleReviewsURL
-    // this.provider.instagramProfileLink = data?.instagramProfileLink
-    this.provider.mostRecentGoogleReviews = data?.mostRecentGoogleReviews
-    // this.provider.numberOfGoogleReviews = data?.numberOfGoogleReviews
-    // this.provider.numberOfInstagramFollowers = data?.numberOfInstagramFollowers
-    // this.provider.numberOfYelpRatings = data?.numberOfYelpRatings
-    this.provider.topGoogleReviews = data?.topGoogleReviews
-    this.provider.yelpTopReviews = data?.yelpTopReviews
-    this.provider.yelpBottomReviews = data?.yelpBottomReviews
-    this.provider.yelpMostRecentReviews = data?.yelpMostRecentReviews
-    // this.provider.yelpProfileURL = data?.yelpProfileURL
+    this.task_id = id
     const modalOptions: NgbModalOptions = {
-      size: 'lg', // 'sm', 'lg', or 'xl'
+      size: 'md', // 'sm', 'lg', or 'xl'
       backdrop: 'static',
     };
     const modalRef = this.modalService.open(content,modalOptions);
     modalRef.result.then((result) => { 
 
-      this.row_id = null
+    this.provider_data_missing = null
+    this.provider_data_review = null
+    this.row_id = null
+    this.task_id=null
+
     }, (reason) => {
-      this.row_id = null
+    this.provider_data_missing = null
+    this.provider_data_review = null
+    this.row_id = null
+    this.task_id=null
     });
   }
-  // submit(){
-  //   // console.log('id', this.row_id);
-  //   // console.log('provider', this.provider);
-  //   this.apiService.updateUser(this.row_id,this.provider).subscribe((res:any)=>{
-  //     if(res?.isSuccess === true){
-  //       this.toastr.success('provider update successfull')
-  //       this.spinner.hide()
-  //       this.modalService.dismissAll()
-  //       this.getAllUsers()
-  //     }
-  //     else this.toastr.error(res?.error)
-      
-  //   })
-  
-  // }
-  closeModal(){
-    this.spinner.hide()
-    this.modalService.dismissAll()
+  getObjectKeys(obj: any): string[] {
+    return Object.keys(obj);
   }
+  updateProvider(){
+    // console.log('==>>',this.provider_data_missing)
+    // console.log('==>>',this.provider_data_review)
+    this.spinner.show(undefined,
+      {
+        type: 'ball-triangle-path',
+        size: 'medium',
+        bdColor: 'rgba(0, 0, 0, 0.8)',
+        color: '#fff',
+        fullScreen: true
+      });
+      var keysWithNoValue ={}
+      keysWithNoValue = this.getKeysWithNoValue(this.provider_data_missing)
+      let body={
+        missing_fields: keysWithNoValue,
+      }
+    this.apiService.updateTask(this.task_id,body).subscribe((res:any)=>{
+      if(res?.isSuccess){
+        this.apiService.updateUser(this.row_id,this.provider_data_missing?this.provider_data_missing:this.provider_data_review).subscribe((res:any)=>{
+          if(res?.isSuccess){
+            this.spinner.hide()
+            this.toastr.success("provider update successfull!")
+            this.modalService.dismissAll()
+              this.getAllTask();
+          }
+          else{ 
+            this.toastr.error(res?.error) 
+            this.spinner.hide()
+          }
+          
+        })
+      }
+      else{ 
+        this.toastr.error(res?.error) 
+        this.spinner.hide()
+      }
+
+    })
+   
+  }
+  getKeysWithNoValue(obj) {
+    return Object.entries(obj)
+      .filter(([key, value]) => value === '' || value === null || value === undefined)
+      .map(([key, value]) => ({ key, value }));
+  }
+
 }
 
