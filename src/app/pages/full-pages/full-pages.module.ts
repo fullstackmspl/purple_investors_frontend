@@ -30,7 +30,7 @@ import { SharedModule } from "app/shared/shared.module";
     SwiperModule,
     PipeModule,
     NgxDatatableModule,
-    SharedModule
+    SharedModule,
   ],
   declarations: [
     UserProfilePageComponent,

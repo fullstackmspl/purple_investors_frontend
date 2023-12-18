@@ -7,7 +7,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ChatgptComponent } from './chatgpt/chatgpt.component';
-import { MarkdownModule } from 'ngx-markdown';
 import { PipeModule } from 'app/shared/pipes/pipe.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { ProviderComponent } from './provider/provider.component';
@@ -15,7 +14,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { CityManagementComponent } from './city-management/city-management.component';
 import { TaskComponent } from './task/task.component';
 import { SharedModule } from 'app/shared/shared.module';
-
+import { MatMenuModule } from '@angular/material/menu';
 
 @NgModule({
   declarations: [
@@ -36,6 +35,7 @@ import { SharedModule } from 'app/shared/shared.module';
     NgxDatatableModule,
     NgxSpinnerModule,
     SharedModule,
+    MatMenuModule
   ]
 })
 export class AdminModule { }

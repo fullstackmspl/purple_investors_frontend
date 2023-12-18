@@ -58,6 +58,8 @@ export class TaskComponent implements OnInit {
     {name:'in-review'},
     {name:'completed'}
   ]
+  users_list=[]
+  selected_user=null
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
@@ -66,6 +68,7 @@ export class TaskComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAllTask()
+    this.getAllUsers()
     this.taskForm = this.formBuilder.group({
       name: ['', Validators.required],
       description: ['', ],
@@ -246,7 +249,58 @@ export class TaskComponent implements OnInit {
     }, (reason) => {
     });
   }
+  updateStatus(id,status){
+    let body ={
+      status:status
+    }
+    if(id){
+      this.apiService.updateTask(id,body).subscribe((res:any)=>{
+        if(res?.isSuccess === true){
+          this.toastr.success('status update successfull!')
+          this.modalService.dismissAll()
+          this.getAllTask();
+        }
+        else this.toastr.error(res?.error)
+      })
+    }
+  }
+  getAllUsers(){
+    this.apiService.getAllUsers(this.limitRef,this.page.pageNumber + 1).subscribe((res: any) => {
+      this.users_list = res?.data?.data
+    })
+  }
+  getSelectedUserId(event){
+    this.selected_user
+  }
+  openModalForAssignTo(content,id,rowId) {
+    this.selected_user =id
+    this.row_id =rowId
+    const modalOptions: NgbModalOptions = {
+      size: 'md', // 'sm', 'lg', or 'xl'
+      backdrop: 'static',
+    };
+    const modalRef = this.modalService.open(content,modalOptions);
+    modalRef.result.then((result) => { 
 
-
+      this.selected_user = null
+    }, (reason) => {
+      this.selected_user = null
+    });
+  }
+  updateAssignTo(){
+    if(this.row_id){
+      let body={
+        user :this.selected_user
+      }
+      this.apiService.updateTask(this.row_id,body).subscribe((res:any)=>{
+        if(res?.isSuccess === true){
+          this.toastr.success('task assign to update successfull!')
+          this.modalService.dismissAll()
+          this.getAllTask();
+        }
+        else this.toastr.error(res?.error)
+      })
+    }
+  }
 }
 

@@ -73,18 +73,18 @@
               </ngx-datatable-column>
               <ngx-datatable-column name="Task Assign" prop="user" [width]="10">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
-                  {{row?.user[0]?.fullname}}
+                  <p (click)="openModalForAssignTo(myModalAssignTo,row?.user[0]?._id,row?._id)">{{row?.user[0]?.fullname}}</p>
                 </ng-template>
               </ngx-datatable-column>
               <ngx-datatable-column name="Status" prop="name" [width]="10">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
-                  <p *ngIf="row?.status == 'open'" [ngClass]="{'badge badge-pill bg-light-success':row?.status == 'open'}">{{row?.status}}</p>
+                  <!-- <p *ngIf="row?.status == 'open'" [ngClass]="{'badge badge-pill bg-light-success':row?.status == 'open'}">{{row?.status}}</p>
       
                   <p *ngIf="row?.status == 'pending'" [ngClass]="{'badge badge-pill bg-light-danger':row?.status == 'pending'}">{{row?.status}}</p>
          
-                  <p *ngIf="row?.status == 'Completed'" [ngClass]="{'badge-pill bg-light-warning':row?.status == 'Completed'}">{{row?.status}}</p>
+                  <p *ngIf="row?.status == 'Completed'" [ngClass]="{'badge-pill bg-light-warning':row?.status == 'Completed'}">{{row?.status}}</p> -->
 
-                  <!-- <p [matMenuTriggerFor]="task_status">
+                  <p [matMenuTriggerFor]="task_status">
                               <span *ngIf="row?.status == 'completed'" [ngClass]="{'badge badge-pill bg-light-success':row?.status == 'completed'}">{{row?.status}}
                               </span>
                               <span *ngIf="row?.status == 'pending'" [ngClass]="{'badge badge-pill bg-light-danger':row?.status == 'pending'}">{{row?.status}}
@@ -94,20 +94,20 @@
                   </p>
                   <mat-menu #task_status="matMenu">
                     <div *ngFor="let status of task_list">
-                      <button mat-menu-item *ngIf="status?._id !== row?.isVerified"
-                        (click)="updateStatus(row._id,status._id)">
+                      <button mat-menu-item *ngIf="status?.name !== row?.status"
+                        (click)="updateStatus(row?._id,status.name)">
                         <span>
-                        <span [ngClass]="{'bg-light-success badge badge-pill':status.name === 'completed'}"
+                        <span class="my-1" [ngClass]="{'bg-light-success badge badge-pill':status.name === 'completed'}"
                           placement="top" *ngIf="status.name === 'completed'">{{status.name}}</span>
-                        <span [ngClass]="{'bg-light-warning badge badge-pill':status.name === 'in-review'}"
+                        <span class="my-1" [ngClass]="{'bg-light-warning badge badge-pill':status.name === 'in-review'}"
                           placement="top" *ngIf="status.name === 'in-review'">{{status.name}}</span>
-                        <span [ngClass]="{'bg-light-danger badge badge-pill':status.name === 'pending'}"
+                        <span class="my-1" [ngClass]="{'bg-light-danger badge badge-pill':status.name === 'pending'}"
                           placement="top"
                           *ngIf="status.name === 'pending'">{{status.name}}</span>
                         </span>
                       </button>
                       </div>
-                  </mat-menu> -->
+                  </mat-menu>
 
                 </ng-template>
               </ngx-datatable-column>
@@ -281,4 +281,29 @@
       <button type="button" class="btn btn-primary" (click)="addCity()">Submit</button>
       </div> -->
     </ng-template>
+</div>
+
+<!-------- Assign To Update Popup ------------- -->
+
+
+<div>
+  <ng-template #myModalAssignTo let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title">Task Assign To Update</h4>
+      <button type="button" class="close" (click)="modal.dismiss()">
+        <span>&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <ng-select [items]="users_list" bindLabel="fullname" bindValue="_id" placeholder="Select User"
+        [(ngModel)]="selected_user" [ngModelOptions]="{ standalone: true }"
+        (change)="getSelectedUserId($event)" [appendTo]="'body'" [virtualScroll]="true" [clearSearchOnAdd]="true">
+      </ng-select>
+
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" (click)="modalService.dismissAll()">Cancel</button>
+      <button type="button" class="btn btn-primary" (click)="updateAssignTo()">Submit</button>
+    </div>
+  </ng-template>
 </div>
