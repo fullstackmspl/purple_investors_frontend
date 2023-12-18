@@ -60,6 +60,33 @@ export class TaskComponent implements OnInit {
   ]
   users_list=[]
   selected_user=null
+  provider={
+    // fullname:'',
+    // email: '',
+    // phone_number: '',
+    // dob:'',
+    // gender:'',
+    // location:{type:"Point",coordinates:[]},
+    // address: '',
+    roles: 'purpleprovider',
+    // averageGoogleRating:'' ,
+    // averageYelpRating:'' ,
+    bottomGoogleReviews : [],
+    // facebookNumberOfFollowers:'',
+    // facebookNumberOfLikes:'' ,
+    // facebookURL:'' ,
+    // googleReviewsURL:'' ,
+    // instagramProfileLink:'' ,
+    mostRecentGoogleReviews:'', 
+    // numberOfGoogleReviews:'' ,
+    // numberOfInstagramFollowers:'' ,
+    // numberOfYelpRatings:'' ,
+    topGoogleReviews : [],
+    yelpBottomReviews :  [],
+    yelpMostRecentReviews : [], 
+    yelpTopReviews :  [], 
+    // yelpProfileURL:''
+  }
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
@@ -301,6 +328,69 @@ export class TaskComponent implements OnInit {
         else this.toastr.error(res?.error)
       })
     }
+  }
+  openModalContentProvider(content,data){
+    this.row_id = data?.user[0]?._id
+    this.row_data =  data?.missing_fields
+    // console.log('data =>',data?.missing_fields)
+    console.log('data',this.row_data)
+
+
+    // this.provider.address = data?.address
+    // this.provider.location = data?.location
+    // this.provider.fullname = data?.fullname
+    // this.provider.email = data?.email
+    // this.provider.phone_number = data?.phone_number
+    // this.provider.dob = '2000-01-01'
+    // this.provider.gender = 'male'
+    // this.provider.roles ='purpleprovider'
+    // this.provider.averageGoogleRating = data?.averageGoogleRating
+    // this.provider.averageYelpRating = data?.averageYelpRating
+    this.provider.bottomGoogleReviews = data?.bottomGoogleReviews
+    // this.provider.facebookNumberOfFollowers = data?.facebookNumberOfFollowers
+    // this.provider.facebookNumberOfLikes = data?.facebookNumberOfLikes
+    // this.provider.facebookURL = data?.facebookURL
+    // this.provider.googleReviewsURL = data?.googleReviewsURL
+    // this.provider.instagramProfileLink = data?.instagramProfileLink
+    this.provider.mostRecentGoogleReviews = data?.mostRecentGoogleReviews
+    // this.provider.numberOfGoogleReviews = data?.numberOfGoogleReviews
+    // this.provider.numberOfInstagramFollowers = data?.numberOfInstagramFollowers
+    // this.provider.numberOfYelpRatings = data?.numberOfYelpRatings
+    this.provider.topGoogleReviews = data?.topGoogleReviews
+    this.provider.yelpTopReviews = data?.yelpTopReviews
+    this.provider.yelpBottomReviews = data?.yelpBottomReviews
+    this.provider.yelpMostRecentReviews = data?.yelpMostRecentReviews
+    // this.provider.yelpProfileURL = data?.yelpProfileURL
+    const modalOptions: NgbModalOptions = {
+      size: 'lg', // 'sm', 'lg', or 'xl'
+      backdrop: 'static',
+    };
+    const modalRef = this.modalService.open(content,modalOptions);
+    modalRef.result.then((result) => { 
+
+      this.row_id = null
+    }, (reason) => {
+      this.row_id = null
+    });
+  }
+  // submit(){
+  //   // console.log('id', this.row_id);
+  //   // console.log('provider', this.provider);
+  //   this.apiService.updateUser(this.row_id,this.provider).subscribe((res:any)=>{
+  //     if(res?.isSuccess === true){
+  //       this.toastr.success('provider update successfull')
+  //       this.spinner.hide()
+  //       this.modalService.dismissAll()
+  //       this.getAllUsers()
+  //     }
+  //     else this.toastr.error(res?.error)
+      
+  //   })
+  
+  // }
+  closeModal(){
+    this.spinner.hide()
+    this.modalService.dismissAll()
   }
 }
 

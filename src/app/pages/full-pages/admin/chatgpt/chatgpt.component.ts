@@ -26,6 +26,7 @@ export class ChatgptComponent implements OnInit {
     location:{type:"Point",coordinates:[]},
     address: '',
     roles: 'purpleprovider',
+    websiteUrl:''
     // averageGoogleRating:'' ,
     // averageYelpRating:'' ,
     // bottomGoogleReviews : [],
@@ -65,6 +66,7 @@ export class ChatgptComponent implements OnInit {
             const data = res?.data[0]?.message?.content;
             this.json_data = data
             this.messages.push({ sender: 'ChatGpt', text:  data.match(/\{.*\}/s)&&data.match(/\{.*\}/s).length?this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])):data , isMe: false });
+            this.provider.websiteUrl = this.newMessage
             this.newMessage = ''; 
           // });
 
@@ -188,24 +190,24 @@ export class ChatgptComponent implements OnInit {
       this.apiService.addUser(this.provider).subscribe((res:any)=>{
         if(res?.isSuccess === true){
           this.showButton = false
-          let body={
-            name: this.provider.fullname,
-            user: this.user._id,
-            working_hour: '2 Hours',
-            task_type:'missing data',
-            status:'pending',
-            missing_fields: {
-              description: '',
-              task_date: '',
-              notes: '',
-              admin_notes: '',
-              budget: '',
-            },
-            add_fields: { name: this.provider.fullname,}
-        }
-        this.apiService.addTask(body).subscribe((res:any)=>{
+        //   let body={
+        //     name: this.provider.fullname,
+        //     user: this.user._id,
+        //     working_hour: '2 Hours',
+        //     task_type:'missing data',
+        //     status:'pending',
+        //     missing_fields: {
+        //       description: '',
+        //       task_date: '',
+        //       notes: '',
+        //       admin_notes: '',
+        //       budget: '',
+        //     },
+        //     add_fields: { name: this.provider.fullname,}
+        // }
+        // this.apiService.addTask(body).subscribe((res:any)=>{
 
-        })
+        // })
           this.toastr.success('provider registered successfull!')
           this.modalService.dismissAll()
         }
