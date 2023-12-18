@@ -19,6 +19,7 @@ export class ChatgptComponent implements OnInit {
   user:any
   message_data: any;
   json_data:any
+  website_url:any
   provider={
     fullname:'',
     email: '',
@@ -58,6 +59,7 @@ export class ChatgptComponent implements OnInit {
     if (this.newMessage.trim() !== '') {
       const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng), - from Open AI API in json format with fields as it is "fullname, email, phone_number, location:{coordinates:[lat,lng]}, address "`
       // const exactMsg2 =`${this.newMessage}  Google Reviews URL,Number of Google Reviews,Average Google Rating,3 Top (Highest rated) Google reviews,3 Bottom (Lowest rated) Google reviews,3 Most Recent Google Reviews, Facebook URL,Facebook Number of Followers,Facebook Number of likes,Yelp Profile URL,Number of Yelp ratings,Average Yelp rating, 3 Yelp Top (Highest rated) reviews,3 Yelp Bottom (Lowest rated) reviews,3 Yelp Most Recent Reviews,Instagram Profile Link,Number of Instagram Followers  and i need fields as it is "fullname, email, phone_number, location, address, roles, averageGoogleRating, averageYelpRating, bottomGoogleReviews, facebookNumberOfFollowers, facebookNumberOfLikes, facebookURL, googleReviewsURL, instagramProfileLink, mostRecentGoogleReviews, numberOfGoogleReviews, numberOfInstagramFollowers, numberOfYelpRatings, topGoogleReviews, yelpBottomReviews, yelpMostRecentReviews, yelpTopReviews, yelpProfileURL from Open AI API in json format"`
+      this.website_url = this.newMessage
       this.messages.push({ sender: 'You', text: this.newMessage, isMe: true });
       this.apiService.chatgptSearch('6578625ec5e9c2b1c8909c58',this.user._id,exactMsg).subscribe((res:any)=>{
         if(res?.isSuccess){
@@ -66,7 +68,7 @@ export class ChatgptComponent implements OnInit {
             const data = res?.data[0]?.message?.content;
             this.json_data = data
             this.messages.push({ sender: 'ChatGpt', text:  data.match(/\{.*\}/s)&&data.match(/\{.*\}/s).length?this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])):data , isMe: false });
-            this.provider.websiteUrl = this.newMessage
+            
             this.newMessage = ''; 
           // });
 
@@ -153,40 +155,8 @@ export class ChatgptComponent implements OnInit {
   }
   details(data){
    try {
-    // let jsonString = data.replace(/^```json/, '').replace(/```$/, '');
-    // this.json_data = JSON.parse( jsonString)
-    // console.log('==>>',this.json_data)
-    // let body={
-    //   fullname: this.json_data.name,
-    //   email: this.json_data.email,
-    //   phone_number: this.json_data.phoneNumber ,
-    //   location: {
-    //     coordinates: [
-    //       this.json_data.locations[0].lng,this.json_data.locations[0].lat
-    //     ]
-    //   },
-    //   address:  this.json_data.locations[0].address,
-    //   roles: 'purpleprovider',
-    //   averageGoogleRating : this.json_data.averageGoogleRating,
-    //   averageYelpRating : this.json_data.averageYelpRating,
-    //   bottomGoogleReviews : [this.json_data.bottomGoogleReviews],
-    //   facebookNumberOfFollowers : this.json_data.facebookNumberOfFollowers,
-    //   facebookNumberOfLikes : this.json_data.facebookNumberOfLikes,
-    //   facebookURL : this.json_data.facebookURL,
-    //   googleReviewsURL : this.json_data.googleReviewsURL,
-    //   instagramProfileLink : this.json_data.instagramProfileLink,
-    //   mostRecentGoogleReviews :  this.json_data.mostRecentGoogleReviews,
-    //   numberOfGoogleReviews :  this.json_data.numberOfGoogleReviews,
-    //   numberOfInstagramFollowers : this.json_data.numberOfInstagramFollowers,
-    //   numberOfYelpRatings : this.json_data.numberOfYelpRatings,
-    //   topGoogleReviews : [this.json_data.topGoogleReviews],
-    //   yelpBottomReviews :  [this.json_data.yelpBottomReviews],
-    //   yelpMostRecentReviews : [this.json_data.yelpMostRecentReviews],
-    //   yelpTopReviews :  [this.json_data.yelpTopReviews],
-    //   yelpProfileURL : this.json_data.yelpProfileURL
-
-    // }
-    // console.log('==>>',body)
+   
+    this.provider.websiteUrl = this.website_url
       this.apiService.addUser(this.provider).subscribe((res:any)=>{
         if(res?.isSuccess === true){
           this.showButton = false
