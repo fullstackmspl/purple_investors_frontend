@@ -15,7 +15,7 @@ import swal from 'sweetalert2';
 export class ChatgptComponent implements OnInit {
 
   messages: { sender: string; text: string; isMe: boolean  }[] = [];
-  newMessage: string = 'https://academyofexcellencepreschool.com/';
+  newMessage: string = '';
   user:any
   message_data: any;
   json_data:any
