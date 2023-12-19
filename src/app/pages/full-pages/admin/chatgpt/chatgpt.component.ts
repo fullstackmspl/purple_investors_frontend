@@ -109,8 +109,34 @@ export class ChatgptComponent implements OnInit {
     this.provider.roles = 'purpleprovider'
   }
   async setAddress(addressData) {
-      this.provider.location= {type:"Point",coordinates:[addressData[0].lng,addressData[0].lat]}
-      this.provider.address= addressData[1].formatted_address
+      // this.provider.location= {type:"Point",coordinates:[addressData[0].lng,addressData[0].lat]}
+      // this.provider.address= addressData[1].formatted_address
+
+      // const lat = addressData.coordinates[0].lat;
+      // const lng = addressData.coordinates[0].lng;
+  
+      // this.provider.location = { type: "Point", coordinates: [lng,lat] };
+      // this.provider.address = addressData[1].formatted_address;
+
+
+      if (addressData && addressData.coordinates && Array.isArray(addressData.coordinates)) {
+        const coordinates = addressData.coordinates[0];
+        if (coordinates && typeof coordinates.lat === 'number' && typeof coordinates.lng === 'number') {
+            const lat = coordinates.lat;
+            const lng = coordinates.lng;
+
+            this.provider.location = { type: "Point", coordinates: [lat, lng] };
+        } else {
+            console.error("Invalid or missing coordinates in the input data.");
+        }
+    } else {
+        console.error("Invalid or missing input data.");
+    }
+
+    // Assuming addressData does not have a nested structure
+    this.provider.address = addressData.formatted_address || null;
+
+    
   }
   confirmAdd(data) {
     swal.fire({
@@ -157,27 +183,10 @@ export class ChatgptComponent implements OnInit {
    try {
    
     this.provider.websiteUrl = this.website_url
+    // console.log('body =>>',this.provider)
       this.apiService.addUser(this.provider).subscribe((res:any)=>{
         if(res?.isSuccess === true){
           this.showButton = false
-        //   let body={
-        //     name: this.provider.fullname,
-        //     user: this.user._id,
-        //     working_hour: '2 Hours',
-        //     task_type:'missing data',
-        //     status:'pending',
-        //     missing_fields: {
-        //       description: '',
-        //       task_date: '',
-        //       notes: '',
-        //       admin_notes: '',
-        //       budget: '',
-        //     },
-        //     add_fields: { name: this.provider.fullname,}
-        // }
-        // this.apiService.addTask(body).subscribe((res:any)=>{
-
-        // })
           this.toastr.success('provider registered successfull!')
           this.modalService.dismissAll()
         }
@@ -189,5 +198,6 @@ export class ChatgptComponent implements OnInit {
     console.error('Error parsing JSON:', error);
    }
   }
+  
 
 }

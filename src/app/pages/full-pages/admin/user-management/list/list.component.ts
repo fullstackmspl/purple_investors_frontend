@@ -29,7 +29,7 @@ export class ListComponent implements OnInit {
   public rows = [];
   public filterRows=[];
   public ColumnMode = ColumnMode;
-  public limitRef = 10;
+  public limitRef = 100;
   public columns = [
     { name: "Name", prop: "name" },
     { name: "Email", prop: "email" },

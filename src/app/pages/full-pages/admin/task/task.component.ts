@@ -47,7 +47,8 @@ export class TaskComponent implements OnInit {
     notes: '',
     admin_notes: '',
     working_hour: '',
-    budget: ''
+    budget: '',
+    status:'',
   }
 
   row_id:any
@@ -63,14 +64,23 @@ export class TaskComponent implements OnInit {
   provider_data_missing:any
   provider_data_review:any
   task_id:any
+  user:any
+  taskType:any
+  keysWithNoValue:any ={}
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
                private spinner: NgxSpinnerService,private formBuilder : FormBuilder) {
+                this.user = JSON.parse(localStorage.getItem('user'))
                 }
 
   ngOnInit(): void {
-    this.getAllTask()
+    if(this.user.roles ==='mturkers'){
+      this.getAllTaskByUser()
+    }
+    if(this.user.roles !=='mturkers'){
+      this.getAllTask()
+    }
     this.getAllUsers()
     this.taskForm = this.formBuilder.group({
       name: ['', Validators.required],
@@ -83,6 +93,7 @@ export class TaskComponent implements OnInit {
     });
 
   }
+
   get rf() {
     return this.taskForm.controls;
   }
@@ -99,6 +110,22 @@ export class TaskComponent implements OnInit {
       this.spinner.hide();
       this.rows = res?.data?.data
       this.page.totalPages = res?.data?.TotalCount
+
+    })
+  }
+  getAllTaskByUser(){
+    this.spinner.show(undefined,
+      {
+        type: 'ball-triangle-path',
+        size: 'medium',
+        bdColor: 'rgba(0, 0, 0, 0.8)',
+        color: '#fff',
+        fullScreen: true
+      });
+    this.apiService.getTaskByUserId(this.user._id,this.limitRef,this.page.pageNumber + 1).subscribe((res: any) => {
+      this.spinner.hide();
+      this.rows = res?.data?.items
+      this.page.totalPages = res?.data?.totalCount
 
     })
   }
@@ -170,17 +197,28 @@ export class TaskComponent implements OnInit {
         if(res?.isSuccess === true){
           this.toastr.success('task added successfull!')
           this.modalService.dismissAll()
-          this.getAllTask();
+          if(this.user.roles ==='mturkers'){
+            this.getAllTaskByUser()
+          }
+          if(this.user.roles !=='mturkers'){
+            this.getAllTask()
+          }
         }
         else this.toastr.error(res?.error)
       })
     }
     if(this.row_id){
+      this.task_model.status = 'in-review'
       this.apiService.updateTask(this.row_id,this.task_model).subscribe((res:any)=>{
         if(res?.isSuccess === true){
           this.toastr.success('task update successfull!')
           this.modalService.dismissAll()
-          this.getAllTask();
+          if(this.user.roles ==='mturkers'){
+            this.getAllTaskByUser()
+          }
+          if(this.user.roles !=='mturkers'){
+            this.getAllTask()
+          }
         }
         else this.toastr.error(res?.error)
       })
@@ -261,7 +299,12 @@ export class TaskComponent implements OnInit {
         if(res?.isSuccess === true){
           this.toastr.success('status update successfull!')
           this.modalService.dismissAll()
-          this.getAllTask();
+          if(this.user.roles ==='mturkers'){
+            this.getAllTaskByUser()
+          }
+          if(this.user.roles !=='mturkers'){
+            this.getAllTask()
+          }
         }
         else this.toastr.error(res?.error)
       })
@@ -299,15 +342,26 @@ export class TaskComponent implements OnInit {
         if(res?.isSuccess === true){
           this.toastr.success('task assign to update successfull!')
           this.modalService.dismissAll()
-          this.getAllTask();
+          if(this.user.roles ==='mturkers'){
+            this.getAllTaskByUser()
+          }
+          if(this.user.roles !=='mturkers'){
+            this.getAllTask()
+          }
         }
         else this.toastr.error(res?.error)
       })
     }
   }
-  openModalTaskType(content,data,id) {
-    this.provider_data_missing = data?.missing_fields
-    this.provider_data_review = data?.add_fields
+  openModalTaskType(content,data,id,task_type) {
+    if(task_type === 'missing data'){
+      this.taskType = 'missing data'
+      this.provider_data_missing = data?.missing_fields
+    }
+    if(task_type === 'review data'){
+      this.taskType = 'review data'
+      this.provider_data_review = data?.add_fields
+    }
     this.row_id = data?.user[0]?._id
     this.task_id = id
     const modalOptions: NgbModalOptions = {
@@ -332,9 +386,7 @@ export class TaskComponent implements OnInit {
   getObjectKeys(obj: any): string[] {
     return Object.keys(obj);
   }
-  updateProvider(){
-    // console.log('==>>',this.provider_data_missing)
-    // console.log('==>>',this.provider_data_review)
+  updateMissingProvider(){
     this.spinner.show(undefined,
       {
         type: 'ball-triangle-path',
@@ -343,11 +395,20 @@ export class TaskComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-      var keysWithNoValue ={}
-      keysWithNoValue = this.getKeysWithNoValue(this.provider_data_missing)
-      let body={
-        missing_fields: keysWithNoValue,
+      
+      this.keysWithNoValue = this.getKeysWithNoValue(this.provider_data_missing)
+      let body: { missing_fields: any };
+      if(this.keysWithNoValue && this.keysWithNoValue.length>0){
+         body={
+          missing_fields: this.keysWithNoValue,
+        }
       }
+      else{
+         body ={
+          missing_fields: {},
+        }
+      }
+      
     this.apiService.updateTask(this.task_id,body).subscribe((res:any)=>{
       if(res?.isSuccess){
         this.apiService.updateUser(this.row_id,this.provider_data_missing?this.provider_data_missing:this.provider_data_review).subscribe((res:any)=>{
@@ -355,7 +416,12 @@ export class TaskComponent implements OnInit {
             this.spinner.hide()
             this.toastr.success("provider update successfull!")
             this.modalService.dismissAll()
-              this.getAllTask();
+            if(this.user.roles ==='mturkers'){
+              this.getAllTaskByUser()
+            }
+            if(this.user.roles !=='mturkers'){
+              this.getAllTask()
+            }
           }
           else{ 
             this.toastr.error(res?.error) 
@@ -368,9 +434,36 @@ export class TaskComponent implements OnInit {
         this.toastr.error(res?.error) 
         this.spinner.hide()
       }
-
     })
    
+  }
+  updateReviewProvider(){
+    this.spinner.show(undefined,
+      {
+        type: 'ball-triangle-path',
+        size: 'medium',
+        bdColor: 'rgba(0, 0, 0, 0.8)',
+        color: '#fff',
+        fullScreen: true
+      });
+      this.apiService.updateUser(this.row_id,this.provider_data_review).subscribe((res:any)=>{
+        if(res?.isSuccess){
+          this.spinner.hide()
+          this.toastr.success("provider update successfull!")
+          this.modalService.dismissAll()
+          if(this.user.roles ==='mturkers'){
+            this.getAllTaskByUser()
+          }
+          if(this.user.roles !=='mturkers'){
+            this.getAllTask()
+          }
+        }
+        else{ 
+          this.toastr.error(res?.error) 
+          this.spinner.hide()
+        }
+        
+      })
   }
   getKeysWithNoValue(obj) {
     return Object.entries(obj)
