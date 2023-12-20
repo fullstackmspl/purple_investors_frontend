@@ -61,7 +61,7 @@ export class ProviderComponent implements OnInit {
     facebookURL:'' ,
     googleReviewsURL:'' ,
     instagramProfileLink:'' ,
-    mostRecentGoogleReviews:'', 
+    mostRecentGoogleReviews:[], 
     numberOfGoogleReviews:'' ,
     numberOfInstagramFollowers:'' ,
     numberOfYelpRatings:'' ,
@@ -337,7 +337,13 @@ openModalForProvider(content, id,row_data) {
 }
 submit(){
   // console.log('id', this.row_id);
-  // console.log('provider', this.provider);
+  this.provider.yelpTopReviews =  this.provider.yelpTopReviews ? this.provider.yelpTopReviews : []
+  this.provider.yelpMostRecentReviews=  this.provider.yelpMostRecentReviews? this.provider.yelpMostRecentReviews: []
+  this.provider.yelpBottomReviews =  this.provider.yelpBottomReviews ? this.provider.yelpBottomReviews : []
+  this.provider.topGoogleReviews =  this.provider.topGoogleReviews ? this.provider.topGoogleReviews : []
+  this.provider.mostRecentGoogleReviews =  this.provider.mostRecentGoogleReviews ? this.provider.mostRecentGoogleReviews : []
+  this.provider.bottomGoogleReviews =  this.provider.bottomGoogleReviews ? this.provider.bottomGoogleReviews : []
+
   this.apiService.updateUser(this.row_id,this.provider).subscribe((res:any)=>{
     if(res?.isSuccess === true){
       this.toastr.success('provider update successfull')
