@@ -61,12 +61,41 @@
                       <p class="font-medium-1 line-height-1 mb-0">
                         {{ row?.name }}
                       </p>
-                      
+                      <div class="mt-2">
+                        <p [matMenuTriggerFor]="task_status">
+                          <span class="cursor-pointer" *ngIf="row?.status == 'completed'" [ngClass]="{'badge badge-pill bg-light-success':row?.status == 'completed'}">{{row?.status}}
+                          </span>
+                          <span class="cursor-pointer" *ngIf="row?.status == 'open'" [ngClass]="{'badge badge-pill bg-light-success':row?.status == 'open'}">{{row?.status}}
+                          </span>
+                          <span class="cursor-pointer" *ngIf="row?.status == 'rejected'" [ngClass]="{'badge badge-pill bg-light-danger':row?.status == 'rejected'}">{{row?.status}}
+                          </span>
+                          <span class="cursor-pointer" *ngIf="row?.status == 'in-review'" [ngClass]="{'badge-pill bg-light-warning':row?.status == 'in-review'}">{{row?.status}}
+                          </span>
+                        </p>
+                        <mat-menu #task_status="matMenu">
+                          <div *ngFor="let status of task_list">
+                            <button mat-menu-item *ngIf="status?.name !== row?.status"
+                              (click)="updateStatus(row?._id,status.name)">
+                              <span>
+                              <span class="my-1" [ngClass]="{'bg-light-success badge badge-pill':status.name === 'open'}"
+                                placement="top" *ngIf="status.name === 'open'">{{status.name}}</span>
+                                <span class="my-1" [ngClass]="{'bg-light-success badge badge-pill':status.name === 'completed'}"
+                                placement="top" *ngIf="status.name === 'completed'">{{status.name}}</span>
+                              <span class="my-1" [ngClass]="{'bg-light-warning badge badge-pill':status.name === 'in-review'}"
+                                placement="top" *ngIf="status.name === 'in-review'">{{status.name}}</span>
+                              <span class="my-1" [ngClass]="{'bg-light-danger badge badge-pill':status.name === 'rejected'}"
+                                placement="top"
+                                *ngIf="status.name === 'rejected'">{{status.name}}</span>
+                              </span>
+                            </button>
+                            </div>
+                        </mat-menu>
+                      </div>
                     </div>
                   </div>
                 </ng-template>
               </ngx-datatable-column>
-              <ngx-datatable-column name="Task Type" prop="task_type" [width]="10">
+              <ngx-datatable-column name="Task Type" prop="task_type" [width]="80">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <p class="cursor-pointer" (click)="openModalTaskType(myModalTaskType,row,row?._id,row?.task_type)">{{row?.task_type}}</p> 
                 </ng-template>
@@ -81,7 +110,7 @@
                   <p class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.reviewUserId[0]?._id,row?._id,'Task Review')">{{row?.reviewUserId[0]?.fullname}}</p>
                 </ng-template>
               </ngx-datatable-column>
-              <ngx-datatable-column name="Status" prop="name" [width]="10">
+              <!-- <ngx-datatable-column name="Status" prop="name" [width]="10">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
 
                   <p [matMenuTriggerFor]="task_status">
@@ -114,7 +143,7 @@
                   </mat-menu>
 
                 </ng-template>
-              </ngx-datatable-column>
+              </ngx-datatable-column> -->
               <!-- <ngx-datatable-column name="Country" prop="country" [width]="70">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <div class="cell-line-height">

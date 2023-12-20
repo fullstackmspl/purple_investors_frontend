@@ -369,11 +369,11 @@ export class TaskComponent implements OnInit {
     }
   }
   openModalTaskType(content,data,id,task_type) {
-    if(task_type === 'missing data'){
+    if(task_type === 'Please add any missing data for email, phone, and locations for this form'){
       this.taskType = 'missing data'
       this.provider_data_missing = data?.missing_fields
     }
-    if(task_type === 'review data'){
+    if(task_type === 'Please proofread the business name, email, phone, and locations to ensure their correctness on this form'){
       this.taskType = 'review data'
       this.provider_data_review = data?.add_fields
     }
