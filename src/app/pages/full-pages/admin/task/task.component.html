@@ -73,7 +73,12 @@
               </ngx-datatable-column>
               <ngx-datatable-column name="Task Assign" prop="user" [width]="10">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
-                  <p class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.user[0]?._id,row?._id)">{{row?.user[0]?.fullname}}</p>
+                  <p class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.user[0]?._id,row?._id,'Task Assign')">{{row?.user[0]?.fullname}}</p>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Task Review" prop="reviewUserId" [width]="10">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <p class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.reviewUserId[0]?._id,row?._id,'Task Review')">{{row?.reviewUserId[0]?.fullname}}</p>
                 </ng-template>
               </ngx-datatable-column>
               <ngx-datatable-column name="Status" prop="name" [width]="10">
@@ -82,7 +87,9 @@
                   <p [matMenuTriggerFor]="task_status">
                     <span class="cursor-pointer" *ngIf="row?.status == 'completed'" [ngClass]="{'badge badge-pill bg-light-success':row?.status == 'completed'}">{{row?.status}}
                     </span>
-                    <span class="cursor-pointer" *ngIf="row?.status == 'pending'" [ngClass]="{'badge badge-pill bg-light-danger':row?.status == 'pending'}">{{row?.status}}
+                    <span class="cursor-pointer" *ngIf="row?.status == 'open'" [ngClass]="{'badge badge-pill bg-light-success':row?.status == 'open'}">{{row?.status}}
+                    </span>
+                    <span class="cursor-pointer" *ngIf="row?.status == 'rejected'" [ngClass]="{'badge badge-pill bg-light-danger':row?.status == 'rejected'}">{{row?.status}}
                     </span>
                     <span class="cursor-pointer" *ngIf="row?.status == 'in-review'" [ngClass]="{'badge-pill bg-light-warning':row?.status == 'in-review'}">{{row?.status}}
                     </span>
@@ -92,13 +99,15 @@
                       <button mat-menu-item *ngIf="status?.name !== row?.status"
                         (click)="updateStatus(row?._id,status.name)">
                         <span>
-                        <span class="my-1" [ngClass]="{'bg-light-success badge badge-pill':status.name === 'completed'}"
+                        <span class="my-1" [ngClass]="{'bg-light-success badge badge-pill':status.name === 'open'}"
+                          placement="top" *ngIf="status.name === 'open'">{{status.name}}</span>
+                          <span class="my-1" [ngClass]="{'bg-light-success badge badge-pill':status.name === 'completed'}"
                           placement="top" *ngIf="status.name === 'completed'">{{status.name}}</span>
                         <span class="my-1" [ngClass]="{'bg-light-warning badge badge-pill':status.name === 'in-review'}"
                           placement="top" *ngIf="status.name === 'in-review'">{{status.name}}</span>
-                        <span class="my-1" [ngClass]="{'bg-light-danger badge badge-pill':status.name === 'pending'}"
+                        <span class="my-1" [ngClass]="{'bg-light-danger badge badge-pill':status.name === 'rejected'}"
                           placement="top"
-                          *ngIf="status.name === 'pending'">{{status.name}}</span>
+                          *ngIf="status.name === 'rejected'">{{status.name}}</span>
                         </span>
                       </button>
                       </div>
@@ -284,7 +293,7 @@
 <div>
   <ng-template #myModalAssignTo let-modal>
     <div class="modal-header">
-      <h4 class="modal-title">Task Assign To Update</h4>
+      <h4 class="modal-title" >{{task_users}} update</h4>
       <button type="button" class="close" (click)="modal.dismiss()">
         <span>&times;</span>
       </button>
@@ -335,8 +344,6 @@
         </div>
           
       </div>
-      
-
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-secondary" (click)="modalService.dismissAll()">Cancel</button>

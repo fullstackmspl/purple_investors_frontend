@@ -272,7 +272,13 @@
                 <span class="text-right">{{user.fullname}}</span><span
                   class="text-right text-muted font-small-3">Available</span>
               </div>
-              <img class="avatar" src="assets/img/portrait/small/avatar-s-1.png" alt="avatar" height="35" width="35" />
+              <div class="avatar mr-1 ml-0 bg-primary">
+                <div class="avatar-content">
+                  {{ user.fullname| shortName }}
+              </div>
+              </div>
+             
+              <!-- <img class="avatar" src="assets/img/portrait/small/avatar-s-1.png" alt="avatar" height="35" width="35" /> -->
             </a>
             <div class="dropdown-menu text-left dropdown-menu-right m-0 pb-0" aria-labelledby="dropdownBasic2"
               ngbDropdownMenu>

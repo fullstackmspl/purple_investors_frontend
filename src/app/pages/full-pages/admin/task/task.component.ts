@@ -55,9 +55,10 @@ export class TaskComponent implements OnInit {
   row_name:any
   row_data:any
   task_list=[
-    {name:'pending'},
+    {name:'open'},
     {name:'in-review'},
-    {name:'completed'}
+    {name:'completed'},
+    {name:'rejected'}
   ]
   users_list=[]
   selected_user=null
@@ -67,6 +68,7 @@ export class TaskComponent implements OnInit {
   user:any
   taskType:any
   keysWithNoValue:any ={}
+  task_users:any
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
@@ -109,6 +111,7 @@ export class TaskComponent implements OnInit {
     this.apiService.getAllTask(this.limitRef,this.page.pageNumber + 1).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.data
+      this.rows.reverse()
       this.page.totalPages = res?.data?.TotalCount
 
     })
@@ -125,6 +128,7 @@ export class TaskComponent implements OnInit {
     this.apiService.getTaskByUserId(this.user._id,this.limitRef,this.page.pageNumber + 1).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.items
+      this.rows.reverse()
       this.page.totalPages = res?.data?.totalCount
 
     })
@@ -318,8 +322,9 @@ export class TaskComponent implements OnInit {
   getSelectedUserId(event){
     this.selected_user
   }
-  openModalForAssignTo(content,id,rowId) {
+  openModalForAssignTo(content,id,rowId,taskUser) {
     this.selected_user =id
+    this.task_users = taskUser
     this.row_id =rowId
     const modalOptions: NgbModalOptions = {
       size: 'md', // 'sm', 'lg', or 'xl'
@@ -335,12 +340,22 @@ export class TaskComponent implements OnInit {
   }
   updateAssignTo(){
     if(this.row_id){
-      let body={
-        user :this.selected_user
+      let body
+      if(this.task_users === 'Task Assign'){
+        body={
+          user :this.selected_user
+        }
       }
+      if(this.task_users === 'Task Review'){
+        body={
+          reviewUserId :this.selected_user
+        }
+      }
+
+      
       this.apiService.updateTask(this.row_id,body).subscribe((res:any)=>{
         if(res?.isSuccess === true){
-          this.toastr.success('task assign to update successfull!')
+          this.toastr.success(`${this.task_users} to update successfull!`)
           this.modalService.dismissAll()
           if(this.user.roles ==='mturkers'){
             this.getAllTaskByUser()

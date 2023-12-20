@@ -56,7 +56,7 @@ export class ChatgptComponent implements OnInit {
   }
   sendMessage() {
     
-    if (this.newMessage.trim() !== '') {
+    if (!!this.newMessage.trim() ) {
       const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng), - from Open AI API in json format with fields as it is "fullname, email, phone_number, location:{coordinates:[lat,lng]}, address "`
       // const exactMsg2 =`${this.newMessage}  Google Reviews URL,Number of Google Reviews,Average Google Rating,3 Top (Highest rated) Google reviews,3 Bottom (Lowest rated) Google reviews,3 Most Recent Google Reviews, Facebook URL,Facebook Number of Followers,Facebook Number of likes,Yelp Profile URL,Number of Yelp ratings,Average Yelp rating, 3 Yelp Top (Highest rated) reviews,3 Yelp Bottom (Lowest rated) reviews,3 Yelp Most Recent Reviews,Instagram Profile Link,Number of Instagram Followers  and i need fields as it is "fullname, email, phone_number, location, address, roles, averageGoogleRating, averageYelpRating, bottomGoogleReviews, facebookNumberOfFollowers, facebookNumberOfLikes, facebookURL, googleReviewsURL, instagramProfileLink, mostRecentGoogleReviews, numberOfGoogleReviews, numberOfInstagramFollowers, numberOfYelpRatings, topGoogleReviews, yelpBottomReviews, yelpMostRecentReviews, yelpTopReviews, yelpProfileURL from Open AI API in json format"`
       this.website_url = this.newMessage
@@ -107,34 +107,17 @@ export class ChatgptComponent implements OnInit {
     let jsonString = this.json_data.match(/\{.*\}/s)[0];
     this.provider = JSON.parse(jsonString)
     this.provider.roles = 'purpleprovider'
+
   }
   async setAddress(addressData) {
-      // this.provider.location= {type:"Point",coordinates:[addressData[0].lng,addressData[0].lat]}
-      // this.provider.address= addressData[1].formatted_address
+      // console.log('address =>>',addressData)
+      this.provider.location= {type:"Point",coordinates:[addressData[0].lng,addressData[0].lat]}
+      this.provider.address= addressData[1].formatted_address
 
-      // const lat = addressData.coordinates[0].lat;
-      // const lng = addressData.coordinates[0].lng;
-  
-      // this.provider.location = { type: "Point", coordinates: [lng,lat] };
-      // this.provider.address = addressData[1].formatted_address;
-
-
-      if (addressData && addressData.coordinates && Array.isArray(addressData.coordinates)) {
-        const coordinates = addressData.coordinates[0];
-        if (coordinates && typeof coordinates.lat === 'number' && typeof coordinates.lng === 'number') {
-            const lat = coordinates.lat;
-            const lng = coordinates.lng;
-
-            this.provider.location = { type: "Point", coordinates: [lat, lng] };
-        } else {
-            console.error("Invalid or missing coordinates in the input data.");
-        }
-    } else {
-        console.error("Invalid or missing input data.");
+    if(!Array.isArray(addressData?.coordinates)){
+      addressData = {...addressData,coordinates:Object.values(addressData.coordinates)}
     }
-
-    // Assuming addressData does not have a nested structure
-    this.provider.address = addressData.formatted_address || null;
+    this.provider.location = addressData || null;
 
     
   }
@@ -183,7 +166,6 @@ export class ChatgptComponent implements OnInit {
    try {
    
     this.provider.websiteUrl = this.website_url
-    // console.log('body =>>',this.provider)
       this.apiService.addUser(this.provider).subscribe((res:any)=>{
         if(res?.isSuccess === true){
           this.showButton = false
