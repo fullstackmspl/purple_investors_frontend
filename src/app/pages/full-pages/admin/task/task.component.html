@@ -52,14 +52,14 @@
                   <div class="d-flex align-items-center">
                     <div *ngIf="!row.image" class="avatar mr-1 ml-0 bg-primary">
                       <div class="avatar-content">
-                        <span *ngIf="row?.name">
-                          {{ row?.name| shortName }}
+                        <span *ngIf="row?.name || row?.fullname">
+                          {{ row?.name || row?.fullname| shortName }}
                         </span>
                       </div>
                     </div>
                     <div class="cell-line-height cursor-pointer">
                       <p class="font-medium-1 line-height-1 mb-0">
-                        {{ row?.name }}
+                        {{ row?.name || row?.fullname }}
                       </p>
                       <div class="mt-2">
                         <p [matMenuTriggerFor]="task_status">
