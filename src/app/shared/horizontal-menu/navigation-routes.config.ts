@@ -4,10 +4,7 @@ export const HROUTES: RouteInfo[] = [
 
   {
     path: '/dashboard', title: 'Dashboard', icon: 'ft-home', class: 'dropdown nav-item has-sub', isExternalLink: false,
-    submenu: [
-    //   { path: '/dashboard/dashboard1', title: 'Dashboard 1', icon: 'ft-arrow-right submenu-icon', class: 'dropdown-item', isExternalLink: false, submenu: [] },
-    //   { path: '/dashboard/dashboard2', title: 'Dashboard 2', icon: 'ft-arrow-right submenu-icon', class: 'dropdown-item', isExternalLink: false, submenu: [] }
-    ]
+    submenu: [ ]
   },
   {
     path: '/chatgpt', title: 'ChatGpt', icon: 'ft-codepen', class: 'dropdown nav-item has-sub', isExternalLink: false,
@@ -210,3 +207,13 @@ export const HROUTES: RouteInfo[] = [
   //   ]
   // }
 ];
+export const AMROUTES: RouteInfo[] = [
+  {
+    path: '/dashboard', title: 'Dashboard', icon: 'ft-home', class: 'dropdown nav-item has-sub', isExternalLink: false,
+    submenu: [ ]
+  },
+  {
+    path: '/task', title: 'Task', icon: 'ft-codepen', class: 'dropdown nav-item has-sub', isExternalLink: false,
+    submenu: []
+  },
+]
