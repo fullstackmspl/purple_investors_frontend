@@ -303,7 +303,7 @@ openModalForProvider(content, id,row_data) {
             this.setProvider();
             this.cdr.detectChanges();
             this.provider.address = row_data?.address
-            this.provider.location = row_data?.location
+            // this.provider.location = row_data?.location
             this.provider.fullname = row_data?.fullname
             this.provider.email = row_data?.email
             this.provider.phone_number = row_data?.phone_number

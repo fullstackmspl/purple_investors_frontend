@@ -1,0 +1,158 @@
+<section id="ngx-datatable-filter">
+  <div class="row">
+    <div class="col-12"></div>
+    <div class="col-12">
+      <div class="card">
+        <div class="card-content">
+          <div class="card-body">
+            <!-- ngx-datatable-filter -->
+            <fieldset class="form-group">
+              <div class="row align-items-end mt-0 pagination-body">
+                <div class="col-12 col-sm-12 col-md-3 col-lg-3 mb-2">
+                  <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="40"
+                  [footerHeight]="40" rowHeight="auto" [limit]="limitRef" [rows]="rows" [externalPaging]="true"
+                  [count]="page.totalPages" [offset]="page.pageNumber" (page)="pageChangeData($event)"></ngx-datatable>
+                </div>
+                
+                <div class="col-12 col-sm-12 col-md-9 col-lg-9 mt-2 mb-1">
+                  <div class="row-flex">
+                    <div class="col-flex-2 filter">
+                    </div>
+                    <div class="col-flex-2 mb-1 position-relative">
+                      <input id="ngx-filter-ref"
+                        class="form-control form-control-sm d-inline-block width-300 ml-1 rounded-right shadow searchInput"
+                        type="text" placeholder="Search" #name />
+                      <button class="btn search-btn glow position-absolute">
+                        <i class="ft-search text-white cursor-pointer"></i>
+                      </button>
+                    </div>
+                    <div class="col-flex-2 mb-1">
+                      <button class="btn btn-primary btn-block users-list-clear glow mb-0" (click)="resetFilter()">
+                        Reset
+                        <i class="ft-filter text-white cursor-pointer"></i>
+                      </button>
+                    </div>
+                    <div class="col-flex-2 mb-1">
+                      <button type="reset" class="btn btn-primary btn-block users-list-clear glow mb-0"
+                      placement="top" ngbTooltip="Add New" routerLink="/add-program">
+                        +
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="50"
+              [footerHeight]="50" rowHeight="auto" [limit]="limitRef" [rows]="rows" [scrollbarH]="true"
+              [columns]="columns" [externalPaging]="true" [count]="page.totalPages" [offset]="page.offset"
+              (page)="pageChangeData($event)">
+              <ngx-datatable-column name="Name" prop="name" [width]="60">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <!-- <div class="d-flex align-items-center">
+                    <div *ngIf="!row.image" class="avatar mr-1 ml-0 bg-primary">
+                      <div class="avatar-content">
+                        <span *ngIf="row?.name || row?.fullname">
+                          {{ row?.name || row?.fullname| shortName }}
+                        </span>
+                      </div>
+                    </div>
+                    <div class="cell-line-height cursor-pointer">
+                      <p class="font-medium-1 line-height-1 mb-0">
+                        {{ row?.name || row?.fullname }}
+                      </p>
+                    </div>
+                  </div> -->
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Description" prop="task_type" [width]="80">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <!-- <p class="cursor-pointer" (click)="openModalTaskType(myModalTaskType,row,row?._id,row?.task_type)">{{row?.task_type}}</p>  -->
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Category" prop="user" [width]="10">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <!-- <p class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.user[0]?._id,row?._id,'Task Assign')">{{row?.user[0]?.fullname}}</p> -->
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Sub Category" prop="reviewUserId" [width]="10">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <!-- <p class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.reviewUserId[0]?._id,row?._id,'Task Review')">{{row?.reviewUserId[0]?.fullname}}</p> -->
+                </ng-template>
+              </ngx-datatable-column>
+              <!-- <ngx-datatable-column name="Status" prop="name" [width]="10">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+
+                  <p [matMenuTriggerFor]="task_status">
+                    <span class="cursor-pointer" *ngIf="row?.status == 'completed'" [ngClass]="{'badge badge-pill bg-light-success':row?.status == 'completed'}">{{row?.status}}
+                    </span>
+                    <span class="cursor-pointer" *ngIf="row?.status == 'open'" [ngClass]="{'badge badge-pill bg-light-success':row?.status == 'open'}">{{row?.status}}
+                    </span>
+                    <span class="cursor-pointer" *ngIf="row?.status == 'rejected'" [ngClass]="{'badge badge-pill bg-light-danger':row?.status == 'rejected'}">{{row?.status}}
+                    </span>
+                    <span class="cursor-pointer" *ngIf="row?.status == 'in-review'" [ngClass]="{'badge-pill bg-light-warning':row?.status == 'in-review'}">{{row?.status}}
+                    </span>
+                  </p>
+                  <mat-menu #task_status="matMenu">
+                    <div *ngFor="let status of task_list">
+                      <button mat-menu-item *ngIf="status?.name !== row?.status"
+                        (click)="updateStatus(row?._id,status.name)">
+                        <span>
+                        <span class="my-1" [ngClass]="{'bg-light-success badge badge-pill':status.name === 'open'}"
+                          placement="top" *ngIf="status.name === 'open'">{{status.name}}</span>
+                          <span class="my-1" [ngClass]="{'bg-light-success badge badge-pill':status.name === 'completed'}"
+                          placement="top" *ngIf="status.name === 'completed'">{{status.name}}</span>
+                        <span class="my-1" [ngClass]="{'bg-light-warning badge badge-pill':status.name === 'in-review'}"
+                          placement="top" *ngIf="status.name === 'in-review'">{{status.name}}</span>
+                        <span class="my-1" [ngClass]="{'bg-light-danger badge badge-pill':status.name === 'rejected'}"
+                          placement="top"
+                          *ngIf="status.name === 'rejected'">{{status.name}}</span>
+                        </span>
+                      </button>
+                      </div>
+                  </mat-menu>
+
+                </ng-template>
+              </ngx-datatable-column> -->
+              <!-- <ngx-datatable-column name="Country" prop="country" [width]="70">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <div class="cell-line-height">
+                    {{ row?.country}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="State" prop="state" [width]="70">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <div class="cell-line-height">
+                    {{ row?.state}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Zip Code" prop="zipcode" [width]="70">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <div class="cell-line-height">
+                    {{ row?.zipcode}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column> -->
+              <ngx-datatable-column name="Actions" [width]="50">
+                <!-- <ng-template let-row="row" ngx-datatable-cell-template>
+                  <i class="ft-edit text-primary cursor-pointer mx-1"
+                  (click)="openModal(myModalContent,row?._id,row)"></i>
+                  <i class="ft-trash-2 cursor-pointer danger mx-1"
+                    (click)="confirmDelete(row._id)"></i>
+                  <i class="ft-eye text-primary cursor-pointer mx-1"
+                  (click)="openModalView(myModalContentView,row)"></i>
+                </ng-template> -->
+              </ngx-datatable-column>
+            </ngx-datatable>
+            <!-- ngx-datatable-filter -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--/ Filter Datatables -->
+<div class="d-flex justify-content-between align-items-center">
+  <ngx-spinner></ngx-spinner>
+</div>

@@ -13,9 +13,13 @@ const routes: Routes = [
     {path:'providers',component:ProviderComponent},
     {path:'city-managements',component:CityManagementComponent},
     {path:'task', component:TaskComponent},
-    { 
+    {   
       path:'',
       loadChildren:()=> import('./user-management/user-management.module').then(m=>m.UserManagementModule)
+    },
+    {
+      path:'',
+      loadChildren:()=> import('./programs/programs.module').then(m=>m.ProgramsModule)
     }
   
 ];
