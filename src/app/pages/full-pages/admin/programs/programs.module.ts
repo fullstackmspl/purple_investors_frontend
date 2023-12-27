@@ -9,6 +9,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { ListComponent } from './list/list.component';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { MatOptionModule } from '@angular/material/core';
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     NgbModule,
     NgSelectModule,
     NgxDatatableModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    MatOptionModule,
   ]
 })
 export class ProgramsModule { }

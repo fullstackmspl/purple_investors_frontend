@@ -1,7 +1,7 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormControl, FormGroup, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
-
+import { Program } from 'app/shared/models/program.model';
 @Component({
   selector: 'app-add-program',
   templateUrl: './add-program.component.html',
@@ -10,8 +10,8 @@ import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 })
 export class AddProgramComponent implements OnInit {
 
-  activeTab = "general";
-  generalFormSubmitted = false;
+  activeTab = "Program Info";
+  firstFormGroupSubmitted = false;
   changePasswordFormSubmitted = false;
   infoFormSubmitted = false;
   alertVisible = true;
@@ -59,56 +59,13 @@ export class AddProgramComponent implements OnInit {
   category_List=[
     {name:'Test',_id:'test'}
   ]
-  months_List=[
-    {name:'0',_id:'0'},
-    {name:'1',_id:'1'},
-    {name:'2',_id:'2'},
-    {name:'3',_id:'3'},
-    {name:'4',_id:'4'},
-    {name:'5',_id:'5'},
-    {name:'6',_id:'6'},
-    {name:'7',_id:'7'},
-    {name:'8',_id:'8'},
-    {name:'9',_id:'9'},
-    {name:'10',_id:'10'},
-    {name:'11',_id:'11'},
-    {name:'12',_id:'12'},
-    {name:'13',_id:'13'},
-    {name:'14',_id:'14'},
-    {name:'15',_id:'15'},
-    {name:'16',_id:'16'},
-    {name:'17',_id:'17'},
-    {name:'18',_id:'18'},
-    {name:'19',_id:'19'},
-    {name:'20',_id:'20'},
-    {name:'21',_id:'21'},
-    {name:'22',_id:'22'},
-    {name:'23',_id:'23'},
-  ]
-  years_List=[
-    {name:'2',_id:'2'},
-    {name:'3',_id:'3'},
-    {name:'4',_id:'4'},
-    {name:'5',_id:'5'},
-    {name:'6',_id:'6'},
-    {name:'7',_id:'7'},
-    {name:'8',_id:'8'},
-    {name:'9',_id:'9'},
-    {name:'10',_id:'10'},
-    {name:'11',_id:'11'},
-    {name:'12',_id:'12'},
-    {name:'13',_id:'13'},
-    {name:'14',_id:'14'},
-    {name:'15',_id:'15'},
-    {name:'16',_id:'16'},
-    {name:'17',_id:'17'},
-  ]
+  months_List=[]
+  years_List=[]
   maxnumber_student_List=[
     {name:"Maximum number of kids a single class/session/lesson can accommodate"},
     {name:"No Capacity info"},
-
   ]
-  generalForm = new UntypedFormGroup({
+  firstFormGroup = new UntypedFormGroup({
     displayname: new UntypedFormControl('hermione007', [Validators.required]),
     email: new UntypedFormControl('granger007@hogward.com', [Validators.required]),
     program_description: new UntypedFormControl('', [Validators.required]),
@@ -146,10 +103,128 @@ export class AddProgramComponent implements OnInit {
     instagram: new UntypedFormControl(''),
     quora: new UntypedFormControl('')
   });
+program_model={
+  name:'',
+  emails:[],
+  description:'',
+  earlyDrop_off_LatePick_up: {
+    ealryDrop: false,
+    earlyTime: '',
+    lateDrop: false,
+    lateTime: ''
+  },
+  categoryId:'',
+  subCategory:'',
+  ageGroup:{ month: [], year: [] },
+  skillGroup: '',
+  isFreeTrial: false,
+  parentalSupervisionRequired:'',
 
+}
+minCapacity: number = 0;
+maxCapacity: number = 0;
+days: any =
+  {
+    sunday: false,
+    monday: false,
+    tuesday: false,
+    wednesday: false,
+    thursday: false,
+    friday: false,
+    saturday: false,
+  }
+
+activityRecurring = {
+  activityRecurring: false,
+  day: [],
+}
+
+program: any = new Program;
   constructor( private modalService: NgbModal,) { }
 
   ngOnInit() {
+    this. ageRange()
+
+    this.firstFormGroup = new FormGroup({
+      name: new FormControl(['',]),
+      type: new FormControl(['',]),
+      categoryId: new FormControl(['',]),
+      phoneNumber: new FormControl(['']),
+      // subCategory: new FormControl(),
+      subCategory: new FormControl(['',]),
+      inpersonOrVirtual: new FormControl(['',]),
+      indoorOroutdoor: new FormControl(['',]),
+      description: new FormControl(['',]),
+      specialInstructions: new FormControl(['',]),
+      email: new FormControl(['', Validators.email]),
+      presenter: new FormControl(['',]),
+      ageGroup: new FormControl(['',]),
+      startDate: new FormControl(['',]),
+      endDate: new FormControl(['',]),
+      startTime: new FormControl(['',]),
+      endTime: new FormControl(['',]),
+      isDateNotMention: new FormControl(false),
+      isDayNotMention: new FormControl(false),
+      isTimeNotMention: new FormControl(false),
+      isproRated: new FormControl(false),
+      dayss: new FormControl(['',]),
+      isFree: new FormControl(false),
+      isFreeTrial: new FormControl(false),
+      days: new FormControl(['',]),
+      pricePerParticipant: new FormControl(['',]),
+      priceForSiblings: new FormControl(['',]),
+      perTimePeriod: new FormControl(['',]),
+      timePeriodDuration: new FormControl(['',]),
+      extractionDate: new FormControl(['',]),
+      adultAssistanceIsRequried: new FormControl(false),
+      addresses: new FormControl(['',]),
+      hours: new FormControl(['',]),
+      joiningLink: new FormControl(['',]),
+      location: new FormControl(['']),
+      instructors: new FormControl(['']),
+      locationOfActivity: new FormControl(['', this.program.privateOrGroup == 'private' && this.program.inpersonOrVirtual == 'Inperson' ? Validators.required : '']),
+      city: new FormControl(['']),
+      source: new FormControl(['',]),
+      sourceUrl: new FormControl(['',]),
+      cycle: new FormControl(['']),
+      isExpired: new FormControl([false]),
+      zip: new FormControl(['']),
+      activeStatus: new FormControl(['']),
+      per_hour_rate: new FormControl(['']),
+      privateOrGroup: new FormControl(['']),
+      offerDiscount: new FormControl(['']),
+      last_reviewed: new FormControl(['']),
+      program_last_reviewed: new FormControl(['']),
+      cycle_time: new FormControl(['']),
+      isParentJoin: new FormControl([false]),
+      maxTravelDistance: new FormControl([Number]),
+      totalSessionClasses: new FormControl([Number]),
+      isParentGuardianRequire: new FormControl([false]),
+      extractor_notes: new FormControl(['']),
+      program_extractor_notes: new FormControl(['']),
+      // proof_reader_notes: new FormControl(['']),
+      isOpenForBooking: new FormControl(true),
+      isChildCare: new FormControl([false]),
+      isPriceNotMention: new FormControl([false]),
+      ealryDrop: new FormControl([false]),
+      lateDrop: new FormControl([false]),
+      parentalSupervisionRequired: new FormControl(['']),
+      maxNumberOfStudents: new FormControl(['']),
+      skillGroup: new FormControl(['']),
+      pricing: new FormControl(['']),
+      pricePerUnit: new FormControl(['']),
+      actualPrice: new FormControl(['']),
+    });
+
+  }
+
+  ageRange(){
+    for(let i =2; i<18; i++){
+      this.years_List.push(i)
+    }
+    for(let i =0; i<24; i++){
+      this.months_List.push(i)
+    }
   }
 
   setActiveTab(tab) {
@@ -157,7 +232,7 @@ export class AddProgramComponent implements OnInit {
   }
 
   get gf() {
-    return this.generalForm.controls;
+    return this.firstFormGroup.controls;
   }
 
   get cpf() {
@@ -168,9 +243,9 @@ export class AddProgramComponent implements OnInit {
     return this.infoForm.controls;
   }
 
-  onGeneralFormSubmit() {
-    this.generalFormSubmitted = true;
-    if (this.generalForm.invalid) {
+  onfirstFormGroupSubmit() {
+    this.firstFormGroupSubmitted = true;
+    if (this.firstFormGroup.invalid) {
       return;
     }
   }
@@ -206,6 +281,146 @@ export class AddProgramComponent implements OnInit {
     }, (reason) => {
     });
   }
-
+  getCategory(event){
+    this.program_model.categoryId
+  }
+  getSubCategory(event){
+    this.program_model.subCategory
+  }
+  getAgeMonth(event){
+    this.program_model.ageGroup.month
+  }
+  getAgeYear(event){
+    this.program_model.ageGroup.year
+  }
+  getSkillLevel(event){
+    this.program_model.skillGroup
+  }
+  getFreeTrial(event: any) {
+    this.program_model.isFreeTrial = event.target.checked;
+    console.log('Is Free Trial:', this.program_model.isFreeTrial);
+  }
+  getEarlyDrop(event){
+    this.program_model.earlyDrop_off_LatePick_up.ealryDrop = event.target.checked;
+    console.log('early drop:', this.program_model.earlyDrop_off_LatePick_up.ealryDrop);
+  }
+  getLateDrop(event){
+    this.program_model.earlyDrop_off_LatePick_up.lateDrop = event.target.checked;
+    console.log('late drop:', this.program_model.earlyDrop_off_LatePick_up.lateDrop);
+  }
+  submit(){
+    console.log('=>>>',this.program_model)
+  }
 }
 
+// =================
+
+// {
+//   "time": {},
+//   "date": {
+//       "from": "2023-12-26T09:00:26.184Z",
+//       "to": "2023-12-26T09:00:26.184Z"
+//   },
+//   "ageGroup": {
+//       "month": [
+//           20
+//       ],
+//       "year": []
+//   },
+//   "bookingCancelledIn": {
+//       "days": "5",
+//       "hours": "2"
+//   },
+//   "duration": {},
+//   "isFree": false,
+//   "isFreeTrial": true,
+//   "isproRated": true,
+//   "isDateNotMention": false,
+//   "isTimeNotMention": false,
+//   "isDayNotMention": false,
+//   "isDayFlexible": false,
+//   "isTimeFlexible": false,
+//   "isDateFlexible": false,
+//   "adultAssistanceIsRequried": false,
+//   "capacity": {
+//       "min": 0,
+//       "max": 9
+//   },
+//   "emails": [],
+//   "categoryId": [
+//       "60b47687bb70a952280bfa7b"
+//   ],
+//   "tags": [],
+//   "days": {
+//       "sunday": false,
+//       "monday": false,
+//       "tuesday": false,
+//       "wednesday": false,
+//       "thursday": false,
+//       "friday": false,
+//       "saturday": false
+//   },
+//   "timelinePics": [],
+//   "extraPrices": [
+//       {
+//           "pricePerUnit": "week",
+//           "pricePerParticipant": "70",
+//           "noOfUnits": 1,
+//           "pricePerHour": "30",
+//           "priceProrated": true,
+//           "setDefault": true
+//       }
+//   ],
+//   "categoryIds": [],
+//   "subCategoryIds": [
+//       "6284897d3c0c6e0c3949b891"
+//   ],
+//   "category": [],
+//   "pricePeriod": {},
+//   "realTime": {
+//       "from": 0,
+//       "to": 0
+//   },
+//   "isExpired": false,
+//   "isPrivateLession": false,
+//   "isParentJoin": false,
+//   "isParentGuardianRequire": false,
+//   "isOpenForBooking": true,
+//   "isChildCare": false,
+//   "isPriceNotMention": false,
+//   "multiLocations": [
+//       "6321d3f99a05f82338b976ec"
+//   ],
+//   "earlyDrop_off_LatePick_up": {
+//       "ealryDrop": true,
+//       "earlyTime": "10:30",
+//       "lateDrop": false,
+//       "lateTime": ""
+//   },
+//   "pricePerUnit": {
+//       "unit": "week",
+//       "actualPrice": "30"
+//   },
+//   "type": "Class",
+//   "privateOrGroup": "group",
+//   "city": "Jersey City",
+//   "parentalSupervisionRequired": "Parent attendance required",
+//   "maxNumberOfStudents": "Maximum number of kids a single class/session/lesson can accommodate",
+//   "indoorOroutdoor": "Indoor",
+//   "pricing": "Price available",
+//   "name": "test",
+//   "providerEmail": "6321d3f99a05f82338b976ee",
+//   "description": "test test",
+//   "specialInstructions": " fhfgh fhfgh fghfghn",
+//   "extractor_notes": " rgeg  g edgg link",
+//   "offerDiscount": "test tershfghfgbh dgh",
+//   "pricePerParticipant": "70",
+//   "exceptionDates": [],
+//   "activityRecurring": {
+//       "activityRecurring": false,
+//       "day": []
+//   },
+//   "userId": "6186620b8e5bb757115d5222",
+//   "program_last_reviewed": "26-12-2023",
+//   "extractionDate": "2023-12-26T09:00:26.184Z"
+// }
