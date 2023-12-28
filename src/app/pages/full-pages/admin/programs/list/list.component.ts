@@ -62,7 +62,7 @@ export class ListComponent implements OnInit {
       working_hour: ['', ],
       budget: ['', ]
     });
-
+    this.getProgramsByUserId()
   }
 
   pageChangeData(page:any){

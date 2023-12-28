@@ -46,7 +46,6 @@ export class Program {
   categoryId: any[] = [];
   tags: any = [];
   days: any = [];
-  timelinePics: any[] = [];
   extraPrices: any[] = [];
   user: string;
   joiningLink: string;
