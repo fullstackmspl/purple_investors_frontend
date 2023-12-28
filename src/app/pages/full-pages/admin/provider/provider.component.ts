@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { DatatableComponent, ColumnMode } from '@swimlane/ngx-datatable';
 import { ApiServiceService } from 'app/shared/services/api-service.service';
@@ -80,6 +81,7 @@ export class ProviderComponent implements OnInit {
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
+               private router:Router,
                private spinner: NgxSpinnerService,private formBuilder : FormBuilder,
                private cdr: ChangeDetectorRef) { 
                 this.user = JSON.parse(localStorage.getItem('user'))
@@ -261,7 +263,9 @@ export class ProviderComponent implements OnInit {
 //     }, (reason) => {
 //     });
 //   }
-
+goToPrograms(user) {
+  this.router.navigate(['/programs-list', user._id]);
+}
 
 openModalForProvider(content, id,row_data) {
   

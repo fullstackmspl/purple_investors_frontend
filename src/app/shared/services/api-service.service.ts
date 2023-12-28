@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment';
 import { Observable, Subject } from 'rxjs';
+import { Program } from '../models/program.model';
 
 @Injectable({
   providedIn: 'root'
@@ -233,5 +234,24 @@ deleteTask(id:any): Observable<any> {
   });
   return subject.asObservable();
 }
-
+addProgram(model): Observable<Program[]> {
+  const subject = new Subject<Program[]>();
+  this.http.post(`${this.root}/program/create`, model).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+getProgramsByUserId(id:any,page_size,page_number): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.get(`${this.root}/program/getByUserId/${id}?page_size=${page_size}&page_number=${page_number}`,).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
 }

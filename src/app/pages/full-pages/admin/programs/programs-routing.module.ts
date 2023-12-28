@@ -4,8 +4,8 @@ import { AddProgramComponent } from './add-program/add-program.component';
 import { ListComponent } from './list/list.component';
 
 const routes: Routes = [
-  {path:'add-program', component:AddProgramComponent},
-  {path:'programs-list', component:ListComponent}
+  {path:'add-program/:id', component:AddProgramComponent},
+  {path:'programs-list/:id', component:ListComponent}
 
 ];
 

@@ -36,7 +36,7 @@ export class Program {
   priceForSiblings: string;
   specialInstructions: string;
   adultAssistanceIsRequried: boolean = false;
-  capacity: any = {};
+  capacity: any = {min:0, max: 0};
   emails = [];
   sessions: any[];
   status: string;
@@ -93,9 +93,15 @@ export class Program {
   isPriceNotMention: boolean = false;
   multiLocations: any[] = [];
   providerEmail: string;
-  earlyDrop_off_LatePick_up: any = {};
+  privateOrGroup:string='group'
+  earlyDrop_off_LatePick_up: any =  {
+    ealryDrop: false,
+    earlyTime: '',
+    lateDrop: false,
+    lateTime: ''
+  };
   parentalSupervisionRequired: string;
-  maxNumberOfStudents: string;
+  maxNumberOfStudents: string='No Capacity info';
   skillGroup: string;
   pricing: string;
   pricePerUnit = {

@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DatatableComponent, ColumnMode } from '@swimlane/ngx-datatable';
 import { ApiServiceService } from 'app/shared/services/api-service.service';
@@ -39,11 +40,16 @@ export class ListComponent implements OnInit {
 
 
   imageUrl='';
+  id: any;
   
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
-               private spinner: NgxSpinnerService,private formBuilder : FormBuilder) {
+               private spinner: NgxSpinnerService,private formBuilder : FormBuilder,
+               private activatedRoute: ActivatedRoute) {
+                this.activatedRoute.params.subscribe(params => {
+                  this.id = params['id'];
+                });
                 }
 
   ngOnInit(): void {
@@ -61,6 +67,13 @@ export class ListComponent implements OnInit {
 
   pageChangeData(page:any){
     this.apiService.getAllTask(this.limitRef,page.offset +1).subscribe((res: any) => {
+      this.rows = res?.data?.user
+      this.rows.reverse()
+      this.page.totalPages = res?.data?.TotalCount
+    })
+  }
+  getProgramsByUserId(){
+    this.apiService.getProgramsByUserId(this.id,this.limitRef,1).subscribe((res: any) => {
       this.rows = res?.data?.user
       this.rows.reverse()
       this.page.totalPages = res?.data?.TotalCount
