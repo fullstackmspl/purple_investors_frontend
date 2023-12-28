@@ -33,7 +33,7 @@ export class ListComponent implements OnInit {
   public limitRef = 100;
   public columns = [
     { name: "Name", prop: "name" },
-    { name: "Email", prop: "email" },
+    { name: "Description", prop: "description" },
     { name: "Phone", prop: "phone_number" },
     { name: "Actions", prop: "Actions" },
   ];
@@ -74,10 +74,18 @@ export class ListComponent implements OnInit {
   }
   getProgramsByUserId(){
     this.apiService.getProgramsByUserId(this.id,this.limitRef,1).subscribe((res: any) => {
-      this.rows = res?.data?.user
-      this.rows.reverse()
-      this.page.totalPages = res?.data?.TotalCount
+      this.rows = res?.data?.items
+      // this.rows.reverse()
+      this.page.totalPages = res?.data?.totalCount
+      console.log(res,this.rows)
     })
+  }
+  showCategoryNames(categories){
+    let arr=[]
+    for(let i=0;i<categories.length;i++){
+      arr.push(categories[i].name)
+    }
+    return arr.toString()
   }
   getTagsFilter(data:any){
     // let search=data

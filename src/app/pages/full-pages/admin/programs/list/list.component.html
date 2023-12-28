@@ -35,7 +35,7 @@
                     <div class="col-flex-2 mb-1">
                       <button type="reset" class="btn btn-primary btn-block users-list-clear glow mb-0"
                       placement="top" ngbTooltip="Add New" routerLink="/add-program/{{id}}">
-                        + program
+                        +
                       </button>
                     </div>
                   </div>
@@ -48,6 +48,8 @@
               (page)="pageChangeData($event)">
               <ngx-datatable-column name="Name" prop="name" [width]="60">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  {{ row?.name }}
+
                   <!-- <div class="d-flex align-items-center">
                     <div *ngIf="!row.image" class="avatar mr-1 ml-0 bg-primary">
                       <div class="avatar-content">
@@ -64,18 +66,21 @@
                   </div> -->
                 </ng-template>
               </ngx-datatable-column>
-              <ngx-datatable-column name="Description" prop="task_type" [width]="80">
+              <ngx-datatable-column name="Description" prop="description" [width]="80">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  {{ row?.description }}
                   <!-- <p class="cursor-pointer" (click)="openModalTaskType(myModalTaskType,row,row?._id,row?.task_type)">{{row?.task_type}}</p>  -->
                 </ng-template>
               </ngx-datatable-column>
               <ngx-datatable-column name="Category" prop="user" [width]="10">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  {{showCategoryNames(row?.categoryId)}}
                   <!-- <p class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.user[0]?._id,row?._id,'Task Assign')">{{row?.user[0]?.fullname}}</p> -->
                 </ng-template>
               </ngx-datatable-column>
               <ngx-datatable-column name="Sub Category" prop="reviewUserId" [width]="10">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  {{showCategoryNames(row?.subCategoryIds)}}
                   <!-- <p class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.reviewUserId[0]?._id,row?._id,'Task Review')">{{row?.reviewUserId[0]?.fullname}}</p> -->
                 </ng-template>
               </ngx-datatable-column>
