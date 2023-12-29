@@ -1,11 +1,12 @@
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { DatatableComponent, ColumnMode } from '@swimlane/ngx-datatable';
 import { ApiServiceService } from 'app/shared/services/api-service.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
+import swal from 'sweetalert2';
 
 @Component({
   selector: 'app-list',
@@ -41,12 +42,14 @@ export class ListComponent implements OnInit {
 
   imageUrl='';
   id: any;
+  program: string;
   
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
                private spinner: NgxSpinnerService,private formBuilder : FormBuilder,
-               private activatedRoute: ActivatedRoute) {
+               private activatedRoute: ActivatedRoute,
+               private router:Router) {
                 this.activatedRoute.params.subscribe(params => {
                   this.id = params['id'];
                 });
@@ -78,6 +81,44 @@ export class ListComponent implements OnInit {
       // this.rows.reverse()
       this.page.totalPages = res?.data?.totalCount
       console.log(res,this.rows)
+    })
+  }
+  editProgram(row){
+    this.router.navigateByUrl(`/add-program/${this.id}?id=${row._id}`)
+  }
+  confirmDelete(id:string) {
+    this.program=id
+    swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#2F8BE6',
+      cancelButtonColor: '#F55252',
+      confirmButtonText: 'Yes, delete it!',
+      customClass: {
+        confirmButton: 'btn btn-warning',
+        cancelButton: 'btn btn-danger ml-1'
+      },
+      buttonsStyling: false,
+    }).then( (result)=> {
+      if (result.value) {
+        this.deleteProgram()
+      } else if (result.dismiss === swal.DismissReason.cancel) {
+        swal.fire({
+          title: 'Cancelled',
+          text: 'Your Program is safe :)',
+          icon: 'error',
+          customClass: {
+            confirmButton: 'btn btn-success'
+          },
+        })
+      }
+    });
+  }
+  deleteProgram(){
+    this.apiService.deleteProgram(this.program).subscribe((res:any)=>{
+      this.getProgramsByUserId()
     })
   }
   showCategoryNames(categories){

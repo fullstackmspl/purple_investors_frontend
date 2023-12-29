@@ -45,7 +45,6 @@ export class Program {
   addresses: [];
   categoryId: any[] = [];
   tags: any = [];
-  days: any = [];
   extraPrices: any[] = [];
   user: string;
   joiningLink: string;
@@ -87,7 +86,7 @@ export class Program {
   maxTravelDistance: number;
   totalSessionClasses: number;
   isParentGuardianRequire: boolean = false;
-  isOpenForBooking: boolean = true;
+  isOpenForBooking: string = 'Yes';
   isChildCare: boolean = false;
   isPriceNotMention: boolean = false;
   multiLocations: any[] = [];

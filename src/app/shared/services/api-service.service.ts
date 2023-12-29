@@ -244,11 +244,52 @@ addProgram(model): Observable<Program[]> {
   });
   return subject.asObservable();
 }
+// ----------------------- update Program ---------------------------------------------------
+updateProgram(data: any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.put(`${this.root}/program/update/${data._id}`, data).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
 getProgramsByUserId(id:any,page_size,page_number): Observable<any> {
   const subject = new Subject<any>();
   this.http.get(`${this.root}/program/getByUserId/${id}?page_size=${page_size}&page_number=${page_number}`,).subscribe(res => {
       this.userResponse = res;
       subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+// ----------------------- Get Program By Id---------------------------------------------------
+getProgramById(id:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.get(`${this.root}/program/getById/${id}`,).subscribe(res => {
+      subject.next(res);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+
+deleteProgram(id:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.delete(`${this.root}/program/remove/${id}`,).subscribe(res => {
+      subject.next(res);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+// ----------------------- Get Activity By program Id---------------------------------------------------
+getProgramsActivity(id:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.get(`${this.root}/activity/getByProgramId/${id}`,).subscribe(res => {
+      subject.next(res);
   }, error => {
       subject.next(error.error);
   });

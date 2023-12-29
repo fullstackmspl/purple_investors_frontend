@@ -1,7 +1,8 @@
 import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormControl, FormGroup, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { ColumnMode } from '@swimlane/ngx-datatable';
 import { Program } from 'app/shared/models/program.model';
 import { ApiServiceService } from 'app/shared/services/api-service.service';
 import { WondrflyApiService } from 'app/shared/services/wondrfly-api.service';
@@ -20,6 +21,14 @@ export class AddProgramComponent implements OnInit {
   secondFormSubmitted = false;
   infoFormSubmitted = false;
   alertVisible = true;
+  addProgramView=true
+  public ColumnMode = ColumnMode;
+  public columns = [
+    { name: "Name", prop: "name" },
+    { name: "Description", prop: "description" },
+    { name: "Phone", prop: "phone_number" },
+    { name: "Actions", prop: "Actions" },
+  ];
 
   countries = [
       { value: "USA", name: 'USA' },
@@ -49,7 +58,17 @@ export class AddProgramComponent implements OnInit {
       { value: "Folk", name: 'Folk' },
       { value: "Hip Hop", name: 'Hip Hop' },
   ];
-
+  date_options_list=[
+    {name:"Date is not available",value:"Dates are not available"},
+    {name:"Dates are flexible",value:"Dates are flexible"},
+    {name:"Dates available",value:"Dates available"},
+  ]
+  days_options_list=[
+    {name:"Days provided"},
+    {name:"Days are flexible"}, 
+    {name:"No data available"}
+  ]
+  requiredRecipients:boolean
   selectedMovies = ["The Dark Knight", "Perl Harbour"];
   movies = [
       { value: "Avatar", name: 'Avatar' },
@@ -60,7 +79,20 @@ export class AddProgramComponent implements OnInit {
       { value: "Perl Harbour", name: 'Perl Harbour' },
       { value: "Airplane!", name: 'Airplane!' },
   ];
+  Instructors_List=[
 
+  ]
+  inpersonOrvirtual_List=[
+    {name:"In person only",value:"Inperson"},
+    {name:"Online only",value:"Virtual"},
+    {name:"In-person or Online",value:"In-person or Online"},
+    {name:"No data available",value:"No data available"}
+  ]
+  isOpenForBooking_List=[
+    {name:"Yes",value:"Yes"},
+    {name:"No",value:"No"},
+    {name:"No info",value:"No info"}
+  ]
   category_List:any[]=[]
   months_List=[]
   years_List=[]
@@ -81,6 +113,9 @@ export class AddProgramComponent implements OnInit {
     {name:"No data available",value:'No data available'},
   ]
   id: any;
+  programId: any;
+  isEdit: boolean;
+  activityList: any;
   changePricing(val){
     this.program.pricing=val.value
     console.log(this.program.pricing)
@@ -129,24 +164,24 @@ export class AddProgramComponent implements OnInit {
     indoorOroutdoor: new FormControl('No data available', [Validators.required]),
   });
 
-  infoForm = new UntypedFormGroup({
-    offersDiscounts: new UntypedFormControl('', [Validators.required]),
-    specialAdditionalInfo: new UntypedFormControl('', [Validators.required]),
-    bookingCancel: new UntypedFormControl('', [Validators.required]),
+  infoForm = new FormGroup({
+    offersDiscounts: new FormControl('', [Validators.required]),
+    specialAdditionalInfo: new FormControl('', [Validators.required]),
+    bookingCancel: new FormControl('', [Validators.required]),
 
-    bdate: new UntypedFormControl('', [Validators.required]),
-    bio: new UntypedFormControl(''),
-    phone: new UntypedFormControl('', [Validators.required]),
-    website: new UntypedFormControl('')
+    bdate: new FormControl('', [Validators.required]),
+    bio: new FormControl(''),
+    phone: new FormControl('', [Validators.required]),
+    website: new FormControl('')
   });
 
-  socialForm = new UntypedFormGroup({
-    twitter: new UntypedFormControl(''),
-    facebook: new UntypedFormControl(''),
-    googlePlus: new UntypedFormControl(''),
-    linkedin: new UntypedFormControl(''),
-    instagram: new UntypedFormControl(''),
-    quora: new UntypedFormControl('')
+  socialForm = new FormGroup({
+    twitter: new FormControl(''),
+    facebook: new FormControl(''),
+    googlePlus: new FormControl(''),
+    linkedin: new FormControl(''),
+    instagram: new FormControl(''),
+    quora: new FormControl('')
   });
 program_model={
   name:'',
@@ -199,6 +234,10 @@ parental_supervision_required=[
 ]
 program: any = new Program;
   tags: any[];
+  capacity={
+    min: 0,
+    max: 0
+  }
   constructor( private modalService: NgbModal,private wondrflyapiservice:WondrflyApiService,
     private apiservice:ApiServiceService,private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
@@ -206,10 +245,38 @@ program: any = new Program;
       this.activatedRoute.params.subscribe(params => {
         this.id = params['id'];
       });
+      this.activatedRoute.queryParams
+      .subscribe(async (params: any) => {
+      if(params.id){
+        this.isEdit=true;
+        this.programId=params.id
+        this.getProgramById(this.programId)
+      }
+      });
     this.getCategories()
     this.getTags()
    }
-
+ getProgramById(id){
+  this.apiservice.getProgramById(id).subscribe((res:any)=>{
+    this.program=res.data
+    this.program.subCategoryIds=this.program.subCategoryIds.map((item:any)=>item._id)
+    this.program.categoryId=this.program.categoryId.map((item:any)=>item._id)
+    this.extraPrices=this.program.extraPrices
+    this.capacity=this.program.capacity
+    this.program.email=this.program.emails[0]
+    if(this.program.last_reviewed){
+    this.program.last_reviewed=this.parseISODate(this.program.last_reviewed)
+    }
+    this.getActivities()
+})
+}
+getActivities() {
+  this.apiservice.getProgramsActivity(this.programId).subscribe((res: any) => {
+    if (res.isSuccess) {
+      this.activityList = res.data;
+    }
+  })
+}
   ngOnInit() {
     this. ageRange()
 
@@ -297,14 +364,14 @@ program: any = new Program;
   }
   activatedAgeClass(age, type) {
     if (type == 'year') {
-      const index = this.program.ageGroup.year.indexOf(age);
+      const index = this.program.ageGroup?.year.indexOf(age);
       if (index >= 0) {
         return true;
       }
       return false
     }
     if (type == 'month') {
-      const index = this.program.ageGroup.month.indexOf(age);
+      const index = this.program.ageGroup?.month.indexOf(age);
       if (index >= 0) {
         return true;
       }
@@ -370,6 +437,7 @@ program: any = new Program;
     this.secondFormSubmitted = true;
     console.log('secondForm',this.secondForm.value)
     if (this.secondForm.invalid) {
+      this.requiredRecipients=true
       return;
     }
     this.setActiveTab('Program Pricing')
@@ -388,25 +456,61 @@ program: any = new Program;
     // }
     
   }
+  parseISODate(isoDateString) {
+    const date = new Date(isoDateString);
+    
+    return {
+      year: date.getFullYear(),
+      month: date.getMonth() + 1, // Months are zero-based
+      day: date.getDate()
+    };
+  }
   addProgram() {
     this.program.extraPrices = this.extraPrices;
     this.program.userId = this.id;
     this.program.user = this.id;
-    this.apiservice.addProgram(this.program).subscribe((res: any) => {
-      // this.loader.close();
-      if (res.isSuccess === true) {
-        // this.programId = res.data._id || res.data.id;
-        // // this.session.setItem("ag_", this.programId)
-        // this.snack.open('Program Added successfully', 'OK', { duration: 5000 });
-        // // this.route.navigate(['tables/program', this.id]);
-        // this.isActivityTable = true;
-        // this.stepChange('ACTIVITIES');
-        this.router.navigate(['/programs-list',this.id]);
-      }
-      else{
-        this.toastr.error('Something went wrong!')
-      }
-    });
+    this.program.capacity=this.capacity
+    this.program.emails=[this.program.email]
+    if(this.program.last_reviewed){
+      const date = new Date(this.program.last_reviewed.year, this.program.last_reviewed.month - 1, this.program.last_reviewed.day);
+      // Convert the date to ISO string
+     const isoDate = date.toISOString();
+     this.program.last_reviewed=isoDate
+    }
+    if(this.isEdit){
+      this.apiservice.updateProgram(this.program).subscribe((res: any) => {
+        // this.loader.close();
+        if (res.isSuccess === true) {
+          // this.programId = res.data._id || res.data.id;
+          // // this.session.setItem("ag_", this.programId)
+          // this.snack.open('Program Added successfully', 'OK', { duration: 5000 });
+          // // this.route.navigate(['tables/program', this.id]);
+          // this.isActivityTable = true;
+          // this.stepChange('ACTIVITIES');
+          this.router.navigate(['/programs-list',this.id]);
+        }
+        else{
+          this.toastr.error('Something went wrong!')
+        }
+      });
+    }
+    else{
+      this.apiservice.addProgram(this.program).subscribe((res: any) => {
+        // this.loader.close();
+        if (res.isSuccess === true) {
+          // this.programId = res.data._id || res.data.id;
+          // // this.session.setItem("ag_", this.programId)
+          // this.snack.open('Program Added successfully', 'OK', { duration: 5000 });
+          // // this.route.navigate(['tables/program', this.id]);
+          // this.isActivityTable = true;
+          // this.stepChange('ACTIVITIES');
+          this.router.navigate(['/programs-list',this.id]);
+        }
+        else{
+          this.toastr.error('Something went wrong!')
+        }
+      });
+    }
     // this.loader.close();
   }
 
