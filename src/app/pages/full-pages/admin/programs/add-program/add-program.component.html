@@ -530,8 +530,8 @@
                                     </button>
                                   </div> -->
                                   <div class="col-flex-2 mb-1" style="float: right;">
-                                    <button type="reset" style="width: 110px;" class="btn btn-primary btn-block users-list-clear glow mb-0"
-                                    placement="top" ngbTooltip="Add New" routerLink="/add-program/{{id}}" (click)="addProgramView=false">
+                                    <button *ngIf="addProgramView" type="reset" style="width: 110px;" class="btn btn-primary btn-block users-list-clear glow mb-0"
+                                    placement="top" ngbTooltip="Add New" routerLink="/add-program/{{id}}" (click)="addProgramView=false;setActiveTab('Activity Info')">
                                       + Activity
                                     </button>
                                   </div>
