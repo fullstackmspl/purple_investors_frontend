@@ -10,12 +10,14 @@ import { ListComponent } from './list/list.component';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { MatOptionModule } from '@angular/material/core';
-
+import { TagInputModule } from 'ngx-chips';
+import { AllProgramsComponent } from './all-programs/all-programs.component';
 
 @NgModule({
   declarations: [
     AddProgramComponent,
-    ListComponent
+    ListComponent,
+    AllProgramsComponent
   ],
   imports: [
     CommonModule,
@@ -27,6 +29,7 @@ import { MatOptionModule } from '@angular/material/core';
     NgxDatatableModule,
     NgxSpinnerModule,
     MatOptionModule,
+    TagInputModule
   ]
 })
 export class ProgramsModule { }

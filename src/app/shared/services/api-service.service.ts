@@ -295,4 +295,30 @@ getProgramsActivity(id:any): Observable<any> {
   });
   return subject.asObservable();
 }
+
+searchProviders(search:any,cityId?): Observable<any> {
+  const subject = new Subject<any>();
+  let url = `${this.root}/user/searchProvider?fullname=${search}`
+  if(cityId) url += `&cityId=${cityId}`
+  this.http.get(url).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+searchProgram(providerId:any,cityId?): Observable<any> {
+  const subject = new Subject<any>();
+  let url = `${this.root}/program/search?`
+  if(providerId!=undefined&&providerId!='undefined') url += `user=${providerId}`
+  if(cityId) url += `&cityId=${cityId}`
+  this.http.get(url).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
 }

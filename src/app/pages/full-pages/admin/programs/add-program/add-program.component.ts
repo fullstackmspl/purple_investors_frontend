@@ -3,10 +3,14 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { ColumnMode } from '@swimlane/ngx-datatable';
+import { Activity } from 'app/shared/models/activity.model';
 import { Program } from 'app/shared/models/program.model';
 import { ApiServiceService } from 'app/shared/services/api-service.service';
 import { WondrflyApiService } from 'app/shared/services/wondrfly-api.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
+import * as moment from 'moment';
+
 @Component({
   selector: 'app-add-program',
   templateUrl: './add-program.component.html',
@@ -17,6 +21,21 @@ export class AddProgramComponent implements OnInit {
   ageYears: any[] = [];
   extraPrices: any[] = [];
   activeTab = "Program Info";
+  activity: any = new Activity;
+  activityRecurring = {
+    activityRecurring: false,
+    day: [],
+  }
+  days ={
+    sunday: false,
+    monday: false,
+    tuesday: false,
+    wednesday: false,
+    thursday: false,
+    friday: false,
+    saturday: false,
+  }
+  city_List: any[]=[];
   firstFormGroupSubmitted = false;
   secondFormSubmitted = false;
   infoFormSubmitted = false;
@@ -116,6 +135,11 @@ export class AddProgramComponent implements OnInit {
   programId: any;
   isEdit: boolean;
   activityList: any;
+  startDate: any = new Date;
+  endDate: any = new Date;
+  last_reviewed: any = new Date;
+  activityfirstFormGroupSubmitted: boolean;
+  activitySecondFormGroupSubmitted: boolean;
   changePricing(val){
     this.program.pricing=val.value
     console.log(this.program.pricing)
@@ -154,7 +178,16 @@ export class AddProgramComponent implements OnInit {
       description: new FormControl(['',]),
       email: new FormControl(['', Validators.email]),
   });
-
+  activityfirstFormGroup = new FormGroup({
+    name: new FormControl(['',]),
+    description: new FormControl(['',]),
+    email: new FormControl(['', Validators.email]),
+});
+activitySecondFormGroup = new FormGroup({
+  name: new FormControl(['',]),
+  description: new FormControl(['',]),
+  email: new FormControl(['', Validators.email]),
+});
   secondForm = new FormGroup({
     parentalSupervisionRequired: new FormControl('No data available', [Validators.required]),
     maxNumberOfStudents: new FormControl('No Capacity info', [Validators.required]),
@@ -203,21 +236,7 @@ program_model={
 }
 minCapacity: number = 0;
 maxCapacity: number = 0;
-days: any =
-  {
-    sunday: false,
-    monday: false,
-    tuesday: false,
-    wednesday: false,
-    thursday: false,
-    friday: false,
-    saturday: false,
-  }
 
-activityRecurring = {
-  activityRecurring: false,
-  day: [],
-}
 parental_supervision_required=[
   {
     name:"Parent attendance required",
@@ -239,7 +258,7 @@ program: any = new Program;
     max: 0
   }
   constructor( private modalService: NgbModal,private wondrflyapiservice:WondrflyApiService,
-    private apiservice:ApiServiceService,private activatedRoute: ActivatedRoute,
+    private apiservice:ApiServiceService,private activatedRoute: ActivatedRoute,  private spinner: NgxSpinnerService,
     private toastr: ToastrService,
     private router:Router) {
       this.activatedRoute.params.subscribe(params => {
@@ -277,9 +296,27 @@ getActivities() {
     }
   })
 }
+items=[]
+public onSelect(item) {
+  console.log('tag selected: value is ' + item,this.items);
+}
+getAllCity(){
+  // this.spinner.show(undefined,
+  //   {
+  //     type: 'ball-triangle-path',
+  //     size: 'medium',
+  //     bdColor: 'rgba(0, 0, 0, 0.8)',
+  //     color: '#fff',
+  //     fullScreen: true
+  //   });
+  this.apiservice.getAllCity(1000,1).subscribe((res: any) => {
+    // this.spinner.hide();
+    this.city_List = res?.data?.user
+  })
+}
   ngOnInit() {
     this. ageRange()
-
+    this.getAllCity()
     // this.firstFormGroup = new FormGroup({
     //   name: new FormControl(['',]),
     //   type: new FormControl(['',]),
@@ -352,7 +389,11 @@ getActivities() {
     // });
 
   }
-
+ addActivity(){
+  this.activity.date.from = `${moment(this.startDate).format('YYYY-MM-DD')}T09:00:26.184Z`
+  this.activity.date.to = `${moment(this.endDate).format('YYYY-MM-DD')}T09:00:26.184Z`
+  this.activity.last_reviewed = moment(this.last_reviewed).format('DD-MM-YYYY');
+ }
   ageRange(){
     for(let i =2; i<18; i++){
       this.years_List.push(i)
@@ -407,7 +448,12 @@ getActivities() {
   get ff() {
     return this.firstFormGroup.controls;
   }
-
+  get acff() {
+    return this.activityfirstFormGroup.controls;
+  }
+  get acSf() {
+    return this.activitySecondFormGroup.controls;
+  }
   get sf() {
     return this.secondForm.controls;
   }
@@ -432,7 +478,20 @@ getActivities() {
     }
     this.setActiveTab('Program Features')
   }
-
+  onActivityfirstFormGroupSubmit() {
+    this.activityfirstFormGroupSubmitted = true;
+    if (this.activityfirstFormGroup.invalid) {
+      return;
+    }
+    this.setActiveTab('Activity Schedule')
+  }
+  onActivitySecondFormGroupSubmit() {
+    this.activitySecondFormGroupSubmitted = true;
+    if (this.activitySecondFormGroup.invalid) {
+      return;
+    }
+    this.setActiveTab('For Internal Use')
+  }
   onSecondFormSubmit() {
     this.secondFormSubmitted = true;
     console.log('secondForm',this.secondForm.value)
@@ -466,6 +525,14 @@ getActivities() {
     };
   }
   addProgram() {
+    this.spinner.show(undefined,
+      {
+        type: 'ball-triangle-path',
+        size: 'medium',
+        bdColor: 'rgba(0, 0, 0, 0.8)',
+        color: '#fff',
+        fullScreen: true
+      });
     this.program.extraPrices = this.extraPrices;
     this.program.userId = this.id;
     this.program.user = this.id;
@@ -481,6 +548,7 @@ getActivities() {
       this.apiservice.updateProgram(this.program).subscribe((res: any) => {
         // this.loader.close();
         if (res.isSuccess === true) {
+          this.spinner.hide();
           // this.programId = res.data._id || res.data.id;
           // // this.session.setItem("ag_", this.programId)
           // this.snack.open('Program Added successfully', 'OK', { duration: 5000 });
@@ -498,7 +566,8 @@ getActivities() {
       this.apiservice.addProgram(this.program).subscribe((res: any) => {
         // this.loader.close();
         if (res.isSuccess === true) {
-          // this.programId = res.data._id || res.data.id;
+          this.spinner.hide();
+          this.programId = res.data._id || res.data.id;
           // // this.session.setItem("ag_", this.programId)
           // this.snack.open('Program Added successfully', 'OK', { duration: 5000 });
           // // this.route.navigate(['tables/program', this.id]);
@@ -554,6 +623,9 @@ getActivities() {
   getCategory(event){
     console.log(this.program.categoryId)
     this.program_model.categoryId
+  }
+  getDateOptions(event){
+    console.log(this.activity.dateOption)
   }
   getCategories() {
     this.wondrflyapiservice.getCategory("true").subscribe(res => {

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -12,6 +12,7 @@ import swal from 'sweetalert2';
   selector: 'app-list',
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
 })
 export class ListComponent implements OnInit {
@@ -65,19 +66,33 @@ export class ListComponent implements OnInit {
       working_hour: ['', ],
       budget: ['', ]
     });
-    this.getProgramsByUserId()
+    if(this.id){
+      this.getProgramsByUserId()
+    }
+    else{
+
+    }
   }
 
   pageChangeData(page:any){
-    this.apiService.getAllTask(this.limitRef,page.offset +1).subscribe((res: any) => {
+    this.apiService.getProgramsByUserId(this.id,this.limitRef,page.offset +1).subscribe((res: any) => {
       this.rows = res?.data?.user
-      this.rows.reverse()
+      // this.rows.reverse()
       this.page.totalPages = res?.data?.TotalCount
     })
   }
   getProgramsByUserId(){
+    this.spinner.show(undefined,
+      {
+        type: 'ball-triangle-path',
+        size: 'medium',
+        bdColor: 'rgba(0, 0, 0, 0.8)',
+        color: '#fff',
+        fullScreen: true
+      });
     this.apiService.getProgramsByUserId(this.id,this.limitRef,1).subscribe((res: any) => {
       this.rows = res?.data?.items
+      this.spinner.hide();
       // this.rows.reverse()
       this.page.totalPages = res?.data?.totalCount
       console.log(res,this.rows)

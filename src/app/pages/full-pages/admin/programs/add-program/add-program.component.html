@@ -4,7 +4,7 @@
   </div>
 </div>
 <div class="row">
-  <div class="col-md-3 mt-3" *ngIf="addProgramView;else addActivity">
+  <div class="col-md-3 mt-3" *ngIf="addProgramView;else addActivityView">
     <ul class="nav flex-column nav-pills" id="myTab" role="tablist">
       <li class="nav-item">
         <a class="nav-link" href="javascript:;" [ngClass]="{active: activeTab === 'Program Info'}"
@@ -38,7 +38,7 @@
           <span class="align-middle">Program Internal Use</span>
         </a>
       </li>
-      <li class="nav-item">
+      <li class="nav-item" *ngIf="programId">
         <a class="nav-link" href="javascript:;" [ngClass]="{active: activeTab === 'Activities'}"
           (click)="setActiveTab('Activities')" id="Activities-tab" data-toggle="tab" role="tab"
           aria-controls="Activities" aria-selected="false">
@@ -48,7 +48,7 @@
       </li>
     </ul>
   </div>
-  <ng-template #addActivity>
+  <ng-template #addActivityView>
     <div class="col-md-3 mt-3">
       <ul class="nav flex-column nav-pills" id="myTab" role="tablist">
         <li class="nav-item">
@@ -136,6 +136,20 @@
                       <div *ngIf="firstFormGroupSubmitted && (ff.description.invalid || ff.description.errors?.required)"
                         class="help-block mt-1 text-danger"> <i class="ft-alert-circle align-middle"></i> This is
                         required</div>
+                    </div>
+                  </div>
+                  <div class="col-12 form-group">
+                    <label>City</label>
+                    <div class="controls">
+                      <ng-select
+                        [items]="city_List"
+                        bindLabel="city"
+                        bindValue="_id"
+                        placeholder="Select City"
+                        [(ngModel)]="program.cityId"  
+                        [ngModelOptions]="{standalone: true}"
+                        >
+                      </ng-select>
                     </div>
                   </div>
                   <div class="col-12 form-group">
@@ -531,11 +545,11 @@
                                   </div> -->
                                   <div class="col-flex-2 mb-1" style="float: right;">
                                     <button *ngIf="addProgramView" type="reset" style="width: 110px;" class="btn btn-primary btn-block users-list-clear glow mb-0"
-                                    placement="top" ngbTooltip="Add New" routerLink="/add-program/{{id}}" (click)="addProgramView=false;setActiveTab('Activity Info')">
+                                    placement="top" ngbTooltip="Add New" (click)="addProgramView=false;setActiveTab('Activity Info')">
                                       + Activity
                                     </button>
                                     <button *ngIf="!addProgramView" type="reset" style="width: 110px;" class="btn btn-primary btn-block users-list-clear glow mb-0"
-                                    placement="top" ngbTooltip="Add New" routerLink="/add-program/{{id}}" (click)="addProgramView=true;setActiveTab('Activities')">
+                                    placement="top" ngbTooltip="Add New" (click)="addProgramView=true;setActiveTab('Activities')">
                                       Cancel
                                     </button>
                                   </div>
@@ -590,13 +604,13 @@
             </div>
             <div class="tab-pane" [ngClass]="{active: activeTab === 'Activity Info'}" id="Activity Info" role="tabpanel"
             aria-labelledby="Activity Info-tab">
-            <form [formGroup]="firstFormGroup" (ngSubmit)="onfirstFormGroupSubmit()">
+            <form [formGroup]="activityfirstFormGroup" (ngSubmit)="onActivityfirstFormGroupSubmit()">
               <div style="display: flex;">
                 <h4>Activity Info</h4>
                 <hr>
                 <div class="col-flex-2 mb-1" style="float: right;">
                   <button *ngIf="!addProgramView" type="reset" style="width: 110px;" class="btn btn-primary btn-block users-list-clear glow mb-0"
-                  placement="top" ngbTooltip="Add New" routerLink="/add-program/{{id}}" (click)="addProgramView=true;setActiveTab('Activities')">
+                  placement="top" ngbTooltip="Add New" (click)="addProgramView=true;setActiveTab('Activities')">
                     Cancel
                   </button>
                 </div>
@@ -610,7 +624,7 @@
                       bindLabel="name"
                       bindValue="id"
                       placeholder="Select instructors"
-                      [(ngModel)]="program.categoryId"  
+                      [(ngModel)]="activity.instructors"  
                       [ngModelOptions]="{standalone: true}"
                       (change)="getCategory($event)"
                       [multiple]="true"
@@ -625,11 +639,9 @@
                     [items]="inpersonOrvirtual_List"
                     bindLabel="name"
                     bindValue="value"
-                    [multiple]="true"
                     placeholder="Select Online vs In-person"
-                    [(ngModel)]="program.subCategoryIds"  
+                    [(ngModel)]="activity.inpersonOrVirtual"  
                     [ngModelOptions]="{standalone: true}"
-                    (change)="getSubCategory($event)"
                     >
                   </ng-select>
                   </div>
@@ -641,26 +653,32 @@
                     [items]="isOpenForBooking_List"
                     bindLabel="name"
                     bindValue="value"
-                    [multiple]="true"
                     placeholder="Select "
-                    [(ngModel)]="program.subCategoryIds"  
+                    [(ngModel)]="activity.isOpenForBooking"  
                     [ngModelOptions]="{standalone: true}"
-                    (change)="getSubCategory($event)"
                     >
                   </ng-select>
                   </div>
                 </div>
                 <div class="col-12 form-group">
                   <label>Join Links</label>
+                  <div class="form-group">
+                    <tag-input [(ngModel)]="items" (onSelect)="onSelect($event)" [modelAsStrings]="true">
+                    </tag-input>
+                    <!-- <p class="text-muted small my-1">By default close char is <code>x</code>. -->
+                  </div>
+                </div>
+                <!-- <div class="col-12 form-group">
+                  <label>Join Links</label>
                   <div class="controls">
                     <input type="text" formControlName="name"  class="form-control" placeholder="displayname"
-                      [ngClass]="{ 'is-invalid': firstFormGroupSubmitted && ff.name.invalid, 'is-valid': firstFormGroupSubmitted && !ff.name.invalid }"
+                      [ngClass]="{ 'is-invalid': activityfirstFormGroupSubmitted && acff.name.invalid, 'is-valid': activityfirstFormGroupSubmitted && !acff.name.invalid }"
                       required>
-                    <div *ngIf="firstFormGroupSubmitted && (ff.name.invalid || ff.name.errors?.required)"
+                    <div *ngIf="activityfirstFormGroupSubmitted && (acff.name.invalid || acff.name.errors?.required)"
                       class="help-block mt-1 text-danger"> <i class="ft-alert-circle align-middle"></i> This is
                       required</div>
                   </div>
-                </div>
+                </div> -->
                 <div class="col-12 d-flex flex-sm-row flex-column justify-content-end">
                   <button type="submit" class="btn btn-primary mr-sm-2 mb-1">Next</button>
                 </div>
@@ -669,13 +687,13 @@
           </div>
           <div class="tab-pane" [ngClass]="{active: activeTab === 'Activity Schedule'}" id="Activity Schedule"
           role="tabpanel" aria-labelledby="Activity Schedule-tab">
-          <form [formGroup]="secondForm" (ngSubmit)="onSecondFormSubmit()">
+          <form [formGroup]="activitySecondFormGroup" (ngSubmit)="onActivitySecondFormGroupSubmit()">
             <div style="display: flex;">
               <h4>Activity Schedule</h4>
               <hr>
               <div class="col-flex-2 mb-1" style="float: right;">
                 <button *ngIf="!addProgramView" type="reset" style="width: 110px;" class="btn btn-primary btn-block users-list-clear glow mb-0"
-                placement="top" ngbTooltip="Add New" routerLink="/add-program/{{id}}" (click)="addProgramView=true;setActiveTab('Activities')">
+                placement="top" ngbTooltip="Add New" (click)="addProgramView=true;setActiveTab('Activities')">
                   Cancel
                 </button>
               </div>
@@ -688,35 +706,37 @@
                     bindLabel="name"
                     bindValue="value"
                     placeholder="Select"
-                    formControlName="parentalSupervisionRequired"
-                    [(ngModel)]="program.parentalSupervisionRequired" 
+                    formControlName="dateOption"
+                    [(ngModel)]="activity.dateOption" 
+                    (change)="getDateOptions($event)"
                     >
                   </ng-select>
               </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" *ngIf="activity.dateOption == 'Dates available'">
               <label>Date From</label>
               <div class="controls">
-                <!-- <input type="date" class="form-control" name="bookingCancel" id="bookingCancel" > -->
-                <input ngbDatepicker (click)="datePicker.toggle()" #datePicker="ngbDatepicker"
-                 [(ngModel)]="program.last_reviewed" type="text"  [ngModelOptions]="{standalone: true}" class="form-control pickadate" required
-                placeholder="Date From">
+                <input type="date"  [(ngModel)]="startDate" class="form-control" name="startDate" id="startDate" >
+                <!-- <input ngbDatepicker (click)="datePicker.toggle()" #datePicker="ngbDatepicker"
+                 [(ngModel)]="startDate" type="text"  [ngModelOptions]="{standalone: true}" class="form-control pickadate" required
+                placeholder="Date From"> -->
               </div>
             </div>
-            <div class="form-group">
+            <div class="form-group" *ngIf="activity.dateOption == 'Dates available'">
               <label>Date To</label>
               <div class="controls">
                 <!-- <input type="date" class="form-control" name="bookingCancel" id="bookingCancel" > -->
-                <input ngbDatepicker (click)="datePicker.toggle()" #datePicker="ngbDatepicker"
-                 [(ngModel)]="program.last_reviewed" type="text"  [ngModelOptions]="{standalone: true}" class="form-control pickadate" required
-                placeholder="Date To">
+                <input type="date"  [(ngModel)]="startDate" class="form-control" name="startDate" id="startDate" >
+                <!-- <input ngbDatepicker (click)="datePicker.toggle()" #datePicker="ngbDatepicker"
+                 [(ngModel)]="endDate" type="text"  [ngModelOptions]="{standalone: true}" class="form-control pickadate" required
+                placeholder="Date To"> -->
               </div>
             </div>
             <div class="col-12 form-group">
               <div class="form-check">
                 <input class="form-check-input" type="checkbox" (change)="getFreeTrial($event)" [(ngModel)]="program.isFreeTrial"  id="flexCheckDefault1" [ngModelOptions]="{standalone: true}">
                 <label class="form-check-label" for="flexCheckDefault1">
-                  Does it have a Free Trial?
+                  Is activity recurring ?
                 </label>
               </div>
             </div>
@@ -776,13 +796,12 @@
         </div>
         <div class="tab-pane" [ngClass]="{active: activeTab === 'For Internal Use'}" id="For Internal Use" role="tabpanel"
         aria-labelledby="For Internal Use-tab">
-        <form [formGroup]="socialForm" >
           <div style="display: flex;">
             <h4>For Internal Use</h4>
             <hr>
             <div class="col-flex-2 mb-1" style="float: right;">
               <button *ngIf="!addProgramView" type="reset" style="width: 110px;" class="btn btn-primary btn-block users-list-clear glow mb-0"
-              placement="top" ngbTooltip="Add New" routerLink="/add-program/{{id}}" (click)="addProgramView=true;setActiveTab('Activities')">
+              placement="top" ngbTooltip="Add New" (click)="addProgramView=true;setActiveTab('Activities')">
                 Cancel
               </button>
             </div>
@@ -790,23 +809,22 @@
           <div class="form-group">
             <label>Extractor Note</label>
             <div class="controls">
-             <textarea name="specialAdditionalInfo" class="form-control" id="specialAdditionalInfo"  [(ngModel)]="program.extractor_notes"  [ngModelOptions]="{standalone: true}" cols="30" rows="3"></textarea>
+             <textarea name="specialAdditionalInfo" class="form-control" id="specialAdditionalInfo"  [(ngModel)]="activity.extractor_notes"  [ngModelOptions]="{standalone: true}" cols="30" rows="3"></textarea>
             </div>
           </div>
           <div class="form-group">
             <label>Last Review Date</label>
             <div class="controls">
-              <!-- <input type="date" class="form-control" name="bookingCancel" id="bookingCancel" > -->
-              <input ngbDatepicker (click)="datePicker.toggle()" #datePicker="ngbDatepicker"
-               [(ngModel)]="program.last_reviewed" type="text"  [ngModelOptions]="{standalone: true}" class="form-control pickadate" required
-              placeholder="Last Review Date">
+              <input type="date" class="form-control" name="bookingCancel" id="bookingCancel" >
+              <!-- <input ngbDatepicker (click)="datePicker.toggle()" #datePicker="ngbDatepicker"
+               [(ngModel)]="program.last_reviewed" type="text" class="form-control pickadate" required
+              placeholder="Last Review Date"> -->
             </div>
           </div>
           <div class="d-flex flex-sm-row flex-column justify-content-end">
             <button type="submit" class="btn btn-secondary mr-sm-2 mb-1" (click)="setActiveTab('Program Pricing')">Previous</button>
             <button type="button" class="btn btn-primary mb-1" (click)="addProgram()" >Save</button>
           </div>
-        </form>
       </div>
             <!-- <div class="tab-pane" [ngClass]="{active: activeTab === 'notifications'}" id="notifications" role="tabpanel"
               aria-labelledby="notifications-tab">

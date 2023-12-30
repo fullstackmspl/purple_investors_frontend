@@ -4,6 +4,7 @@ export class Program {
   isFav: boolean;
   name: string;
   description: string;
+  cityId: string;
   type: string;
   email: string;
   price: string;
