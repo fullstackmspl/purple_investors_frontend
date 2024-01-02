@@ -490,7 +490,7 @@ export class AddProgramComponent implements OnInit {
         // // this.route.navigate(['tables/program', this.id]);
         // this.isActivityTable = true;
         // this.stepChange('ACTIVITIES');
-        this.router.navigate(['/programs-list', this.id]);
+        // this.router.navigate(['/programs-list', this.id]);
       }
       else {
         this.toastr.error('Something went wrong!')
