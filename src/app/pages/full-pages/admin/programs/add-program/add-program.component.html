@@ -8,8 +8,8 @@
     <ul class="nav flex-column nav-pills" id="myTab" role="tablist">
       <li class="nav-item">
         <a class="nav-link" href="javascript:;" [ngClass]="{active: activeTab === 'Program Info'}"
-          (click)="setActiveTab('Program Info')" id="Program Info-tab" data-toggle="tab" role="tab" aria-controls="Program Info"
-          aria-selected="true">
+          (click)="setActiveTab('Program Info')" id="Program Info-tab" data-toggle="tab" role="tab"
+          aria-controls="Program Info" aria-selected="true">
           <i class="ft-info mr-1 align-middle"></i>
           <span class="align-middle">Program Info</span>
         </a>
@@ -24,8 +24,8 @@
       </li>
       <li class="nav-item">
         <a class="nav-link" href="javascript:;" [ngClass]="{active: activeTab === 'Program Pricing'}"
-          (click)="setActiveTab('Program Pricing')" id="Program Pricing-tab" data-toggle="tab" role="tab" aria-controls="Program Pricing"
-          aria-selected="false">
+          (click)="setActiveTab('Program Pricing')" id="Program Pricing-tab" data-toggle="tab" role="tab"
+          aria-controls="Program Pricing" aria-selected="false">
           <i class="ft-dollar-sign mr-1 align-middle"></i>
           <span class="align-middle">Program Pricing</span>
         </a>
@@ -53,8 +53,8 @@
       <ul class="nav flex-column nav-pills" id="myTab" role="tablist">
         <li class="nav-item">
           <a class="nav-link" href="javascript:;" [ngClass]="{active: activeTab === 'Activity Info'}"
-            (click)="setActiveTab('Activity Info')" id="Activity Info-tab" data-toggle="tab" role="tab" aria-controls="Program Info"
-            aria-selected="true">
+            (click)="setActiveTab('Activity Info')" id="Activity Info-tab" data-toggle="tab" role="tab"
+            aria-controls="Program Info" aria-selected="true">
             <i class="ft-info mr-1 align-middle"></i>
             <span class="align-middle">Activity Info</span>
           </a>
@@ -102,7 +102,8 @@
                   <div class="col-12 form-group">
                     <label>Display Name</label>
                     <div class="controls">
-                      <input type="text" formControlName="name" [(ngModel)]="program.name" class="form-control" placeholder="displayname"
+                      <input type="text" formControlName="name" [(ngModel)]="program.name" class="form-control"
+                        placeholder="displayname"
                         [ngClass]="{ 'is-invalid': firstFormGroupSubmitted && ff.name.invalid, 'is-valid': firstFormGroupSubmitted && !ff.name.invalid }"
                         required>
                       <div *ngIf="firstFormGroupSubmitted && (ff.name.invalid || ff.name.errors?.required)"
@@ -113,7 +114,8 @@
                   <div class="col-12 form-group">
                     <label>Default Email</label>
                     <div class="controls">
-                      <input type="text" formControlName="email" [(ngModel)]="program_model.emails"  class="form-control" placeholder="E-mail"
+                      <input type="text" formControlName="email" [(ngModel)]="program_model.emails" class="form-control"
+                        placeholder="E-mail"
                         [ngClass]="{ 'is-invalid': firstFormGroupSubmitted && ff.email.invalid, 'is-valid': firstFormGroupSubmitted && !ff.email.invalid }"
                         required>
                       <div *ngIf="firstFormGroupSubmitted && (ff.email.invalid || ff.email.errors?.required)"
@@ -130,10 +132,13 @@
                   <div class="col-12 form-group">
                     <label>Program Descripton</label>
                     <div class="controls">
-                      <textarea name="description" id="description" cols="30" rows="3" formControlName="description" [(ngModel)]="program.description"  class="form-control" placeholder="Program Descripton" aria-invalid="false"
-                      [ngClass]="{ 'is-invalid': firstFormGroupSubmitted && ff.description.invalid, 'is-valid': firstFormGroupSubmitted && !ff.description.invalid }"
-                      required></textarea>
-                      <div *ngIf="firstFormGroupSubmitted && (ff.description.invalid || ff.description.errors?.required)"
+                      <textarea name="description" id="description" cols="30" rows="3" formControlName="description"
+                        [(ngModel)]="program.description" class="form-control" placeholder="Program Descripton"
+                        aria-invalid="false"
+                        [ngClass]="{ 'is-invalid': firstFormGroupSubmitted && ff.description.invalid, 'is-valid': firstFormGroupSubmitted && !ff.description.invalid }"
+                        required></textarea>
+                      <div
+                        *ngIf="firstFormGroupSubmitted && (ff.description.invalid || ff.description.errors?.required)"
                         class="help-block mt-1 text-danger"> <i class="ft-alert-circle align-middle"></i> This is
                         required</div>
                     </div>
@@ -141,74 +146,54 @@
                   <div class="col-12 form-group">
                     <label>City</label>
                     <div class="controls">
-                      <ng-select
-                        [items]="city_List"
-                        bindLabel="city"
-                        bindValue="_id"
-                        placeholder="Select City"
-                        [(ngModel)]="program.cityId"  
-                        [ngModelOptions]="{standalone: true}"
-                        >
+                      <ng-select [items]="city_List" bindLabel="city" bindValue="_id" placeholder="Select City"
+                        [(ngModel)]="program.cityId" [ngModelOptions]="{standalone: true}">
                       </ng-select>
                     </div>
                   </div>
                   <div class="col-12 form-group">
                     <label>Category</label>
                     <div class="controls">
-                      <ng-select
-                        [items]="category_List"
-                        bindLabel="name"
-                        bindValue="id"
-                        placeholder="Select Category"
-                        [(ngModel)]="program.categoryId"  
-                        [ngModelOptions]="{standalone: true}"
-                        (change)="getCategory($event)"
-                        [multiple]="true"
-                        >
+                      <ng-select [items]="category_List" bindLabel="name" bindValue="id" placeholder="Select Category"
+                        [(ngModel)]="program.categoryId" [ngModelOptions]="{standalone: true}"
+                        (change)="getCategory($event)" [multiple]="true">
                       </ng-select>
                     </div>
                   </div>
                   <div class="col-12 form-group">
                     <label>Sub Category</label>
                     <div class="controls">
-                      <ng-select
-                      [items]="tags"
-                      bindLabel="name"
-                      bindValue="_id"
-                      [multiple]="true"
-                      placeholder="Select Sub Category"
-                      [(ngModel)]="program.subCategoryIds"  
-                      [ngModelOptions]="{standalone: true}"
-                      (change)="getSubCategory($event)"
-                      >
-                    </ng-select>
+                      <ng-select [items]="tags" bindLabel="name" bindValue="_id" [multiple]="true"
+                        placeholder="Select Sub Category" [(ngModel)]="program.subCategoryIds"
+                        [ngModelOptions]="{standalone: true}" (change)="getSubCategory($event)">
+                      </ng-select>
                     </div>
                   </div>
                   <div class="col-12 form-group">
                     <label>Age Groups</label>
                     <span class="star_required" data-toggle="tooltip"
-                    data-title="Age range for kids who can take part in the activity">*</span>
-              <div class="field-group">
-                  <div class="age-number-info">
-                      <label class="label-heading">
+                      data-title="Age range for kids who can take part in the activity">*</span>
+                    <div class="field-group">
+                      <div class="age-number-info">
+                        <label class="label-heading">
                           <span data-toggle="tooltip"
-                              data-title="Age range for kids who can take part in the activity">Age in
-                              Months</span>
-                      </label>
-                      <div class="btns-age-number-cnt">
+                            data-title="Age range for kids who can take part in the activity">Age in
+                            Months</span>
+                        </label>
+                        <div class="btns-age-number-cnt">
                           <button class="btn-age-number" *ngFor='let age of months_List;let i=index'
-                              [class.active]="activatedAgeClass(age,'month')" type="button"
-                              (click)="changeAge(i,'month')">{{age}}</button>
-                      </div>
-                      <label class="label-heading">Age in Years</label>
-                      <div class="btns-age-number-cnt">
+                            [class.active]="activatedAgeClass(age,'month')" type="button"
+                            (click)="changeAge(i,'month')">{{age}}</button>
+                        </div>
+                        <label class="label-heading">Age in Years</label>
+                        <div class="btns-age-number-cnt">
                           <button class="btn-age-number" type="button" *ngFor='let age of years_List;let i=index'
-                              (click)="changeAge(i,'year')"
-                              [class.active]="activatedAgeClass(age,'year')">{{age}}</button>
+                            (click)="changeAge(i,'year')"
+                            [class.active]="activatedAgeClass(age,'year')">{{age}}</button>
+                        </div>
                       </div>
-                  </div>
-              </div>
                     </div>
+                  </div>
                   <!-- <div class="col-12 form-group">
                     <label>Age Group</label>
                     <div class="controls">
@@ -246,21 +231,16 @@
                   <div class="col-12 form-group">
                     <label>Skill Level</label>
                     <div class="controls">
-                      <ng-select
-                        [items]="category_List"
-                        bindLabel="name"
-                        bindValue="_id"
-                        placeholder="Select Skill Level"
-                        [(ngModel)]="program_model.skillGroup" 
-                        [ngModelOptions]="{standalone: true}"
-                        (change)="getSkillLevel($event)"
-                        >
+                      <ng-select [items]="category_List" bindLabel="name" bindValue="_id"
+                        placeholder="Select Skill Level" [(ngModel)]="program_model.skillGroup"
+                        [ngModelOptions]="{standalone: true}" (change)="getSkillLevel($event)">
                       </ng-select>
                     </div>
                   </div>
                   <div class="col-12 form-group">
                     <div class="form-check">
-                      <input class="form-check-input" type="checkbox" (change)="getFreeTrial($event)" [(ngModel)]="program.isFreeTrial"  id="flexCheckDefault1" [ngModelOptions]="{standalone: true}">
+                      <input class="form-check-input" type="checkbox" (change)="getFreeTrial($event)"
+                        [(ngModel)]="program.isFreeTrial" id="flexCheckDefault1" [ngModelOptions]="{standalone: true}">
                       <label class="form-check-label" for="flexCheckDefault1">
                         Does it have a Free Trial?
                       </label>
@@ -283,169 +263,136 @@
                 <div class="form-group">
                   <label>Parental supervision required?</label>
                   <div class="controls">
-                    <ng-select
-                        [items]="parental_supervision_required"
-                        bindLabel="name"
-                        bindValue="value"
-                        placeholder="Select"
-                        formControlName="parentalSupervisionRequired"
-                        [(ngModel)]="program.parentalSupervisionRequired" 
-                        >
-                      </ng-select>
+                    <ng-select [items]="parental_supervision_required" bindLabel="name" bindValue="value"
+                      placeholder="Select" formControlName="parentalSupervisionRequired"
+                      [(ngModel)]="program.parentalSupervisionRequired">
+                    </ng-select>
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="new-password">Early Drop-off/Late Pick-up</label>
                   <div class="controls">
                     <div class="form-check">
-                      <input class="form-check-input"  type="checkbox" id="flexCheckDefault" [(ngModel)]="program.earlyDrop_off_LatePick_up.ealryDrop" [ngModelOptions]="{standalone: true}" (change)="getEarlyDrop($event)">
+                      <input class="form-check-input" type="checkbox" id="flexCheckDefault"
+                        [(ngModel)]="program.earlyDrop_off_LatePick_up.ealryDrop" [ngModelOptions]="{standalone: true}"
+                        (change)="getEarlyDrop($event)">
                       <label class="form-check-label" for="flexCheckDefault">
                         Early Drop-off
                       </label>
                     </div>
                     <div class="controls" *ngIf="program.earlyDrop_off_LatePick_up.ealryDrop">
                       <label>Time for Early Drop-off</label>
-                      <input type="time"  class="form-control" [(ngModel)]="program.earlyDrop_off_LatePick_up.earlyTime" [ngModelOptions]="{standalone: true}" >
+                      <input type="time" class="form-control" [(ngModel)]="program.earlyDrop_off_LatePick_up.earlyTime"
+                        [ngModelOptions]="{standalone: true}">
                     </div>
                   </div>
-                  <div class="controls" >
+                  <div class="controls">
                     <div class="form-check">
-                      <input class="form-check-input" type="checkbox" id="flexCheckChecked" [(ngModel)]="program.earlyDrop_off_LatePick_up.lateDrop" [ngModelOptions]="{standalone: true}" (change)="getLateDrop($event)">
+                      <input class="form-check-input" type="checkbox" id="flexCheckChecked"
+                        [(ngModel)]="program.earlyDrop_off_LatePick_up.lateDrop" [ngModelOptions]="{standalone: true}"
+                        (change)="getLateDrop($event)">
                       <label class="form-check-label" for="flexCheckChecked">
                         Late Pick-up
                       </label>
                     </div>
                     <div class="controls" *ngIf="program.earlyDrop_off_LatePick_up.lateDrop">
                       <label>Time for Late Pick-up</label>
-                      <input type="time" class="form-control" [(ngModel)]="program.earlyDrop_off_LatePick_up.lateTime" [ngModelOptions]="{standalone: true}" >
+                      <input type="time" class="form-control" [(ngModel)]="program.earlyDrop_off_LatePick_up.lateTime"
+                        [ngModelOptions]="{standalone: true}">
                     </div>
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="retype-new-password">Max Number of students</label>
                   <div class="controls">
-                    <ng-select
-                      [items]="maxnumber_student_List"
-                      bindLabel="name"
-                      bindValue="name"
-                      placeholder="Select"
-                      [(ngModel)]="program.maxNumberOfStudents" 
-                      formControlName="maxNumberOfStudents"
-                      >
+                    <ng-select [items]="maxnumber_student_List" bindLabel="name" bindValue="name" placeholder="Select"
+                      [(ngModel)]="program.maxNumberOfStudents" formControlName="maxNumberOfStudents">
                     </ng-select>
                   </div>
                 </div>
                 <div class="form-group" *ngIf="program.maxNumberOfStudents!=='No Capacity info'">
                   <label>Capacity</label>
                   <div class="controls">
-                    <input type="text" formControlName="capacity" class="form-control"
-                    [(ngModel)]="capacity.max"
-                      placeholder="capacity"
-                    >
-                    
+                    <input type="text" formControlName="capacity" class="form-control" [(ngModel)]="capacity.max"
+                      placeholder="capacity">
+
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="retype-new-password">Program type</label>
                   <div class="controls">
-                    <ng-select
-                      [items]="program_types"
-                      bindLabel="name"
-                      bindValue="name"
-                      placeholder="Select"
-                      formControlName="programType"
-                      [(ngModel)]="program.type" 
-                      [class.ng-touched]="requiredRecipients"
-                      [ngClass]="{ 'is-invalid-select': secondFormSubmitted && sf.programType.invalid, 'is-valid': secondFormSubmitted && !sf.programType.invalid }"
-                      >
+                    <ng-select [items]="program_types" bindLabel="name" bindValue="name" placeholder="Select"
+                      formControlName="programType" [(ngModel)]="program.type" [class.ng-touched]="requiredRecipients"
+                      [ngClass]="{ 'is-invalid-select': secondFormSubmitted && sf.programType.invalid, 'is-valid': secondFormSubmitted && !sf.programType.invalid }">
                     </ng-select>
                   </div>
-                  <div
-                      *ngIf="secondFormSubmitted && (sf.programType.invalid || sf.programType.errors?.required)"
-                      class="help-block mt-1 text-danger"> <i class="ft-alert-circle align-middle"></i> This is required
-                    </div>
+                  <div *ngIf="secondFormSubmitted && (sf.programType.invalid || sf.programType.errors?.required)"
+                    class="help-block mt-1 text-danger"> <i class="ft-alert-circle align-middle"></i> This is required
+                  </div>
                 </div>
                 <div class="form-group">
                   <label for="retype-new-password">Private vs Group</label>
                   <div class="controls">
-                    <ng-select
-                      [items]="private_vs_group"
-                      bindLabel="name"
-                      bindValue="value"
-                      placeholder="Select"
-                      formControlName="privateOrGroup"
-                      [(ngModel)]="program.privateOrGroup" 
-                      >
+                    <ng-select [items]="private_vs_group" bindLabel="name" bindValue="value" placeholder="Select"
+                      formControlName="privateOrGroup" [(ngModel)]="program.privateOrGroup">
                     </ng-select>
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="retype-new-password">Session Premises</label>
                   <div class="controls">
-                    <ng-select
-                      [items]="session_premises"
-                      bindLabel="name"
-                      bindValue="value"
-                      placeholder="Select"
-                      formControlName="indoorOroutdoor"
-                      [(ngModel)]="program.indoorOroutdoor" 
-                      >
+                    <ng-select [items]="session_premises" bindLabel="name" bindValue="value" placeholder="Select"
+                      formControlName="indoorOroutdoor" [(ngModel)]="program.indoorOroutdoor">
                     </ng-select>
                   </div>
                 </div>
                 <div class="d-flex flex-sm-row flex-column justify-content-end">
-                  <button type="button" class="btn btn-secondary mr-sm-2 mb-1" (click)="setActiveTab('Program Info')">Previous</button>
-                  <button type="submit" class="btn btn-primary mb-1" >Next</button>
+                  <button type="button" class="btn btn-secondary mr-sm-2 mb-1"
+                    (click)="setActiveTab('Program Info')">Previous</button>
+                  <button type="submit" class="btn btn-primary mb-1">Next</button>
                 </div>
               </form>
             </div>
 
-            <div class="tab-pane" [ngClass]="{active: activeTab === 'Program Pricing'}" id="Program Pricing" role="tabpanel"
-              aria-labelledby="Program Pricing-tab">
+            <div class="tab-pane" [ngClass]="{active: activeTab === 'Program Pricing'}" id="Program Pricing"
+              role="tabpanel" aria-labelledby="Program Pricing-tab">
               <form [formGroup]="infoForm" (ngSubmit)="onInfoFormSubmit()">
                 <div>
                   <h4>Program Pricing</h4>
                   <hr>
                 </div>
-                  <div class="form-group">
-                    <label>Pricing</label>
-                    <div class="controls">
-                      <ng-select
-                        [items]="pricing_List"
-                        bindLabel="name"
-                        bindValue="value"
-                        placeholder="Select"
-                        (change)="changePricing($event)"
-                        [(ngModel)]="program.pricing"
-                        [ngModelOptions]="{standalone: true}"
-                        >
-                      </ng-select>
-                    </div>
+                <div class="form-group">
+                  <label>Pricing</label>
+                  <div class="controls">
+                    <ng-select [items]="pricing_List" bindLabel="name" bindValue="value" placeholder="Select"
+                      (change)="changePricing($event)" [(ngModel)]="program.pricing"
+                      [ngModelOptions]="{standalone: true}">
+                    </ng-select>
                   </div>
-                  <div class="form-group pricing" *ngIf="program.pricing=='Price available'">
-                    <div class="d-flex justify-content-between">
-                      <h4>Pricing</h4>
-                      <button class="btn btn-primary" (click)="openModalForPrice(myModalPrice)">Add</button>
+                </div>
+                <div class="form-group pricing" *ngIf="program.pricing=='Price available'">
+                  <div class="d-flex justify-content-between">
+                    <h4>Pricing</h4>
+                    <button class="btn btn-primary" (click)="openModalForPrice(myModalPrice)">Add</button>
+                  </div>
+                  <div class="pricing_wrap_details">
+                    <div class="pricing_wrap_details_row mb-8px" *ngFor="let price of extraPrices;let i=index">
+                      <!-- <h6>1 class <span>(45 min)</span></h6> -->
+                      <h6><span>{{price?.noOfUnits?price?.noOfUnits:1}}
+                          {{price?.pricePerUnit}}</span></h6>
+                      <p>$ {{price?.pricePerParticipant}}
+                        <span *ngIf="price?.pricePerHour">(${{price?.pricePerHour}}/hr)</span>
+                        <!-- <span> ($10/hr)</span> -->
+                        <!-- <img src="assets/images/fluent_edit-16-filled.svg" alt="edit" /> -->
+                        <mat-icon class="col-blue ml-10px cursor" (click)="addPrice(price,i)">edit</mat-icon>
+                        <mat-icon class="col-red ml-10px cursor" (click)="deletePrice(i)">delete</mat-icon>
+                      </p>
                     </div>
-                    <div class="pricing_wrap_details">
-                      <div class="pricing_wrap_details_row mb-8px" *ngFor="let price of extraPrices;let i=index">
-                          <!-- <h6>1 class <span>(45 min)</span></h6> -->
-                          <h6><span>{{price?.noOfUnits?price?.noOfUnits:1}}
-                              {{price?.pricePerUnit}}</span></h6>
-                          <p>$ {{price?.pricePerParticipant}}
-                          <span
-                              *ngIf="price?.pricePerHour">(${{price?.pricePerHour}}/hr)</span>
-                              <!-- <span> ($10/hr)</span> -->
-                              <!-- <img src="assets/images/fluent_edit-16-filled.svg" alt="edit" /> -->
-                              <mat-icon class="col-blue ml-10px cursor" (click)="addPrice(price,i)">edit</mat-icon>
-                              <mat-icon class="col-red ml-10px cursor" (click)="deletePrice(i)">delete</mat-icon>
-                          </p>
-                      </div>
-                      <!-- <div class="pricing_wrap_details_row mb-8px">
+                    <!-- <div class="pricing_wrap_details_row mb-8px">
                           <h6>10 classes <span>(45 min)</span></h6>
                           <p>$25 <span> ($25/hr)</span></p>
                       </div> -->
-                      <!-- <div class="pricing_wrap_details_row mb-18px" *ngIf="program?.isFreeTrial">
+                    <!-- <div class="pricing_wrap_details_row mb-18px" *ngIf="program?.isFreeTrial">
                           <h6>Trial class </h6>
                           <p>Free</p>
                       </div>
@@ -453,35 +400,40 @@
                           <p>{{program?.offerDiscount}}</p>
                       </div> -->
                   </div>
+                </div>
+                <div class="form-group">
+                  <label>Offers/Discounts</label>
+                  <div class="controls">
+                    <textarea name="offersDiscounts" [(ngModel)]="program.offerDiscount" class="form-control"
+                      id="offersDiscounts" formControlName="offersDiscounts" cols="30" rows="3"></textarea>
                   </div>
-                  <div class="form-group">
-                    <label>Offers/Discounts</label>
-                    <div class="controls">
-                     <textarea name="offersDiscounts" [(ngModel)]="program.offerDiscount" class="form-control" id="offersDiscounts" formControlName="offersDiscounts" cols="30" rows="3"></textarea>
-                    </div>
+                </div>
+                <div class="form-group">
+                  <label>Special / Additional Instructions</label>
+                  <div class="controls">
+                    <textarea name="specialAdditionalInfo" class="form-control" id="specialAdditionalInfo"
+                      [(ngModel)]="program.specialInstructions" formControlName="specialAdditionalInfo" cols="30"
+                      rows="3"></textarea>
                   </div>
-                  <div class="form-group">
-                    <label>Special / Additional Instructions</label>
-                    <div class="controls">
-                     <textarea name="specialAdditionalInfo" class="form-control" id="specialAdditionalInfo"[(ngModel)]="program.specialInstructions" formControlName="specialAdditionalInfo" cols="30" rows="3"></textarea>
-                    </div>
-                  </div>
-                  <!-- <div class="form-group">
+                </div>
+                <!-- <div class="form-group">
                     <label>Booking Can’t Be Cancelled Before</label>
                     <div class="controls">
                       <input type="text" class="form-control" name="bookingCancel" id="bookingCancel" formControlName="bookingCancel">
                     </div>
                   </div> -->
-                  <div class="d-flex flex-sm-row flex-column justify-content-end">
-                    <button type="submit" class="btn btn-secondary mr-sm-2 mb-1" (click)="setActiveTab('Program Features')">Previous</button>
-                    <button type="submit" class="btn btn-primary mb-1" (click)="setActiveTab('Program Internal Use')">Next</button>
-                  </div>
+                <div class="d-flex flex-sm-row flex-column justify-content-end">
+                  <button type="submit" class="btn btn-secondary mr-sm-2 mb-1"
+                    (click)="setActiveTab('Program Features')">Previous</button>
+                  <button type="submit" class="btn btn-primary mb-1"
+                    (click)="setActiveTab('Program Internal Use')">Next</button>
+                </div>
               </form>
             </div>
 
-            <div class="tab-pane" [ngClass]="{active: activeTab === 'Program Internal Use'}" id="Program Internal Use" role="tabpanel"
-              aria-labelledby="Program Internal Use-tab">
-              <form [formGroup]="socialForm" >
+            <div class="tab-pane" [ngClass]="{active: activeTab === 'Program Internal Use'}" id="Program Internal Use"
+              role="tabpanel" aria-labelledby="Program Internal Use-tab">
+              <form [formGroup]="socialForm">
                 <div>
                   <h4>Program Internal Use</h4>
                   <hr>
@@ -489,7 +441,9 @@
                 <div class="form-group">
                   <label>Class Schedule link</label>
                   <div class="controls">
-                   <textarea name="specialAdditionalInfo" class="form-control" id="specialAdditionalInfo"  [(ngModel)]="program.extractor_notes"  [ngModelOptions]="{standalone: true}" cols="30" rows="3"></textarea>
+                    <textarea name="specialAdditionalInfo" class="form-control" id="specialAdditionalInfo"
+                      [(ngModel)]="program.extractor_notes" [ngModelOptions]="{standalone: true}" cols="30"
+                      rows="3"></textarea>
                   </div>
                 </div>
                 <div class="form-group">
@@ -497,13 +451,14 @@
                   <div class="controls">
                     <!-- <input type="date" class="form-control" name="bookingCancel" id="bookingCancel" > -->
                     <input ngbDatepicker (click)="datePicker.toggle()" #datePicker="ngbDatepicker"
-                     [(ngModel)]="program.last_reviewed" type="text"  [ngModelOptions]="{standalone: true}" class="form-control pickadate" required
-                    placeholder="Last Review Date">
+                      [(ngModel)]="program.last_reviewed" type="text" [ngModelOptions]="{standalone: true}"
+                      class="form-control pickadate" required placeholder="Last Review Date">
                   </div>
                 </div>
                 <div class="d-flex flex-sm-row flex-column justify-content-end">
-                  <button type="submit" class="btn btn-secondary mr-sm-2 mb-1" (click)="setActiveTab('Program Pricing')">Previous</button>
-                  <button type="button" class="btn btn-primary mb-1" (click)="addProgram()" >Save</button>
+                  <button type="submit" class="btn btn-secondary mr-sm-2 mb-1"
+                    (click)="setActiveTab('Program Pricing')">Previous</button>
+                  <button type="button" class="btn btn-primary mb-1" (click)="addProgram()">Save</button>
                 </div>
               </form>
             </div>
@@ -524,7 +479,7 @@
                                 <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="40"
                                 [footerHeight]="40" rowHeight="auto"  [rows]="rows"></ngx-datatable>
                               </div> -->
-                              
+
                               <div class="col-12 col-sm-12 col-md-9 col-lg-9 mt-2 mb-1">
                                 <div class="row-flex">
                                   <div class="col-flex-2 filter">
@@ -544,12 +499,14 @@
                                     </button>
                                   </div> -->
                                   <div class="col-flex-2 mb-1" style="float: right;">
-                                    <button *ngIf="addProgramView" type="reset" style="width: 110px;" class="btn btn-primary btn-block users-list-clear glow mb-0"
-                                    placement="top" ngbTooltip="Add New" (click)="addProgramView=false;setActiveTab('Activity Info')">
+                                    <button *ngIf="addProgramView" type="reset" style="width: 110px;"
+                                      class="btn btn-primary btn-block users-list-clear glow mb-0" placement="top"
+                                      ngbTooltip="Add New" (click)="addProgramView=false;setActiveTab('Activity Info')">
                                       + Activity
                                     </button>
-                                    <button *ngIf="!addProgramView" type="reset" style="width: 110px;" class="btn btn-primary btn-block users-list-clear glow mb-0"
-                                    placement="top" ngbTooltip="Add New" (click)="addProgramView=true;setActiveTab('Activities')">
+                                    <button *ngIf="!addProgramView" type="reset" style="width: 110px;"
+                                      class="btn btn-primary btn-block users-list-clear glow mb-0" placement="top"
+                                      ngbTooltip="Add New" (click)="addProgramView=true;setActiveTab('Activities')">
                                       Cancel
                                     </button>
                                   </div>
@@ -557,9 +514,9 @@
                               </div>
                             </div>
                           </fieldset>
-                          <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="50"
-                            [footerHeight]="50" rowHeight="auto" [rows]="activityList" [scrollbarH]="true"
-                            [columns]="columns" [externalPaging]="true">
+                          <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force"
+                            [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [rows]="activityList"
+                            [scrollbarH]="true" [columns]="columns" [externalPaging]="true">
                             <ngx-datatable-column name="Name" prop="name" [width]="60">
                               <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                                 {{ row?.name }}
@@ -584,12 +541,10 @@
                               </ng-template>
                             </ngx-datatable-column>
                             <ngx-datatable-column name="Actions" [width]="50">
-                               <ng-template let-row="row" ngx-datatable-cell-template>
-                                <i class="ft-edit text-primary cursor-pointer mx-1"
-                                (click)="editProgram(row)"></i>
-                                 <i class="ft-trash-2 cursor-pointer danger mx-1"
-                                  (click)="confirmDelete(row._id)"></i> 
-                               <!-- <i class="ft-eye text-primary cursor-pointer mx-1"
+                              <ng-template let-row="row" ngx-datatable-cell-template>
+                                <i class="ft-edit text-primary cursor-pointer mx-1" (click)="editProgram(row)"></i>
+                                <i class="ft-trash-2 cursor-pointer danger mx-1" (click)="confirmDelete(row._id)"></i>
+                                <!-- <i class="ft-eye text-primary cursor-pointer mx-1"
                                 (click)="openModalView(myModalContentView,row)"></i> -->
                               </ng-template>
                             </ngx-datatable-column>
@@ -603,72 +558,52 @@
               </section>
             </div>
             <div class="tab-pane" [ngClass]="{active: activeTab === 'Activity Info'}" id="Activity Info" role="tabpanel"
-            aria-labelledby="Activity Info-tab">
-            <form [formGroup]="activityfirstFormGroup" (ngSubmit)="onActivityfirstFormGroupSubmit()">
-              <div style="display: flex;">
-                <h4>Activity Info</h4>
-                <hr>
-                <div class="col-flex-2 mb-1" style="float: right;">
-                  <button *ngIf="!addProgramView" type="reset" style="width: 110px;" class="btn btn-primary btn-block users-list-clear glow mb-0"
-                  placement="top" ngbTooltip="Add New" (click)="addProgramView=true;setActiveTab('Activities')">
-                    Cancel
-                  </button>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-12 form-group">
-                  <label>Instructors</label>
-                  <div class="controls">
-                    <ng-select
-                      [items]="Instructors_List"
-                      bindLabel="name"
-                      bindValue="id"
-                      placeholder="Select instructors"
-                      [(ngModel)]="activity.instructors"  
-                      [ngModelOptions]="{standalone: true}"
-                      (change)="getCategory($event)"
-                      [multiple]="true"
-                      >
-                    </ng-select>
+              aria-labelledby="Activity Info-tab">
+              <form [formGroup]="activityfirstFormGroup" (ngSubmit)="onActivityfirstFormGroupSubmit()">
+                <div style="display: flex;">
+                  <h4>Activity Info</h4>
+                  <hr>
+                  <div class="col-flex-2 mb-1" style="float: right;">
+                    <button *ngIf="!addProgramView" type="reset" style="width: 110px;"
+                      class="btn btn-primary btn-block users-list-clear glow mb-0" placement="top" ngbTooltip="Add New"
+                      (click)="addProgramView=true;setActiveTab('Activities')">
+                      Cancel
+                    </button>
                   </div>
                 </div>
-                <div class="col-12 form-group">
-                  <label>Online vs In-person</label>
-                  <div class="controls">
-                    <ng-select
-                    [items]="inpersonOrvirtual_List"
-                    bindLabel="name"
-                    bindValue="value"
-                    placeholder="Select Online vs In-person"
-                    [(ngModel)]="activity.inpersonOrVirtual"  
-                    [ngModelOptions]="{standalone: true}"
-                    >
-                  </ng-select>
+                <div class="row">
+                  <div class="col-12 form-group">
+                    <label>Instructors</label>
+                    <div class="controls">
+                      <ng-select [items]="Instructors_List" bindLabel="name" bindValue="id"
+                        placeholder="Select instructors" [(ngModel)]="activity.instructors"
+                        [ngModelOptions]="{standalone: true}" (change)="getCategory($event)" [multiple]="true">
+                      </ng-select>
+                    </div>
                   </div>
-                </div>
-                <div class="col-12 form-group">
-                  <label>Is the program open for booking?</label>
-                  <div class="controls">
-                    <ng-select
-                    [items]="isOpenForBooking_List"
-                    bindLabel="name"
-                    bindValue="value"
-                    placeholder="Select "
-                    [(ngModel)]="activity.isOpenForBooking"  
-                    [ngModelOptions]="{standalone: true}"
-                    >
-                  </ng-select>
+                  <div class="col-12 form-group">
+                    <label>Online vs In-person</label>
+                    <div class="controls">
+                      <ng-select [items]="inpersonOrvirtual_List" bindLabel="name" bindValue="value"
+                        placeholder="Select Online vs In-person" [(ngModel)]="activity.inpersonOrVirtual"
+                        formControlName="inpersonOrVirtual">
+                      </ng-select>
+                    </div>
                   </div>
-                </div>
-                <div class="col-12 form-group">
-                  <label>Join Links</label>
-                  <div class="form-group">
-                    <tag-input [(ngModel)]="items" (onSelect)="onSelect($event)" [modelAsStrings]="true">
-                    </tag-input>
-                    <!-- <p class="text-muted small my-1">By default close char is <code>x</code>. -->
+                  <div class="col-12 form-group">
+                    <label>Is the program open for booking?</label>
+                    <div class="controls">
+                      <ng-select [items]="isOpenForBooking_List" bindLabel="name" bindValue="value"
+                        placeholder="Select " [(ngModel)]="activity.isOpenForBooking"
+                        formControlName="isOpenForBooking">
+                      </ng-select>
+                    </div>
                   </div>
-                </div>
-                <!-- <div class="col-12 form-group">
+                  <!-- <div class="col-12 form-group">
+                    <label>Join Links</label>
+               
+                  </div> -->
+                  <!-- <div class="col-12 form-group">
                   <label>Join Links</label>
                   <div class="controls">
                     <input type="text" formControlName="name"  class="form-control" placeholder="displayname"
@@ -679,153 +614,164 @@
                       required</div>
                   </div>
                 </div> -->
-                <div class="col-12 d-flex flex-sm-row flex-column justify-content-end">
-                  <button type="submit" class="btn btn-primary mr-sm-2 mb-1">Next</button>
+                  <div class="col-12 d-flex flex-sm-row flex-column justify-content-end">
+                    <button type="submit" class="btn btn-primary mr-sm-2 mb-1">Next</button>
+                  </div>
+                </div>
+              </form>
+            </div>
+            <div class="tab-pane" [ngClass]="{active: activeTab === 'Activity Schedule'}" id="Activity Schedule"
+              role="tabpanel" aria-labelledby="Activity Schedule-tab">
+              <form [formGroup]="activitySecondFormGroup" (ngSubmit)="onActivitySecondFormGroupSubmit()">
+                <div style="display: flex;">
+                  <h4>Activity Schedule</h4>
+                  <hr>
+                  <div class="col-flex-2 mb-1" style="float: right;">
+                    <button *ngIf="!addProgramView" type="reset" style="width: 110px;"
+                      class="btn btn-primary btn-block users-list-clear glow mb-0" placement="top" ngbTooltip="Add New"
+                      (click)="addProgramView=true;setActiveTab('Activities')">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Date Options</label>
+                  <div class="controls">
+                    <ng-select [items]="date_options_list" bindLabel="name" bindValue="value" placeholder="Select"
+                      formControlName="dateOption" [(ngModel)]="activity.dateOption" (change)="getDateOptions($event)">
+                    </ng-select>
+                  </div>
+                </div>
+                <div class="form_label_input" *ngIf="activity.dateOption == 'Dates available'">
+                  <label for="name">Dates</label>
+                  <div class="wrap_for_input form-control">
+                    <input class="form-control" [(ngModel)]="startDate"  [ngModelOptions]="{standalone: true}" type="date">
+                    <i class="ft-arrow-right"></i>
+                    <input class="form-control" [(ngModel)]="endDate" [ngModelOptions]="{standalone: true}"  type="date">
+                  </div>
+                </div>
+                <div class="col-12 form-group">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" (change)="getFreeTrial($event)"
+                      [(ngModel)]="activityRecurring.activityRecurring" id="flexCheckDefault1" [ngModelOptions]="{standalone: true}">
+                    <label class="form-check-label" for="flexCheckDefault1">
+                      Is activity recurring ?
+                    </label>
+                  </div>
+                </div>
+                <div class="form-group" *ngIf="activityRecurring.activityRecurring">
+                  <label for="retype-new-password">Select days when the activity recurs</label>
+                  <div class="controls">
+                    <ng-select [items]="activityRecurring_days_list" bindLabel="name" bindValue="name" placeholder="Select"
+                       [(ngModel)]="activityRecurring.days" [ngModelOptions]="{standalone: true}"
+                         [class.ng-touched]="requiredRecipients" [multiple]="true"
+                     >
+                    </ng-select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="retype-new-password">Days Options</label>
+                  <div class="controls">
+                    <ng-select [items]="days_options_list" bindLabel="name" bindValue="name" placeholder="Select"
+                      [(ngModel)]="activity.dayOption" [ngModelOptions]="{standalone: true}" [class.ng-touched]="requiredRecipients"
+                     >
+                    </ng-select>
+                  </div>
+                </div>
+                <div class="form_label_input">
+                  <label for="name">Exception Dates</label>
+                  <div class="wrap_for_input chips-input min-height-50px">
+                    <input class="form-control" [(ngModel)]="exceptionDate"  [ngModelOptions]="{standalone: true}" (change)="onDateSelected($event)" type="date">
+                    <div class="chips_container">
+                      <div class="chip" *ngFor="let date of exceptionDates">
+                       <p>{{date}}</p>
+                       <i class="ft-x-circle" (click)="removeExceptionDate(date)"></i>
+                      </div>
+                    </div>
+                    <i class="icon_calender ft-calendar"></i>
+                    <!-- <img src="assets/calendar_icon.svg" alt="calendar_icon"> -->
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="retype-new-password">Time Options</label>
+                  <div class="controls">
+                    <ng-select [items]="time_options_list" bindLabel="name" bindValue="value" placeholder="Select"
+                       [(ngModel)]="activity.timeOption" [ngModelOptions]="{standalone: true}">
+                    </ng-select>
+                  </div>
+                </div>
+                <div class="form_label_input" *ngIf="activity.timeOption=='Time Available'">
+                  <label for="name">Times</label>
+                  <div class="wrap_for_input form-control">
+                    <input class="form-control" [(ngModel)]="startTime"  [ngModelOptions]="{standalone: true}" type="time">
+                    <i class="ft-arrow-right"></i>
+                    <input class="form-control" [(ngModel)]="endTime"  [ngModelOptions]="{standalone: true}" type="time">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="retype-new-password">Total number of classes/session</label>
+                  <div class="controls">
+                    <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                    class="form-control" maxlength="7" placeholder="Add.."
+                    onkeyup="(function(el){var t = el.value;el.value = (t.indexOf('.') >= 0) ? (t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 3)) : t;})(this)"
+                    [(ngModel)]="activity.totalSessionClasses" [ngModelOptions]="{standalone: true}">
+                    <!-- <ng-select [items]="maxnumber_student_List" bindLabel="name" bindValue="name" placeholder="Select"
+                      [(ngModel)]="activity.totalSessionClasses" [ngModelOptions]="{standalone: true}">
+                    </ng-select> -->
+                  </div>
+                </div>
+                <div class="form_label_input">
+                  <label for="name">Registration Dates</label>
+                  <div class="wrap_for_input form-control">
+                    <input class="form-control" [(ngModel)]="registrationStartDate"  [ngModelOptions]="{standalone: true}" type="date">
+                    <i class="ft-arrow-right"></i>
+                    <input class="form-control" [(ngModel)]="registrationEndDate"  [ngModelOptions]="{standalone: true}" type="date">
+                  </div>
+                </div>
+
+                <div class="d-flex flex-sm-row flex-column justify-content-end">
+                  <button type="button" class="btn btn-secondary mr-sm-2 mb-1"
+                    (click)="setActiveTab('Activity Info')">Previous</button>
+                  <button type="submit" class="btn btn-primary mb-1">Next</button>
+                </div>
+              </form>
+            </div>
+            <div class="tab-pane" [ngClass]="{active: activeTab === 'For Internal Use'}" id="For Internal Use"
+              role="tabpanel" aria-labelledby="For Internal Use-tab">
+              <div style="display: flex;">
+                <h4>For Internal Use</h4>
+                <hr>
+                <div class="col-flex-2 mb-1" style="float: right;">
+                  <button *ngIf="!addProgramView" type="reset" style="width: 110px;"
+                    class="btn btn-primary btn-block users-list-clear glow mb-0" placement="top" ngbTooltip="Add New"
+                    (click)="addProgramView=true;setActiveTab('Activities')">
+                    Cancel
+                  </button>
                 </div>
               </div>
-            </form>
-          </div>
-          <div class="tab-pane" [ngClass]="{active: activeTab === 'Activity Schedule'}" id="Activity Schedule"
-          role="tabpanel" aria-labelledby="Activity Schedule-tab">
-          <form [formGroup]="activitySecondFormGroup" (ngSubmit)="onActivitySecondFormGroupSubmit()">
-            <div style="display: flex;">
-              <h4>Activity Schedule</h4>
-              <hr>
-              <div class="col-flex-2 mb-1" style="float: right;">
-                <button *ngIf="!addProgramView" type="reset" style="width: 110px;" class="btn btn-primary btn-block users-list-clear glow mb-0"
-                placement="top" ngbTooltip="Add New" (click)="addProgramView=true;setActiveTab('Activities')">
-                  Cancel
-                </button>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Date Options</label>
-              <div class="controls">
-                <ng-select
-                    [items]="date_options_list"
-                    bindLabel="name"
-                    bindValue="value"
-                    placeholder="Select"
-                    formControlName="dateOption"
-                    [(ngModel)]="activity.dateOption" 
-                    (change)="getDateOptions($event)"
-                    >
-                  </ng-select>
-              </div>
-            </div>
-            <div class="form-group" *ngIf="activity.dateOption == 'Dates available'">
-              <label>Date From</label>
-              <div class="controls">
-                <input type="date"  [(ngModel)]="startDate" class="form-control" name="startDate" id="startDate" >
-                <!-- <input ngbDatepicker (click)="datePicker.toggle()" #datePicker="ngbDatepicker"
-                 [(ngModel)]="startDate" type="text"  [ngModelOptions]="{standalone: true}" class="form-control pickadate" required
-                placeholder="Date From"> -->
-              </div>
-            </div>
-            <div class="form-group" *ngIf="activity.dateOption == 'Dates available'">
-              <label>Date To</label>
-              <div class="controls">
-                <!-- <input type="date" class="form-control" name="bookingCancel" id="bookingCancel" > -->
-                <input type="date"  [(ngModel)]="startDate" class="form-control" name="startDate" id="startDate" >
-                <!-- <input ngbDatepicker (click)="datePicker.toggle()" #datePicker="ngbDatepicker"
-                 [(ngModel)]="endDate" type="text"  [ngModelOptions]="{standalone: true}" class="form-control pickadate" required
-                placeholder="Date To"> -->
-              </div>
-            </div>
-            <div class="col-12 form-group">
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" (change)="getFreeTrial($event)" [(ngModel)]="program.isFreeTrial"  id="flexCheckDefault1" [ngModelOptions]="{standalone: true}">
-                <label class="form-check-label" for="flexCheckDefault1">
-                  Is activity recurring ?
-                </label>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="retype-new-password">Days Options</label>
-              <div class="controls">
-                <ng-select
-                  [items]="days_options_list"
-                  bindLabel="name"
-                  bindValue="name"
-                  placeholder="Select"
-                  formControlName="programType"
-                  [(ngModel)]="program.type" 
-                  [class.ng-touched]="requiredRecipients"
-                  [ngClass]="{ 'is-invalid-select': secondFormSubmitted && sf.programType.invalid, 'is-valid': secondFormSubmitted && !sf.programType.invalid }"
-                  >
-                </ng-select>
-              </div>
-              <div
-                  *ngIf="secondFormSubmitted && (sf.programType.invalid || sf.programType.errors?.required)"
-                  class="help-block mt-1 text-danger"> <i class="ft-alert-circle align-middle"></i> This is required
+              <div class="form-group">
+                <label>Extractor Note</label>
+                <div class="controls">
+                  <textarea name="specialAdditionalInfo" class="form-control" id="specialAdditionalInfo"
+                    [(ngModel)]="activity.extractor_notes" [ngModelOptions]="{standalone: true}" cols="30"
+                    rows="3"></textarea>
                 </div>
-            </div>
-            <div class="form-group">
-              <label for="retype-new-password">Private vs Group</label>
-              <div class="controls">
-                <ng-select
-                  [items]="private_vs_group"
-                  bindLabel="name"
-                  bindValue="value"
-                  placeholder="Select"
-                  formControlName="privateOrGroup"
-                  [(ngModel)]="program.privateOrGroup" 
-                  >
-                </ng-select>
               </div>
-            </div>
-            <div class="form-group">
-              <label for="retype-new-password">Session Premises</label>
-              <div class="controls">
-                <ng-select
-                  [items]="session_premises"
-                  bindLabel="name"
-                  bindValue="value"
-                  placeholder="Select"
-                  formControlName="indoorOroutdoor"
-                  [(ngModel)]="program.indoorOroutdoor" 
-                  >
-                </ng-select>
-              </div>
-            </div>
-            <div class="d-flex flex-sm-row flex-column justify-content-end">
-              <button type="button" class="btn btn-secondary mr-sm-2 mb-1" (click)="setActiveTab('Program Info')">Previous</button>
-              <button type="submit" class="btn btn-primary mb-1" >Next</button>
-            </div>
-          </form>
-        </div>
-        <div class="tab-pane" [ngClass]="{active: activeTab === 'For Internal Use'}" id="For Internal Use" role="tabpanel"
-        aria-labelledby="For Internal Use-tab">
-          <div style="display: flex;">
-            <h4>For Internal Use</h4>
-            <hr>
-            <div class="col-flex-2 mb-1" style="float: right;">
-              <button *ngIf="!addProgramView" type="reset" style="width: 110px;" class="btn btn-primary btn-block users-list-clear glow mb-0"
-              placement="top" ngbTooltip="Add New" (click)="addProgramView=true;setActiveTab('Activities')">
-                Cancel
-              </button>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Extractor Note</label>
-            <div class="controls">
-             <textarea name="specialAdditionalInfo" class="form-control" id="specialAdditionalInfo"  [(ngModel)]="activity.extractor_notes"  [ngModelOptions]="{standalone: true}" cols="30" rows="3"></textarea>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Last Review Date</label>
-            <div class="controls">
-              <input type="date" class="form-control" name="bookingCancel" id="bookingCancel" >
-              <!-- <input ngbDatepicker (click)="datePicker.toggle()" #datePicker="ngbDatepicker"
+              <div class="form-group">
+                <label>Last Review Date</label>
+                <div class="controls">
+                  <input type="date" class="form-control" [(ngModel)]="activity_last_reviewed" name="bookingCancel" id="bookingCancel">
+                  <!-- <input ngbDatepicker (click)="datePicker.toggle()" #datePicker="ngbDatepicker"
                [(ngModel)]="program.last_reviewed" type="text" class="form-control pickadate" required
               placeholder="Last Review Date"> -->
+                </div>
+              </div>
+              <div class="d-flex flex-sm-row flex-column justify-content-end">
+                <button type="submit" class="btn btn-secondary mr-sm-2 mb-1"
+                  (click)="setActiveTab('Activity Schedule')">Previous</button>
+                <button type="button" class="btn btn-primary mb-1" (click)="addActivity()">Save</button>
+              </div>
             </div>
-          </div>
-          <div class="d-flex flex-sm-row flex-column justify-content-end">
-            <button type="submit" class="btn btn-secondary mr-sm-2 mb-1" (click)="setActiveTab('Program Pricing')">Previous</button>
-            <button type="button" class="btn btn-primary mb-1" (click)="addProgram()" >Save</button>
-          </div>
-      </div>
             <!-- <div class="tab-pane" [ngClass]="{active: activeTab === 'notifications'}" id="notifications" role="tabpanel"
               aria-labelledby="notifications-tab">
               <div class="row">
@@ -886,62 +832,54 @@
 <div>
   <ng-template #myModalPrice let-modal>
     <div class="modal-header">
-      <h4 class="modal-title" >Add Pricing</h4>
+      <h4 class="modal-title">Add Pricing</h4>
       <button type="button" class="close" (click)="modal.dismiss()">
         <span>&times;</span>
       </button>
     </div>
     <div class="modal-body">
-<form [formGroup]="PriceFormGroup">
+      <form [formGroup]="PriceFormGroup">
 
-      <div class="form-group">
-        <label>Price</label>
-        <input type="text"
-        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-        class="form-control" maxlength="7" placeholder="Add.."
-        onkeyup="(function(el){var t = el.value;el.value = (t.indexOf('.') >= 0) ? (t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 3)) : t;})(this)"
-        formControlName="pricePerParticipant">
-      </div>
-      <div class="form-group">
-        <label>No. Of units</label>
-        <input type="text"
-        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-        class="form-control" maxlength="7" placeholder="Add.."
-        onkeyup="(function(el){var t = el.value;el.value = (t.indexOf('.') >= 0) ? (t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 3)) : t;})(this)"
-        formControlName="noOfUnits" >   
-         </div>
-      <div class="form-group">
-        <label>Price Unit</label>
-        <div class="controls">
-          <ng-select
-            [items]="price_unit_List"
-            bindLabel="name"
-            bindValue="value"
-            placeholder="Select"
-            formControlName="pricePerUnit"
-            >
-          </ng-select>
+        <div class="form-group">
+          <label>Price</label>
+          <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+            class="form-control" maxlength="7" placeholder="Add.."
+            onkeyup="(function(el){var t = el.value;el.value = (t.indexOf('.') >= 0) ? (t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 3)) : t;})(this)"
+            formControlName="pricePerParticipant">
         </div>
-      </div>
-      <div class="form-group">
-        <label>Price/Hour</label>
-        <input type="text"
-        oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-        class="form-control" placeholder="Add.." maxlength="7"
-        formControlName="pricePerHour"
-        onkeyup="(function(el){var t = el.value;el.value = (t.indexOf('.') >= 0) ? (t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 3)) : t;})(this)">      </div>
-      <div class="form-group">
-        <div class="custom-control custom-switch custom-control-inline">
-          <input id="switch1" type="checkbox"  formControlName="setDefault" class="custom-control-input" >
-          <label for="switch1" class="custom-control-label">Set default price</label>
+        <div class="form-group">
+          <label>No. Of units</label>
+          <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+            class="form-control" maxlength="7" placeholder="Add.."
+            onkeyup="(function(el){var t = el.value;el.value = (t.indexOf('.') >= 0) ? (t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 3)) : t;})(this)"
+            formControlName="noOfUnits">
         </div>
-      </div>
-      <div class="form-group">
-        <div class="custom-control custom-switch custom-control-inline">
-          <input id="switch2" type="checkbox" formControlName="priceProrated" class="custom-control-input" >
-          <label for="switch2" class="custom-control-label">Is Pricing prorated?</label>
+        <div class="form-group">
+          <label>Price Unit</label>
+          <div class="controls">
+            <ng-select [items]="price_unit_List" bindLabel="name" bindValue="value" placeholder="Select"
+              formControlName="pricePerUnit">
+            </ng-select>
+          </div>
         </div>
-      </div>
+        <div class="form-group">
+          <label>Price/Hour</label>
+          <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+            class="form-control" placeholder="Add.." maxlength="7" formControlName="pricePerHour"
+            onkeyup="(function(el){var t = el.value;el.value = (t.indexOf('.') >= 0) ? (t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 3)) : t;})(this)">
+        </div>
+        <div class="form-group">
+          <div class="custom-control custom-switch custom-control-inline">
+            <input id="switch1" type="checkbox" formControlName="setDefault" class="custom-control-input">
+            <label for="switch1" class="custom-control-label">Set default price</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="custom-control custom-switch custom-control-inline">
+            <input id="switch2" type="checkbox" formControlName="priceProrated" class="custom-control-input">
+            <label for="switch2" class="custom-control-label">Is Pricing prorated?</label>
+          </div>
+        </div>
       </form>
     </div>
     <div class="modal-footer">
@@ -949,4 +887,4 @@
       <button type="button" class="btn btn-primary" (click)="priceAdd()">Submit</button>
     </div>
   </ng-template>
-</div> 
+</div>

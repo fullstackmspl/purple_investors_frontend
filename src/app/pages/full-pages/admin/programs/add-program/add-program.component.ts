@@ -24,7 +24,7 @@ export class AddProgramComponent implements OnInit {
   activity: any = new Activity;
   activityRecurring = {
     activityRecurring: false,
-    day: [],
+    days: [],
   }
   days ={
     sunday: false,
@@ -87,6 +87,11 @@ export class AddProgramComponent implements OnInit {
     {name:"Days are flexible"}, 
     {name:"No data available"}
   ]
+  time_options_list=[
+    {name:"Time is not available",value:"Time Not Available"},
+    {name:"Time is flexible",value:"Time is flexible"},
+    {name:"Time available",value:"Time Available"},
+  ]
   requiredRecipients:boolean
   selectedMovies = ["The Dark Knight", "Perl Harbour"];
   movies = [
@@ -135,14 +140,46 @@ export class AddProgramComponent implements OnInit {
   programId: any;
   isEdit: boolean;
   activityList: any;
-  startDate: any = new Date;
-  endDate: any = new Date;
+  startDate:any = new Date;
+  endDate:any = new Date;
+  registrationStartDate:any = new Date;
+  registrationEndDate:any = new Date;
+  startTime='16:30';
+  endTime= '18:30';
+  exceptionDate: any;
   last_reviewed: any = new Date;
+  activity_last_reviewed: any = new Date;
   activityfirstFormGroupSubmitted: boolean;
   activitySecondFormGroupSubmitted: boolean;
+  exceptionDates: any[]=[];
+  tools_replaceAll(str, find, replace) {
+    str = str ? str.padStart(5, "0") : str;
+    if (str && find && replace) {
+      var escapedFind = find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+      str = str.replace(new RegExp(escapedFind, 'g'), replace)
+      return str
+    }
+  }
+  onDateSelected(event: any) {
+    // Handle the selected date here
+    console.log('Selected Date:', this.exceptionDate);
+    this.updateExceptionDates(this.exceptionDate);
+  }
   changePricing(val){
     this.program.pricing=val.value
     console.log(this.program.pricing)
+  }
+  removeExceptionDate(date: string) {
+    const index = this.exceptionDates.indexOf(date);
+    if (index >= 0) {
+      this.exceptionDates.splice(index, 1);
+    }
+  }
+  updateExceptionDates(date: string) {
+    // Check if the date is not already in the array before adding it
+    if (!this.exceptionDates.includes(date)) {
+      this.exceptionDates.push(date);
+    }
   }
   price_unit_List=[
     {name:"Hour",value:'hour'},
@@ -153,6 +190,15 @@ export class AddProgramComponent implements OnInit {
     {name:"Package",value:'package'},
     {name:"Semester",value:'semester'},
     {name:"Year",value:'year'},
+  ]
+  activityRecurring_days_list=[
+    {name:"Monday",value:'monday'},
+    {name:"Tuesday",value:'tuesday'},
+    {name:"Wednesday",value:'wednesday'},
+    {name:"Thursday",value:'thursday'},
+    {name:"Friday",value:'friday'},
+    {name:"Saturday",value:'saturday'},
+    {name:"Sunday",value:'sunday'},
   ]
   private_vs_group=[
   {name:"Private",value:'private'},
@@ -179,12 +225,12 @@ export class AddProgramComponent implements OnInit {
       email: new FormControl(['', Validators.email]),
   });
   activityfirstFormGroup = new FormGroup({
-    name: new FormControl(['',]),
-    description: new FormControl(['',]),
+    inpersonOrVirtual: new FormControl(['No data available',]),
+    isOpenForBooking: new FormControl(['Yes',]),
     email: new FormControl(['', Validators.email]),
 });
 activitySecondFormGroup = new FormGroup({
-  name: new FormControl(['',]),
+  dateOption: new FormControl(['Dates available',]),
   description: new FormControl(['',]),
   email: new FormControl(['', Validators.email]),
 });
@@ -278,6 +324,8 @@ program: any = new Program;
  getProgramById(id){
   this.apiservice.getProgramById(id).subscribe((res:any)=>{
     this.program=res.data
+    this.programId=res.data._id
+    this.getActivities()
     this.program.subCategoryIds=this.program.subCategoryIds.map((item:any)=>item._id)
     this.program.categoryId=this.program.categoryId.map((item:any)=>item._id)
     this.extraPrices=this.program.extraPrices
@@ -286,7 +334,6 @@ program: any = new Program;
     if(this.program.last_reviewed){
     this.program.last_reviewed=this.parseISODate(this.program.last_reviewed)
     }
-    this.getActivities()
 })
 }
 getActivities() {
@@ -314,7 +361,21 @@ getAllCity(){
     this.city_List = res?.data?.user
   })
 }
+resetNewActivity(){
+  const today = moment().format('YYYY-MM-DD');
+  this.startDate = today;
+  this.endDate = today;
+  this.exceptionDates=[]
+  this.activity=new Activity
+  this.activityRecurring={
+    activityRecurring: false,
+    days: [],
+  }
+  this.startTime='16:30';
+  this.endTime= '18:30';
+}
   ngOnInit() {
+    this.resetNewActivity()
     this. ageRange()
     this.getAllCity()
     // this.firstFormGroup = new FormGroup({
@@ -390,9 +451,41 @@ getAllCity(){
 
   }
  addActivity(){
+  this.activity.activityRecurring = this.activityRecurring;
   this.activity.date.from = `${moment(this.startDate).format('YYYY-MM-DD')}T09:00:26.184Z`
   this.activity.date.to = `${moment(this.endDate).format('YYYY-MM-DD')}T09:00:26.184Z`
-  this.activity.last_reviewed = moment(this.last_reviewed).format('DD-MM-YYYY');
+  this.activity.registrationStartDate = `${moment(this.registrationStartDate).format('YYYY-MM-DD')}T09:00:26.184Z`
+  this.activity.registrationEndDate = `${moment(this.registrationEndDate).format('YYYY-MM-DD')}T09:00:26.184Z`
+  this.activity.time.from = this.tools_replaceAll(this.startTime, ":", ".");
+  this.activity.time.to = this.tools_replaceAll(this.endTime, ":", ".");
+  this.activity.last_reviewed = `${moment(this.activity_last_reviewed).format('YYYY-MM-DD')}T09:00:26.184Z`
+  this.activity.exceptionDates = this.exceptionDates.map((item) => `${moment(item).format('YYYY-MM-DD')}T09:00:26.184Z`)
+  console.log(this.activity)
+  this.spinner.show(undefined,
+    {
+      type: 'ball-triangle-path',
+      size: 'medium',
+      bdColor: 'rgba(0, 0, 0, 0.8)',
+      color: '#fff',
+      fullScreen: true
+    });
+  this.apiservice.addActivity(this.activity).subscribe((res: any) => {
+    // this.loader.close();
+    this.spinner.hide();
+    if (res.isSuccess === true) {
+      this.getActivities() 
+      // this.programId = res.data._id || res.data.id;
+      // // this.session.setItem("ag_", this.programId)
+      // this.snack.open('Program Added successfully', 'OK', { duration: 5000 });
+      // // this.route.navigate(['tables/program', this.id]);
+      // this.isActivityTable = true;
+      // this.stepChange('ACTIVITIES');
+      this.router.navigate(['/programs-list',this.id]);
+    }
+    else{
+      this.toastr.error('Something went wrong!')
+    }
+  });
  }
   ageRange(){
     for(let i =2; i<18; i++){
@@ -624,7 +717,8 @@ getAllCity(){
     console.log(this.program.categoryId)
     this.program_model.categoryId
   }
-  getDateOptions(event){
+  getDateOptions(val){
+    this.activity.dateOption=val.value
     console.log(this.activity.dateOption)
   }
   getCategories() {

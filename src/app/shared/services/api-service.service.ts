@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'environments/environment';
 import { Observable, Subject } from 'rxjs';
 import { Program } from '../models/program.model';
+import { Activity } from '../models/activity.model';
 
 @Injectable({
   providedIn: 'root'
@@ -314,6 +315,30 @@ searchProgram(providerId:any,cityId?): Observable<any> {
   if(providerId!=undefined&&providerId!='undefined') url += `user=${providerId}`
   if(cityId) url += `&cityId=${cityId}`
   this.http.get(url).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+
+// ----------------------- Add activity ---------------------------------------------------
+addActivity(model): Observable<Activity[]> {
+  const subject = new Subject<Activity[]>();
+  this.http.post(`${this.root}/activity/create`, model).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+
+// ----------------------- update activity ---------------------------------------------------
+updateActivity(data: any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.put(`${this.root}/activity/update/${data._id}`, data).subscribe(res => {
       this.userResponse = res;
       subject.next(this.userResponse);
   }, error => {

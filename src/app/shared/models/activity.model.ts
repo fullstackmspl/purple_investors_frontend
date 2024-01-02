@@ -2,16 +2,16 @@ export class Activity {
   activityId: string;
   programId: string;
   alias: string;
-  dateOption: string;
-  dayOption: string;
-  timeOption: string;
+  dateOption: string="Dates available";
+  dayOption: string="Days provided";
+  timeOption: string="Time Available";
   pricePerParticipant: string;
   priceForSiblings: string;
   specialInstructions: string;
   adultAssistanceIsRequried: boolean = false;
   perTimePeriod: string;
   pricePeriod: any = {};
-  inpersonOrVirtual: any;
+  inpersonOrVirtual: string="No data available";
   extractionDate: Date;
   proofreaderRating: string;
   realTime: any = {
@@ -30,9 +30,9 @@ export class Activity {
   isParentJoin: boolean = false;
   offerDiscount: string;
   maxTravelDistance: number;
-  totalSessionClasses: number;
+  totalSessionClasses: number=0;
   isParentGuardianRequire: boolean = false;
-  isOpenForBooking: string;
+  isOpenForBooking: string="Yes";
   isChildCare: boolean = false;
   isPriceNotMention: boolean = false;
   multiLocations: any[] = [];
