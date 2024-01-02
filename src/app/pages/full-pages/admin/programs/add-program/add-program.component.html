@@ -516,33 +516,45 @@
                           </fieldset>
                           <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force"
                             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [rows]="activityList"
-                            [scrollbarH]="true" [columns]="columns" [externalPaging]="true">
-                            <ngx-datatable-column name="Name" prop="name" [width]="60">
+                            [scrollbarH]="true" [columns]="columns">
+                            <!-- <ngx-datatable-column name="Days" prop="days" [width]="60">
                               <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
-                                {{ row?.name }}
+                                <span *ngIf="row?.dayOption=='Days provided'">{{row?.days | daysfilter}}</span>
+                                <span *ngIf="row?.dayOption!=='Days provided'">{{row?.dayOption}}</span>
                               </ng-template>
-                            </ngx-datatable-column>
-                            <ngx-datatable-column name="Description" prop="description" [width]="80">
+                            </ngx-datatable-column> -->
+                            <ngx-datatable-column name="Time" prop="time" [width]="80">
                               <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
-                                {{ row?.description }}
+                                <span *ngIf="row?.timeOption=='Time Available'">
+                                  {{row?.time?.from | timeConvert | date:'hh:mm a'}} -
+                                  {{row?.time?.to | timeConvert | date:'hh:mm a'}}</span>
+                                <span *ngIf="row?.timeOption!=='Time Available'">{{row?.timeOption}}</span>
                                 <!-- <p class="cursor-pointer" (click)="openModalTaskType(myModalTaskType,row,row?._id,row?.task_type)">{{row?.task_type}}</p>  -->
                               </ng-template>
                             </ngx-datatable-column>
-                            <ngx-datatable-column name="Category" prop="user" [width]="10">
+                            <ngx-datatable-column name="Activity Dates" prop="user" [width]="10">
                               <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
-                                {{showCategoryNames(row?.categoryId)}}
-                                <!-- <p class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.user[0]?._id,row?._id,'Task Assign')">{{row?.user[0]?.fullname}}</p> -->
+                                <span *ngIf="row?.dateOption=='Dates available'">{{row?.date?.from | date:'MMM d'}}
+                                  -
+                                  {{row?.date?.to | date:'MMM d, y'}}</span>
+                                <span *ngIf="row?.dateOption!=='Dates available'">{{row?.dateOption}}</span>
                               </ng-template>
                             </ngx-datatable-column>
-                            <ngx-datatable-column name="Sub Category" prop="reviewUserId" [width]="10">
+                            <ngx-datatable-column name="Expire In" prop="Expire In" [width]="10">
                               <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
-                                {{showCategoryNames(row?.subCategoryIds)}}
+                                <span
+                                  *ngIf="row?.dateOption=='Dates available' && !row?.isExpired">{{dateDiff.transform(row?.date.to)}}</span>
+                                <span
+                                  *ngIf="row?.dateOption!=='Dates available' && !row?.isExpired">{{row?.dateOption}}</span>
+                                <span *ngIf="row?.isExpired"
+                                  style="background: red;padding: 3px 10px;color: #fff;">Expired</span>
+                                <!-- {{showCategoryNames(row?.subCategoryIds)}} -->
                                 <!-- <p class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.reviewUserId[0]?._id,row?._id,'Task Review')">{{row?.reviewUserId[0]?.fullname}}</p> -->
                               </ng-template>
                             </ngx-datatable-column>
                             <ngx-datatable-column name="Actions" [width]="50">
                               <ng-template let-row="row" ngx-datatable-cell-template>
-                                <i class="ft-edit text-primary cursor-pointer mx-1" (click)="editProgram(row)"></i>
+                                <i class="ft-edit text-primary cursor-pointer mx-1" (click)="editActitvity(row)"></i>
                                 <i class="ft-trash-2 cursor-pointer danger mx-1" (click)="confirmDelete(row._id)"></i>
                                 <!-- <i class="ft-eye text-primary cursor-pointer mx-1"
                                 (click)="openModalView(myModalContentView,row)"></i> -->
@@ -645,15 +657,17 @@
                 <div class="form_label_input" *ngIf="activity.dateOption == 'Dates available'">
                   <label for="name">Dates</label>
                   <div class="wrap_for_input form-control">
-                    <input class="form-control" [(ngModel)]="startDate"  [ngModelOptions]="{standalone: true}" type="date">
+                    <input class="form-control" [(ngModel)]="startDate" [ngModelOptions]="{standalone: true}"
+                      type="date">
                     <i class="ft-arrow-right"></i>
-                    <input class="form-control" [(ngModel)]="endDate" [ngModelOptions]="{standalone: true}"  type="date">
+                    <input class="form-control" [(ngModel)]="endDate" [ngModelOptions]="{standalone: true}" type="date">
                   </div>
                 </div>
                 <div class="col-12 form-group">
                   <div class="form-check">
                     <input class="form-check-input" type="checkbox" (change)="getFreeTrial($event)"
-                      [(ngModel)]="activityRecurring.activityRecurring" id="flexCheckDefault1" [ngModelOptions]="{standalone: true}">
+                      [(ngModel)]="activityRecurring.activityRecurring" id="flexCheckDefault1"
+                      [ngModelOptions]="{standalone: true}">
                     <label class="form-check-label" for="flexCheckDefault1">
                       Is activity recurring ?
                     </label>
@@ -662,10 +676,9 @@
                 <div class="form-group" *ngIf="activityRecurring.activityRecurring">
                   <label for="retype-new-password">Select days when the activity recurs</label>
                   <div class="controls">
-                    <ng-select [items]="activityRecurring_days_list" bindLabel="name" bindValue="name" placeholder="Select"
-                       [(ngModel)]="activityRecurring.days" [ngModelOptions]="{standalone: true}"
-                         [class.ng-touched]="requiredRecipients" [multiple]="true"
-                     >
+                    <ng-select [items]="activityRecurring_days_list" bindLabel="name" bindValue="name"
+                      placeholder="Select" [(ngModel)]="activityRecurring.days" [ngModelOptions]="{standalone: true}"
+                      [class.ng-touched]="requiredRecipients" [multiple]="true">
                     </ng-select>
                   </div>
                 </div>
@@ -673,19 +686,20 @@
                   <label for="retype-new-password">Days Options</label>
                   <div class="controls">
                     <ng-select [items]="days_options_list" bindLabel="name" bindValue="name" placeholder="Select"
-                      [(ngModel)]="activity.dayOption" [ngModelOptions]="{standalone: true}" [class.ng-touched]="requiredRecipients"
-                     >
+                      [(ngModel)]="activity.dayOption" [ngModelOptions]="{standalone: true}"
+                      [class.ng-touched]="requiredRecipients">
                     </ng-select>
                   </div>
                 </div>
                 <div class="form_label_input">
                   <label for="name">Exception Dates</label>
                   <div class="wrap_for_input chips-input min-height-50px">
-                    <input class="form-control" [(ngModel)]="exceptionDate"  [ngModelOptions]="{standalone: true}" (change)="onDateSelected($event)" type="date">
+                    <input class="form-control" [(ngModel)]="exceptionDate" [ngModelOptions]="{standalone: true}"
+                      (change)="onDateSelected($event)" type="date">
                     <div class="chips_container">
                       <div class="chip" *ngFor="let date of exceptionDates">
-                       <p>{{date}}</p>
-                       <i class="ft-x-circle" (click)="removeExceptionDate(date)"></i>
+                        <p>{{date}}</p>
+                        <i class="ft-x-circle" (click)="removeExceptionDate(date)"></i>
                       </div>
                     </div>
                     <i class="icon_calender ft-calendar"></i>
@@ -696,25 +710,27 @@
                   <label for="retype-new-password">Time Options</label>
                   <div class="controls">
                     <ng-select [items]="time_options_list" bindLabel="name" bindValue="value" placeholder="Select"
-                       [(ngModel)]="activity.timeOption" [ngModelOptions]="{standalone: true}">
+                      [(ngModel)]="activity.timeOption" [ngModelOptions]="{standalone: true}">
                     </ng-select>
                   </div>
                 </div>
                 <div class="form_label_input" *ngIf="activity.timeOption=='Time Available'">
                   <label for="name">Times</label>
                   <div class="wrap_for_input form-control">
-                    <input class="form-control" [(ngModel)]="startTime"  [ngModelOptions]="{standalone: true}" type="time">
+                    <input class="form-control" [(ngModel)]="startTime" [ngModelOptions]="{standalone: true}"
+                      type="time">
                     <i class="ft-arrow-right"></i>
-                    <input class="form-control" [(ngModel)]="endTime"  [ngModelOptions]="{standalone: true}" type="time">
+                    <input class="form-control" [(ngModel)]="endTime" [ngModelOptions]="{standalone: true}" type="time">
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="retype-new-password">Total number of classes/session</label>
                   <div class="controls">
-                    <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
-                    class="form-control" maxlength="7" placeholder="Add.."
-                    onkeyup="(function(el){var t = el.value;el.value = (t.indexOf('.') >= 0) ? (t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 3)) : t;})(this)"
-                    [(ngModel)]="activity.totalSessionClasses" [ngModelOptions]="{standalone: true}">
+                    <input type="text"
+                      oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"
+                      class="form-control" maxlength="7" placeholder="Add.."
+                      onkeyup="(function(el){var t = el.value;el.value = (t.indexOf('.') >= 0) ? (t.substr(0, t.indexOf('.')) + t.substr(t.indexOf('.'), 3)) : t;})(this)"
+                      [(ngModel)]="activity.totalSessionClasses" [ngModelOptions]="{standalone: true}">
                     <!-- <ng-select [items]="maxnumber_student_List" bindLabel="name" bindValue="name" placeholder="Select"
                       [(ngModel)]="activity.totalSessionClasses" [ngModelOptions]="{standalone: true}">
                     </ng-select> -->
@@ -723,9 +739,11 @@
                 <div class="form_label_input">
                   <label for="name">Registration Dates</label>
                   <div class="wrap_for_input form-control">
-                    <input class="form-control" [(ngModel)]="registrationStartDate"  [ngModelOptions]="{standalone: true}" type="date">
+                    <input class="form-control" [(ngModel)]="registrationStartDate"
+                      [ngModelOptions]="{standalone: true}" type="date">
                     <i class="ft-arrow-right"></i>
-                    <input class="form-control" [(ngModel)]="registrationEndDate"  [ngModelOptions]="{standalone: true}" type="date">
+                    <input class="form-control" [(ngModel)]="registrationEndDate" [ngModelOptions]="{standalone: true}"
+                      type="date">
                   </div>
                 </div>
 
@@ -760,7 +778,8 @@
               <div class="form-group">
                 <label>Last Review Date</label>
                 <div class="controls">
-                  <input type="date" class="form-control" [(ngModel)]="activity_last_reviewed" name="bookingCancel" id="bookingCancel">
+                  <input type="date" class="form-control" [(ngModel)]="activity_last_reviewed" name="bookingCancel"
+                    id="bookingCancel">
                   <!-- <input ngbDatepicker (click)="datePicker.toggle()" #datePicker="ngbDatepicker"
                [(ngModel)]="program.last_reviewed" type="text" class="form-control pickadate" required
               placeholder="Last Review Date"> -->

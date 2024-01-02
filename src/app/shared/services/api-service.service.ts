@@ -346,4 +346,14 @@ updateActivity(data: any): Observable<any> {
   });
   return subject.asObservable();
 }
+deleteActivity(id:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.delete(`${this.root}/activity/remove/${id}`,).subscribe(res => {
+      subject.next(res);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+//
 }

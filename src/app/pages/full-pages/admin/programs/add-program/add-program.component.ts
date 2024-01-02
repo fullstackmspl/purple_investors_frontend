@@ -10,6 +10,8 @@ import { WondrflyApiService } from 'app/shared/services/wondrfly-api.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import * as moment from 'moment';
+import swal from 'sweetalert2';
+import { DateDifferencePipe } from 'app/shared/pipes/date-difference.pipe';
 
 @Component({
   selector: 'app-add-program',
@@ -26,7 +28,7 @@ export class AddProgramComponent implements OnInit {
     activityRecurring: false,
     days: [],
   }
-  days ={
+  days = {
     sunday: false,
     monday: false,
     tuesday: false,
@@ -35,123 +37,124 @@ export class AddProgramComponent implements OnInit {
     friday: false,
     saturday: false,
   }
-  city_List: any[]=[];
+  city_List: any[] = [];
   firstFormGroupSubmitted = false;
   secondFormSubmitted = false;
   infoFormSubmitted = false;
   alertVisible = true;
-  addProgramView=true
+  addProgramView = true
   public ColumnMode = ColumnMode;
   public columns = [
-    { name: "Name", prop: "name" },
-    { name: "Description", prop: "description" },
-    { name: "Phone", prop: "phone_number" },
+    { name: "Days", prop: "days" },
+    { name: "Time", prop: "time" },
+    { name: "Activity Dates", prop: "Activity Dates" },
+    { name: "Expire In", prop: "Expire In" },
     { name: "Actions", prop: "Actions" },
   ];
 
   countries = [
-      { value: "USA", name: 'USA' },
-      { value: "UK", name: 'UK'},
-      { value: "Canada", name: 'Canada' },
+    { value: "USA", name: 'USA' },
+    { value: "UK", name: 'UK' },
+    { value: "Canada", name: 'Canada' },
   ];
 
   selectedLanguages = ["English", "Spanish"];
   languages = [
-      { value: "English", name: 'English' },
-      { value: "Spanish", name: 'Spanish'},
-      { value: "French", name: 'French' },
-      { value: "Russian", name: 'Russian' },
-      { value: "German", name: 'German'},
-      { value: "Hindi", name: 'Hindi' },
-      { value: "Arabic", name: 'Arabic' },
-      { value: "Sanskrit", name: 'Sanskrit'},
+    { value: "English", name: 'English' },
+    { value: "Spanish", name: 'Spanish' },
+    { value: "French", name: 'French' },
+    { value: "Russian", name: 'Russian' },
+    { value: "German", name: 'German' },
+    { value: "Hindi", name: 'Hindi' },
+    { value: "Arabic", name: 'Arabic' },
+    { value: "Sanskrit", name: 'Sanskrit' },
   ];
 
   selectedMusic = ["Jazz", "Hip Hop"];
   music = [
-      { value: "Rock", name: 'Rock' },
-      { value: "Jazz", name: 'Jazz'},
-      { value: "Disco", name: 'Disco' },
-      { value: "Pop", name: 'Pop' },
-      { value: "Techno", name: 'Techno'},
-      { value: "Folk", name: 'Folk' },
-      { value: "Hip Hop", name: 'Hip Hop' },
+    { value: "Rock", name: 'Rock' },
+    { value: "Jazz", name: 'Jazz' },
+    { value: "Disco", name: 'Disco' },
+    { value: "Pop", name: 'Pop' },
+    { value: "Techno", name: 'Techno' },
+    { value: "Folk", name: 'Folk' },
+    { value: "Hip Hop", name: 'Hip Hop' },
   ];
-  date_options_list=[
-    {name:"Date is not available",value:"Dates are not available"},
-    {name:"Dates are flexible",value:"Dates are flexible"},
-    {name:"Dates available",value:"Dates available"},
+  date_options_list = [
+    { name: "Date is not available", value: "Dates are not available" },
+    { name: "Dates are flexible", value: "Dates are flexible" },
+    { name: "Dates available", value: "Dates available" },
   ]
-  days_options_list=[
-    {name:"Days provided"},
-    {name:"Days are flexible"}, 
-    {name:"No data available"}
+  days_options_list = [
+    { name: "Days provided" },
+    { name: "Days are flexible" },
+    { name: "No data available" }
   ]
-  time_options_list=[
-    {name:"Time is not available",value:"Time Not Available"},
-    {name:"Time is flexible",value:"Time is flexible"},
-    {name:"Time available",value:"Time Available"},
+  time_options_list = [
+    { name: "Time is not available", value: "Time Not Available" },
+    { name: "Time is flexible", value: "Time is flexible" },
+    { name: "Time available", value: "Time Available" },
   ]
-  requiredRecipients:boolean
+  requiredRecipients: boolean
   selectedMovies = ["The Dark Knight", "Perl Harbour"];
   movies = [
-      { value: "Avatar", name: 'Avatar' },
-      { value: "The Dark Knight", name: 'The Dark Knight'},
-      { value: "Harry Potter", name: 'Harry Potter' },
-      { value: "Iron Man", name: 'Iron Man' },
-      { value: "Spider Man", name: 'Spider Man'},
-      { value: "Perl Harbour", name: 'Perl Harbour' },
-      { value: "Airplane!", name: 'Airplane!' },
+    { value: "Avatar", name: 'Avatar' },
+    { value: "The Dark Knight", name: 'The Dark Knight' },
+    { value: "Harry Potter", name: 'Harry Potter' },
+    { value: "Iron Man", name: 'Iron Man' },
+    { value: "Spider Man", name: 'Spider Man' },
+    { value: "Perl Harbour", name: 'Perl Harbour' },
+    { value: "Airplane!", name: 'Airplane!' },
   ];
-  Instructors_List=[
+  Instructors_List = [
 
   ]
-  inpersonOrvirtual_List=[
-    {name:"In person only",value:"Inperson"},
-    {name:"Online only",value:"Virtual"},
-    {name:"In-person or Online",value:"In-person or Online"},
-    {name:"No data available",value:"No data available"}
+  inpersonOrvirtual_List = [
+    { name: "In person only", value: "Inperson" },
+    { name: "Online only", value: "Virtual" },
+    { name: "In-person or Online", value: "In-person or Online" },
+    { name: "No data available", value: "No data available" }
   ]
-  isOpenForBooking_List=[
-    {name:"Yes",value:"Yes"},
-    {name:"No",value:"No"},
-    {name:"No info",value:"No info"}
+  isOpenForBooking_List = [
+    { name: "Yes", value: "Yes" },
+    { name: "No", value: "No" },
+    { name: "No info", value: "No info" }
   ]
-  category_List:any[]=[]
-  months_List=[]
-  years_List=[]
-  maxnumber_student_List=[
-    {name:"Maximum number of kids a single class/session/lesson can accommodate"},
-    {name:"No Capacity info"},
+  category_List: any[] = []
+  months_List = []
+  years_List = []
+  maxnumber_student_List = [
+    { name: "Maximum number of kids a single class/session/lesson can accommodate" },
+    { name: "No Capacity info" },
   ]
-  program_types=[
-    {name:"Private Class"},
-    {name:"Class"},
-    {name:"Camp"},
-    {name:"Party"},
+  program_types = [
+    { name: "Private Class" },
+    { name: "Class" },
+    { name: "Camp" },
+    { name: "Party" },
   ]
-  pricing_List=[
-    {name:"Price available",value:'Price available'},
-    {name:"Price can be discussed",value:'Price can be discussed'},
-    {name:"It is a free program",value:'It is a free program'},
-    {name:"No data available",value:'No data available'},
+  pricing_List = [
+    { name: "Price available", value: 'Price available' },
+    { name: "Price can be discussed", value: 'Price can be discussed' },
+    { name: "It is a free program", value: 'It is a free program' },
+    { name: "No data available", value: 'No data available' },
   ]
   id: any;
   programId: any;
   isEdit: boolean;
   activityList: any;
-  startDate:any = new Date;
-  endDate:any = new Date;
-  registrationStartDate:any = new Date;
-  registrationEndDate:any = new Date;
-  startTime='16:30';
-  endTime= '18:30';
+  startDate: any = new Date;
+  endDate: any = new Date;
+  registrationStartDate: any = new Date;
+  registrationEndDate: any = new Date;
+  startTime = '16:30';
+  endTime = '18:30';
   exceptionDate: any;
   last_reviewed: any = new Date;
   activity_last_reviewed: any = new Date;
   activityfirstFormGroupSubmitted: boolean;
   activitySecondFormGroupSubmitted: boolean;
-  exceptionDates: any[]=[];
+  exceptionDates: any[] = [];
   tools_replaceAll(str, find, replace) {
     str = str ? str.padStart(5, "0") : str;
     if (str && find && replace) {
@@ -165,8 +168,8 @@ export class AddProgramComponent implements OnInit {
     console.log('Selected Date:', this.exceptionDate);
     this.updateExceptionDates(this.exceptionDate);
   }
-  changePricing(val){
-    this.program.pricing=val.value
+  changePricing(val) {
+    this.program.pricing = val.value
     console.log(this.program.pricing)
   }
   removeExceptionDate(date: string) {
@@ -181,59 +184,59 @@ export class AddProgramComponent implements OnInit {
       this.exceptionDates.push(date);
     }
   }
-  price_unit_List=[
-    {name:"Hour",value:'hour'},
-    {name:"Class",value:'class'},
-    {name:"Day",value:'day'},
-    {name:"Week",value:'week'},
-    {name:"Month",value:'month'},
-    {name:"Package",value:'package'},
-    {name:"Semester",value:'semester'},
-    {name:"Year",value:'year'},
+  price_unit_List = [
+    { name: "Hour", value: 'hour' },
+    { name: "Class", value: 'class' },
+    { name: "Day", value: 'day' },
+    { name: "Week", value: 'week' },
+    { name: "Month", value: 'month' },
+    { name: "Package", value: 'package' },
+    { name: "Semester", value: 'semester' },
+    { name: "Year", value: 'year' },
   ]
-  activityRecurring_days_list=[
-    {name:"Monday",value:'monday'},
-    {name:"Tuesday",value:'tuesday'},
-    {name:"Wednesday",value:'wednesday'},
-    {name:"Thursday",value:'thursday'},
-    {name:"Friday",value:'friday'},
-    {name:"Saturday",value:'saturday'},
-    {name:"Sunday",value:'sunday'},
+  activityRecurring_days_list = [
+    { name: "Monday", value: 'monday' },
+    { name: "Tuesday", value: 'tuesday' },
+    { name: "Wednesday", value: 'wednesday' },
+    { name: "Thursday", value: 'thursday' },
+    { name: "Friday", value: 'friday' },
+    { name: "Saturday", value: 'saturday' },
+    { name: "Sunday", value: 'sunday' },
   ]
-  private_vs_group=[
-  {name:"Private",value:'private'},
-  {name:"Group",value:'group'}
+  private_vs_group = [
+    { name: "Private", value: 'private' },
+    { name: "Group", value: 'group' }
   ]
-  session_premises=[
-    {name:"Indoor",value:'Indoor'},
-    {name:"Outdoor",value:'Outdoor'},
-    {name:"Either",value:'Either'},
-    {name:"No data available",value:'No data available'},
+  session_premises = [
+    { name: "Indoor", value: 'Indoor' },
+    { name: "Outdoor", value: 'Outdoor' },
+    { name: "Either", value: 'Either' },
+    { name: "No data available", value: 'No data available' },
   ]
   PriceFormGroup = new FormGroup({
-    pricePerUnit: new FormControl('',[Validators.required]),
-    pricePerParticipant: new FormControl('',[Validators.required]),
-    noOfUnits: new FormControl(1,[Validators.required]),
+    pricePerUnit: new FormControl('', [Validators.required]),
+    pricePerParticipant: new FormControl('', [Validators.required]),
+    noOfUnits: new FormControl(1, [Validators.required]),
     pricePerHour: new FormControl(''),
     priceProrated: new FormControl(false),
     setDefault: new FormControl(true),
     // offerDiscount: new FormControl(['',]),
   });
   firstFormGroup = new FormGroup({
-      name: new FormControl(['',]),
-      description: new FormControl(['',]),
-      email: new FormControl(['', Validators.email]),
+    name: new FormControl(['',]),
+    description: new FormControl(['',]),
+    email: new FormControl(['', Validators.email]),
   });
   activityfirstFormGroup = new FormGroup({
     inpersonOrVirtual: new FormControl(['No data available',]),
     isOpenForBooking: new FormControl(['Yes',]),
     email: new FormControl(['', Validators.email]),
-});
-activitySecondFormGroup = new FormGroup({
-  dateOption: new FormControl(['Dates available',]),
-  description: new FormControl(['',]),
-  email: new FormControl(['', Validators.email]),
-});
+  });
+  activitySecondFormGroup = new FormGroup({
+    dateOption: new FormControl(['Dates available',]),
+    description: new FormControl(['',]),
+    email: new FormControl(['', Validators.email]),
+  });
   secondForm = new FormGroup({
     parentalSupervisionRequired: new FormControl('No data available', [Validators.required]),
     maxNumberOfStudents: new FormControl('No Capacity info', [Validators.required]),
@@ -262,121 +265,123 @@ activitySecondFormGroup = new FormGroup({
     instagram: new FormControl(''),
     quora: new FormControl('')
   });
-program_model={
-  name:'',
-  emails:[],
-  description:'',
-  earlyDrop_off_LatePick_up: {
-    ealryDrop: false,
-    earlyTime: '',
-    lateDrop: false,
-    lateTime: ''
-  },
-  categoryId:'',
-  subCategory:'',
-  ageGroup:{ month: [], year: [] },
-  skillGroup: '',
-  isFreeTrial: false,
-  parentalSupervisionRequired:'',
+  program_model = {
+    name: '',
+    emails: [],
+    description: '',
+    earlyDrop_off_LatePick_up: {
+      ealryDrop: false,
+      earlyTime: '',
+      lateDrop: false,
+      lateTime: ''
+    },
+    categoryId: '',
+    subCategory: '',
+    ageGroup: { month: [], year: [] },
+    skillGroup: '',
+    isFreeTrial: false,
+    parentalSupervisionRequired: '',
 
-}
-minCapacity: number = 0;
-maxCapacity: number = 0;
+  }
+  minCapacity: number = 0;
+  maxCapacity: number = 0;
 
-parental_supervision_required=[
-  {
-    name:"Parent attendance required",
-    value:"Parent attendance required"
-  },
-  {
-    name:"Parent attendance NOT required",
-    value:"Parent attendance NOT required"
-  },
-  {
-    name:"No data available",
-    value:"No data available"
-  },
-]
-program: any = new Program;
+  parental_supervision_required = [
+    {
+      name: "Parent attendance required",
+      value: "Parent attendance required"
+    },
+    {
+      name: "Parent attendance NOT required",
+      value: "Parent attendance NOT required"
+    },
+    {
+      name: "No data available",
+      value: "No data available"
+    },
+  ]
+  program: any = new Program;
   tags: any[];
-  capacity={
+  capacity = {
     min: 0,
     max: 0
   }
-  constructor( private modalService: NgbModal,private wondrflyapiservice:WondrflyApiService,
-    private apiservice:ApiServiceService,private activatedRoute: ActivatedRoute,  private spinner: NgxSpinnerService,
+  constructor(private modalService: NgbModal, private wondrflyapiservice: WondrflyApiService,
+    public dateDiff: DateDifferencePipe,
+    private apiservice: ApiServiceService, private activatedRoute: ActivatedRoute, private spinner: NgxSpinnerService,
     private toastr: ToastrService,
-    private router:Router) {
-      this.activatedRoute.params.subscribe(params => {
-        this.id = params['id'];
-      });
-      this.activatedRoute.queryParams
+    private router: Router) {
+    this.activatedRoute.params.subscribe(params => {
+      this.id = params['id'];
+    });
+    this.activatedRoute.queryParams
       .subscribe(async (params: any) => {
-      if(params.id){
-        this.isEdit=true;
-        this.programId=params.id
-        this.getProgramById(this.programId)
-      }
+        if (params.id) {
+          this.isEdit = true;
+          this.programId = params.id
+          this.getProgramById(this.programId)
+        }
       });
     this.getCategories()
     this.getTags()
-   }
- getProgramById(id){
-  this.apiservice.getProgramById(id).subscribe((res:any)=>{
-    this.program=res.data
-    this.programId=res.data._id
-    this.getActivities()
-    this.program.subCategoryIds=this.program.subCategoryIds.map((item:any)=>item._id)
-    this.program.categoryId=this.program.categoryId.map((item:any)=>item._id)
-    this.extraPrices=this.program.extraPrices
-    this.capacity=this.program.capacity
-    this.program.email=this.program.emails[0]
-    if(this.program.last_reviewed){
-    this.program.last_reviewed=this.parseISODate(this.program.last_reviewed)
-    }
-})
-}
-getActivities() {
-  this.apiservice.getProgramsActivity(this.programId).subscribe((res: any) => {
-    if (res.isSuccess) {
-      this.activityList = res.data;
-    }
-  })
-}
-items=[]
-public onSelect(item) {
-  console.log('tag selected: value is ' + item,this.items);
-}
-getAllCity(){
-  // this.spinner.show(undefined,
-  //   {
-  //     type: 'ball-triangle-path',
-  //     size: 'medium',
-  //     bdColor: 'rgba(0, 0, 0, 0.8)',
-  //     color: '#fff',
-  //     fullScreen: true
-  //   });
-  this.apiservice.getAllCity(1000,1).subscribe((res: any) => {
-    // this.spinner.hide();
-    this.city_List = res?.data?.user
-  })
-}
-resetNewActivity(){
-  const today = moment().format('YYYY-MM-DD');
-  this.startDate = today;
-  this.endDate = today;
-  this.exceptionDates=[]
-  this.activity=new Activity
-  this.activityRecurring={
-    activityRecurring: false,
-    days: [],
   }
-  this.startTime='16:30';
-  this.endTime= '18:30';
-}
+  getProgramById(id) {
+    this.apiservice.getProgramById(id).subscribe((res: any) => {
+      this.program = res.data
+      this.programId = res.data._id
+      this.getActivities()
+      this.program.subCategoryIds = this.program.subCategoryIds.map((item: any) => item._id)
+      this.program.categoryId = this.program.categoryId.map((item: any) => item._id)
+      this.extraPrices = this.program.extraPrices
+      this.capacity = this.program.capacity
+      this.program.email = this.program.emails[0]
+      if (this.program.last_reviewed) {
+        this.program.last_reviewed = this.parseISODate(this.program.last_reviewed)
+      }
+    })
+  }
+  getActivities() {
+    this.apiservice.getProgramsActivity(this.programId).subscribe((res: any) => {
+      if (res.isSuccess) {
+        this.activityList = res.data;
+        console.log("this.activityList", this.activityList)
+      }
+    })
+  }
+  items = []
+  public onSelect(item) {
+    console.log('tag selected: value is ' + item, this.items);
+  }
+  getAllCity() {
+    // this.spinner.show(undefined,
+    //   {
+    //     type: 'ball-triangle-path',
+    //     size: 'medium',
+    //     bdColor: 'rgba(0, 0, 0, 0.8)',
+    //     color: '#fff',
+    //     fullScreen: true
+    //   });
+    this.apiservice.getAllCity(1000, 1).subscribe((res: any) => {
+      // this.spinner.hide();
+      this.city_List = res?.data?.user
+    })
+  }
+  resetNewActivity() {
+    const today = moment().format('YYYY-MM-DD');
+    this.startDate = today;
+    this.endDate = today;
+    this.exceptionDates = []
+    this.activity = new Activity
+    this.activityRecurring = {
+      activityRecurring: false,
+      days: [],
+    }
+    this.startTime = '16:30';
+    this.endTime = '18:30';
+  }
   ngOnInit() {
     this.resetNewActivity()
-    this. ageRange()
+    this.ageRange()
     this.getAllCity()
     // this.firstFormGroup = new FormGroup({
     //   name: new FormControl(['',]),
@@ -450,51 +455,56 @@ resetNewActivity(){
     // });
 
   }
- addActivity(){
-  this.activity.activityRecurring = this.activityRecurring;
-  this.activity.date.from = `${moment(this.startDate).format('YYYY-MM-DD')}T09:00:26.184Z`
-  this.activity.date.to = `${moment(this.endDate).format('YYYY-MM-DD')}T09:00:26.184Z`
-  this.activity.registrationStartDate = `${moment(this.registrationStartDate).format('YYYY-MM-DD')}T09:00:26.184Z`
-  this.activity.registrationEndDate = `${moment(this.registrationEndDate).format('YYYY-MM-DD')}T09:00:26.184Z`
-  this.activity.time.from = this.tools_replaceAll(this.startTime, ":", ".");
-  this.activity.time.to = this.tools_replaceAll(this.endTime, ":", ".");
-  this.activity.last_reviewed = `${moment(this.activity_last_reviewed).format('YYYY-MM-DD')}T09:00:26.184Z`
-  this.activity.exceptionDates = this.exceptionDates.map((item) => `${moment(item).format('YYYY-MM-DD')}T09:00:26.184Z`)
-  console.log(this.activity)
-  this.spinner.show(undefined,
-    {
-      type: 'ball-triangle-path',
-      size: 'medium',
-      bdColor: 'rgba(0, 0, 0, 0.8)',
-      color: '#fff',
-      fullScreen: true
+  addActivity() {
+    this.activity.programId = this.programId;
+    this.activity.activityRecurring = this.activityRecurring;
+    this.activity.date.from = `${moment(this.startDate).format('YYYY-MM-DD')}T09:00:26.184Z`
+    this.activity.date.to = `${moment(this.endDate).format('YYYY-MM-DD')}T09:00:26.184Z`
+    this.activity.registrationStartDate = `${moment(this.registrationStartDate).format('YYYY-MM-DD')}T09:00:26.184Z`
+    this.activity.registrationEndDate = `${moment(this.registrationEndDate).format('YYYY-MM-DD')}T09:00:26.184Z`
+    this.activity.time.from = this.tools_replaceAll(this.startTime, ":", ".");
+    this.activity.time.to = this.tools_replaceAll(this.endTime, ":", ".");
+    this.activity.last_reviewed = `${moment(this.activity_last_reviewed).format('YYYY-MM-DD')}T09:00:26.184Z`
+    this.activity.exceptionDates = this.exceptionDates.map((item) => `${moment(item).format('YYYY-MM-DD')}T09:00:26.184Z`)
+    console.log(this.activity)
+    this.spinner.show(undefined,
+      {
+        type: 'ball-triangle-path',
+        size: 'medium',
+        bdColor: 'rgba(0, 0, 0, 0.8)',
+        color: '#fff',
+        fullScreen: true
+      });
+    this.apiservice.addActivity(this.activity).subscribe((res: any) => {
+      // this.loader.close();
+      this.spinner.hide();
+      if (res.isSuccess === true) {
+        this.addProgramView = true
+        this.setActiveTab('Activities');
+        this.resetNewActivity()
+        this.getActivities()
+
+        // this.programId = res.data._id || res.data.id;
+        // // this.session.setItem("ag_", this.programId)
+        // this.snack.open('Program Added successfully', 'OK', { duration: 5000 });
+        // // this.route.navigate(['tables/program', this.id]);
+        // this.isActivityTable = true;
+        // this.stepChange('ACTIVITIES');
+        this.router.navigate(['/programs-list', this.id]);
+      }
+      else {
+        this.toastr.error('Something went wrong!')
+      }
     });
-  this.apiservice.addActivity(this.activity).subscribe((res: any) => {
-    // this.loader.close();
-    this.spinner.hide();
-    if (res.isSuccess === true) {
-      this.getActivities() 
-      // this.programId = res.data._id || res.data.id;
-      // // this.session.setItem("ag_", this.programId)
-      // this.snack.open('Program Added successfully', 'OK', { duration: 5000 });
-      // // this.route.navigate(['tables/program', this.id]);
-      // this.isActivityTable = true;
-      // this.stepChange('ACTIVITIES');
-      this.router.navigate(['/programs-list',this.id]);
-    }
-    else{
-      this.toastr.error('Something went wrong!')
-    }
-  });
- }
-  ageRange(){
-    for(let i =2; i<18; i++){
+  }
+  ageRange() {
+    for (let i = 2; i < 18; i++) {
       this.years_List.push(i)
     }
-    for(let i =0; i<24; i++){
+    for (let i = 0; i < 24; i++) {
       this.months_List.push(i)
     }
-    
+
   }
   activatedAgeClass(age, type) {
     if (type == 'year') {
@@ -554,15 +564,53 @@ resetNewActivity(){
   get inf() {
     return this.infoForm.controls;
   }
-  priceAdd(){
+  editActitvity(activity) {
+    console.log(activity)
+  }
+  confirmDelete(id: string) {
+    this.program = id
+    swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#2F8BE6',
+      cancelButtonColor: '#F55252',
+      confirmButtonText: 'Yes, delete it!',
+      customClass: {
+        confirmButton: 'btn btn-warning',
+        cancelButton: 'btn btn-danger ml-1'
+      },
+      buttonsStyling: false,
+    }).then((result) => {
+      if (result.value) {
+        this.deleteActivity()
+      } else if (result.dismiss === swal.DismissReason.cancel) {
+        swal.fire({
+          title: 'Cancelled',
+          text: 'Your Program is safe :)',
+          icon: 'error',
+          customClass: {
+            confirmButton: 'btn btn-success'
+          },
+        })
+      }
+    });
+  }
+  deleteActivity() {
+    this.apiservice.deleteActivity(this.program).subscribe((res: any) => {
+      this.getActivities()
+    })
+  }
+  priceAdd() {
     // this.firstFormGroupSubmitted = true;
 
     if (this.PriceFormGroup.invalid) {
       return;
     }
-     this.extraPrices.push(this.PriceFormGroup.value);
-     console.log('extraPrices',this.extraPrices)
-     this.modalService.dismissAll()
+    this.extraPrices.push(this.PriceFormGroup.value);
+    console.log('extraPrices', this.extraPrices)
+    this.modalService.dismissAll()
   }
   onfirstFormGroupSubmit() {
     this.firstFormGroupSubmitted = true;
@@ -587,9 +635,9 @@ resetNewActivity(){
   }
   onSecondFormSubmit() {
     this.secondFormSubmitted = true;
-    console.log('secondForm',this.secondForm.value)
+    console.log('secondForm', this.secondForm.value)
     if (this.secondForm.invalid) {
-      this.requiredRecipients=true
+      this.requiredRecipients = true
       return;
     }
     this.setActiveTab('Program Pricing')
@@ -606,11 +654,11 @@ resetNewActivity(){
     // if (this.socialForm.invalid) {
     //   return;
     // }
-    
+
   }
   parseISODate(isoDateString) {
     const date = new Date(isoDateString);
-    
+
     return {
       year: date.getFullYear(),
       month: date.getMonth() + 1, // Months are zero-based
@@ -629,15 +677,15 @@ resetNewActivity(){
     this.program.extraPrices = this.extraPrices;
     this.program.userId = this.id;
     this.program.user = this.id;
-    this.program.capacity=this.capacity
-    this.program.emails=[this.program.email]
-    if(this.program.last_reviewed){
+    this.program.capacity = this.capacity
+    this.program.emails = [this.program.email]
+    if (this.program.last_reviewed) {
       const date = new Date(this.program.last_reviewed.year, this.program.last_reviewed.month - 1, this.program.last_reviewed.day);
       // Convert the date to ISO string
-     const isoDate = date.toISOString();
-     this.program.last_reviewed=isoDate
+      const isoDate = date.toISOString();
+      this.program.last_reviewed = isoDate
     }
-    if(this.isEdit){
+    if (this.isEdit) {
       this.apiservice.updateProgram(this.program).subscribe((res: any) => {
         // this.loader.close();
         if (res.isSuccess === true) {
@@ -648,14 +696,14 @@ resetNewActivity(){
           // // this.route.navigate(['tables/program', this.id]);
           // this.isActivityTable = true;
           // this.stepChange('ACTIVITIES');
-          this.router.navigate(['/programs-list',this.id]);
+          this.router.navigate(['/programs-list', this.id]);
         }
-        else{
+        else {
           this.toastr.error('Something went wrong!')
         }
       });
     }
-    else{
+    else {
       this.apiservice.addProgram(this.program).subscribe((res: any) => {
         // this.loader.close();
         if (res.isSuccess === true) {
@@ -666,9 +714,9 @@ resetNewActivity(){
           // // this.route.navigate(['tables/program', this.id]);
           // this.isActivityTable = true;
           // this.stepChange('ACTIVITIES');
-          this.router.navigate(['/programs-list',this.id]);
+          this.router.navigate(['/programs-list', this.id]);
         }
-        else{
+        else {
           this.toastr.error('Something went wrong!')
         }
       });
@@ -676,9 +724,9 @@ resetNewActivity(){
     // this.loader.close();
   }
 
-  addPrice(price?,i?) {
-    if(price){
-      price.index=i
+  addPrice(price?, i?) {
+    if (price) {
+      price.index = i
     }
     // let dialogRef: MatDialogRef<any> = this.dialog.open(AddBatchComponent, {
     //   width: '60%',
@@ -698,27 +746,27 @@ resetNewActivity(){
     //     }
     //   });
   }
-  deletePrice(i){
-    this.extraPrices.splice(i,1)
+  deletePrice(i) {
+    this.extraPrices.splice(i, 1)
   }
   openModalForPrice(content) {
-   
+
     const modalOptions: NgbModalOptions = {
       size: 'lg', // 'sm', 'lg', or 'xl'
       backdrop: 'static',
     };
-    const modalRef = this.modalService.open(content,modalOptions);
-    modalRef.result.then((result) => { 
+    const modalRef = this.modalService.open(content, modalOptions);
+    modalRef.result.then((result) => {
 
     }, (reason) => {
     });
   }
-  getCategory(event){
+  getCategory(event) {
     console.log(this.program.categoryId)
     this.program_model.categoryId
   }
-  getDateOptions(val){
-    this.activity.dateOption=val.value
+  getDateOptions(val) {
+    this.activity.dateOption = val.value
     console.log(this.activity.dateOption)
   }
   getCategories() {
@@ -734,33 +782,33 @@ resetNewActivity(){
       this.tags = this.tags.filter((item) => item.isActivated === true);
     });
   }
-  getSubCategory(event){
+  getSubCategory(event) {
     console.log(this.program.subCategoryIds)
     this.program_model.subCategory
   }
-  getAgeMonth(event){
+  getAgeMonth(event) {
     this.program_model.ageGroup.month
   }
-  getAgeYear(event){
+  getAgeYear(event) {
     this.program_model.ageGroup.year
   }
-  getSkillLevel(event){
+  getSkillLevel(event) {
     this.program_model.skillGroup
   }
   getFreeTrial(event: any) {
     this.program.isFreeTrial = event.target.checked;
     console.log('Is Free Trial:', this.program.isFreeTrial);
   }
-  getEarlyDrop(event){
+  getEarlyDrop(event) {
     this.program_model.earlyDrop_off_LatePick_up.ealryDrop = event.target.checked;
     console.log('early drop:', this.program_model.earlyDrop_off_LatePick_up.ealryDrop);
   }
-  getLateDrop(event){
+  getLateDrop(event) {
     this.program_model.earlyDrop_off_LatePick_up.lateDrop = event.target.checked;
     console.log('late drop:', this.program_model.earlyDrop_off_LatePick_up.lateDrop);
   }
-  submit(){
-    console.log('=>>>',this.program_model)
+  submit() {
+    console.log('=>>>', this.program_model)
   }
 }
 

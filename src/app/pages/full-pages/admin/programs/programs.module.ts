@@ -12,6 +12,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { MatOptionModule } from '@angular/material/core';
 import { TagInputModule } from 'ngx-chips';
 import { AllProgramsComponent } from './all-programs/all-programs.component';
+import { PipeModule } from 'app/shared/pipes/pipe.module';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { AllProgramsComponent } from './all-programs/all-programs.component';
   ],
   imports: [
     CommonModule,
+    PipeModule,
     ProgramsRoutingModule,
     FormsModule,
     ReactiveFormsModule,
