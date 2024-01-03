@@ -16,7 +16,7 @@ export class DaysfilterPipe implements PipeTransform {
             }
         });
         uniqueChars = [...new Set(filtr)];
-        return uniqueChars = uniqueChars.map(el => el.substring(0, 3));
+        return uniqueChars = uniqueChars.map(el => el.charAt(0).toUpperCase()+el.substring(1, 3));
     }
 
 }

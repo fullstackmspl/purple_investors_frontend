@@ -211,3 +211,17 @@ justify-content: end;
     height: 100%;
     left:0;
 }
+.radio-fields{
+  display: flex;
+  padding: 0;
+}
+.weekday-ceckboxes-info {display: flex;flex-direction: row;flex-wrap: wrap;column-gap: 35px;}
+.weekday-ceckboxes-info .checkbox__body {font-family: 'Poppins';font-style: normal;font-weight: 400;font-size: 12px;line-height: 18px;letter-spacing: 0.001em;color: #494949;}
+.checkbox-circle-box .checkbox {padding: 0px;}
+.checkbox-circle-box .checkbox__checkmark {position: relative;height: 18px;width: 18px;border: 1px solid #C4C4C4;border-radius: 50px;margin: 0px auto;margin-bottom: 7px;}
+.checkbox-circle-box .checkbox .checkbox__checkmark:after {width: 18px;height: 18px;border-radius: 50%;}
+.label-heading span{
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  font-weight: 500;
+}

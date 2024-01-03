@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, UrlTree } from '@angular/router';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { ColumnMode } from '@swimlane/ngx-datatable';
 import { Activity } from 'app/shared/models/activity.model';
@@ -28,10 +28,11 @@ export class AddProgramComponent implements OnInit {
     activityRecurring: false,
     days: [],
   }
+  orderedDays = ['sunday', 'monday','tuesday' , 'wednesday', 'thursday','friday','saturday'];
   days = {
     sunday: false,
     monday: false,
-    tuesday: false,
+    tuesday: true,
     wednesday: false,
     thursday: false,
     friday: false,
@@ -155,7 +156,9 @@ export class AddProgramComponent implements OnInit {
   activityfirstFormGroupSubmitted: boolean;
   activitySecondFormGroupSubmitted: boolean;
   exceptionDates: any[] = [];
+  activityId: any;
   tools_replaceAll(str, find, replace) {
+    console.log('tools_replaceAll', str, find, replace)
     str = str ? str.padStart(5, "0") : str;
     if (str && find && replace) {
       var escapedFind = find.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
@@ -321,6 +324,9 @@ export class AddProgramComponent implements OnInit {
           this.programId = params.id
           this.getProgramById(this.programId)
         }
+        if(params.activityId){
+          this.activityId = params.activityId
+        }
       });
     this.getCategories()
     this.getTags()
@@ -341,9 +347,22 @@ export class AddProgramComponent implements OnInit {
     })
   }
   getActivities() {
+    this.spinner.show(undefined,
+      {
+        type: 'ball-triangle-path',
+        size: 'medium',
+        bdColor: 'rgba(0, 0, 0, 0.8)',
+        color: '#fff',
+        fullScreen: true
+      });
     this.apiservice.getProgramsActivity(this.programId).subscribe((res: any) => {
       if (res.isSuccess) {
         this.activityList = res.data;
+        this.spinner.hide();
+        if(this.activityId){
+          let activity = this.activityList.find((item: any) => item._id == this.activityId)
+          this.editActitvity(activity)
+        }
         console.log("this.activityList", this.activityList)
       }
     })
@@ -370,17 +389,35 @@ export class AddProgramComponent implements OnInit {
     const today = moment().format('YYYY-MM-DD');
     this.startDate = today;
     this.endDate = today;
+    this.registrationEndDate = today;
+    this.registrationStartDate = today;
+    this.activity_last_reviewed = today;
     this.exceptionDates = []
     this.activity = new Activity
     this.activityRecurring = {
       activityRecurring: false,
       days: [],
     }
+    this.days= {
+      sunday: false,
+      monday: false,
+      tuesday: false,
+      wednesday: false,
+      thursday: false,
+      friday: false,
+      saturday: false,
+    }
     this.startTime = '16:30';
     this.endTime = '18:30';
+    this.activityId=null
+    if(this.programId){
+      const queryParams = { id:this.programId};
+      const urlTree: UrlTree = this.router.createUrlTree([], { queryParams });
+      const url = urlTree.toString();
+      history.replaceState({}, '', url);
+    }
   }
   ngOnInit() {
-    this.resetNewActivity()
     this.ageRange()
     this.getAllCity()
     // this.firstFormGroup = new FormGroup({
@@ -466,6 +503,7 @@ export class AddProgramComponent implements OnInit {
     this.activity.time.to = this.tools_replaceAll(this.endTime, ":", ".");
     this.activity.last_reviewed = `${moment(this.activity_last_reviewed).format('YYYY-MM-DD')}T09:00:26.184Z`
     this.activity.exceptionDates = this.exceptionDates.map((item) => `${moment(item).format('YYYY-MM-DD')}T09:00:26.184Z`)
+    this.activity.days = this.days
     console.log(this.activity)
     this.spinner.show(undefined,
       {
@@ -475,27 +513,42 @@ export class AddProgramComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiservice.addActivity(this.activity).subscribe((res: any) => {
-      // this.loader.close();
-      this.spinner.hide();
-      if (res.isSuccess === true) {
-        this.addProgramView = true
-        this.setActiveTab('Activities');
-        this.resetNewActivity()
-        this.getActivities()
-
-        // this.programId = res.data._id || res.data.id;
-        // // this.session.setItem("ag_", this.programId)
-        // this.snack.open('Program Added successfully', 'OK', { duration: 5000 });
-        // // this.route.navigate(['tables/program', this.id]);
-        // this.isActivityTable = true;
-        // this.stepChange('ACTIVITIES');
-        // this.router.navigate(['/programs-list', this.id]);
+      if(this.activityId){
+        this.apiservice.updateActivity(this.activity).subscribe((res: any) => {
+          // this.loader.close();
+          this.spinner.hide();
+          if (res.isSuccess === true) {
+            this.addProgramView = true
+              this.activityId=null
+              this.addProgramView = true
+              const queryParams = { id:this.programId};
+              const urlTree: UrlTree = this.router.createUrlTree([], { queryParams });
+              const url = urlTree.toString();
+              history.replaceState({}, '', url);
+            this.setActiveTab('Activities');
+            this.resetNewActivity()
+            this.getActivities()
+          }
+          else {
+            this.toastr.error('Something went wrong!')
+          }
+        });
       }
-      else {
-        this.toastr.error('Something went wrong!')
+      else{
+        this.apiservice.addActivity(this.activity).subscribe((res: any) => {
+          // this.loader.close();
+          this.spinner.hide();
+          if (res.isSuccess === true) {
+            this.addProgramView = true
+            this.setActiveTab('Activities');
+            this.resetNewActivity()
+            this.getActivities()
+          }
+          else {
+            this.toastr.error('Something went wrong!')
+          }
+        });
       }
-    });
   }
   ageRange() {
     for (let i = 2; i < 18; i++) {
@@ -545,6 +598,9 @@ export class AddProgramComponent implements OnInit {
     console.log(this.program.ageGroup)
   }
   setActiveTab(tab) {
+    if(tab=='Activities'){
+      this.resetNewActivity()
+    }
     this.activeTab = tab;
   }
 
@@ -565,7 +621,29 @@ export class AddProgramComponent implements OnInit {
     return this.infoForm.controls;
   }
   editActitvity(activity) {
-    console.log(activity)
+    this.activity= activity
+    this.activityRecurring= activity.activityRecurring
+    this.startDate = moment(this.activity.date.from).format('YYYY-MM-DD')
+    this.endDate = moment(this.activity.date.to).format('YYYY-MM-DD')
+    this.registrationStartDate = moment(this.activity.registrationStartDate).format('YYYY-MM-DD')
+    this.registrationEndDate = moment(this.activity.registrationEndDate).format('YYYY-MM-DD')
+    this.activity_last_reviewed = moment(this.activity.last_reviewed).format('YYYY-MM-DD')
+    this.exceptionDates = this.activity.exceptionDates.map((item) => moment(item).format('YYYY-MM-DD'))
+    this.days=this.activity.days
+    this.startTime = this.tools_replaceAll(this.activity.time.from.toString(), ".", ":");
+    this.endTime = this.tools_replaceAll(this.activity.time.to.toString(), ".", ":");
+    console.log(activity,this.startTime,this.endTime)
+    let activityId = ''
+    if (this.programId) {
+      activityId=activity._id
+      this.activityId = activityId
+      this.addProgramView = false
+    }
+    const queryParams = { id:this.programId,activityId: activityId };
+    const urlTree: UrlTree = this.router.createUrlTree([], { queryParams });
+    const url = urlTree.toString();
+    history.replaceState({}, '', url);
+    this.setActiveTab('Activity Info')
   }
   confirmDelete(id: string) {
     this.program = id
@@ -588,7 +666,7 @@ export class AddProgramComponent implements OnInit {
       } else if (result.dismiss === swal.DismissReason.cancel) {
         swal.fire({
           title: 'Cancelled',
-          text: 'Your Program is safe :)',
+          text: 'Your Activity is safe :)',
           icon: 'error',
           customClass: {
             confirmButton: 'btn btn-success'
@@ -690,13 +768,22 @@ export class AddProgramComponent implements OnInit {
         // this.loader.close();
         if (res.isSuccess === true) {
           this.spinner.hide();
-          // this.programId = res.data._id || res.data.id;
+          this.programId = res.data._id || res.data.id;
+          let id = ''
+          if (this.programId) {
+            id=this.programId
+          }
+          const queryParams = { id: id };
+          const urlTree: UrlTree = this.router.createUrlTree([], { queryParams });
+          const url = urlTree.toString();
+          history.replaceState({}, '', url);
           // // this.session.setItem("ag_", this.programId)
           // this.snack.open('Program Added successfully', 'OK', { duration: 5000 });
           // // this.route.navigate(['tables/program', this.id]);
           // this.isActivityTable = true;
           // this.stepChange('ACTIVITIES');
-          this.router.navigate(['/programs-list', this.id]);
+          this.getProgramById(this.programId)
+          // this.router.navigate(['/programs-list', this.id]);
         }
         else {
           this.toastr.error('Something went wrong!')
@@ -709,12 +796,20 @@ export class AddProgramComponent implements OnInit {
         if (res.isSuccess === true) {
           this.spinner.hide();
           this.programId = res.data._id || res.data.id;
+          let id = ''
+          if (this.programId) {
+            id=this.programId
+          }
+          const queryParams = { id: id };
+          const urlTree: UrlTree = this.router.createUrlTree([], { queryParams });
+          const url = urlTree.toString();
+          history.replaceState({}, '', url);
           // // this.session.setItem("ag_", this.programId)
           // this.snack.open('Program Added successfully', 'OK', { duration: 5000 });
           // // this.route.navigate(['tables/program', this.id]);
           // this.isActivityTable = true;
           // this.stepChange('ACTIVITIES');
-          this.router.navigate(['/programs-list', this.id]);
+          // this.router.navigate(['/programs-list', this.id]);
         }
         else {
           this.toastr.error('Something went wrong!')

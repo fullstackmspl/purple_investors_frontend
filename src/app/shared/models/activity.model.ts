@@ -59,7 +59,15 @@ export class Activity {
   };
   exceptionDates: any[] = [];
   activityRecurring: any;
-  days: any = [];
+  days: any = {
+    sunday: false,
+    monday: false,
+    tuesday: false,
+    wednesday: false,
+    thursday: false,
+    friday: false,
+    saturday: false,
+  };
   isDateNotMention: boolean;
   cancelBeforeHours: 0;
   cancelBeforeDays: 0;

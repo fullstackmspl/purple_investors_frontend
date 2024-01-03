@@ -501,7 +501,7 @@
                                   <div class="col-flex-2 mb-1" style="float: right;">
                                     <button *ngIf="addProgramView" type="reset" style="width: 110px;"
                                       class="btn btn-primary btn-block users-list-clear glow mb-0" placement="top"
-                                      ngbTooltip="Add New" (click)="addProgramView=false;setActiveTab('Activity Info')">
+                                      ngbTooltip="Add New" (click)="addProgramView=false;resetNewActivity();setActiveTab('Activity Info')">
                                       + Activity
                                     </button>
                                     <button *ngIf="!addProgramView" type="reset" style="width: 110px;"
@@ -517,12 +517,12 @@
                           <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force"
                             [headerHeight]="50" [footerHeight]="50" rowHeight="auto" [rows]="activityList"
                             [scrollbarH]="true" [columns]="columns">
-                            <!-- <ngx-datatable-column name="Days" prop="days" [width]="60">
+                            <ngx-datatable-column name="Days" prop="days" [width]="60">
                               <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                                 <span *ngIf="row?.dayOption=='Days provided'">{{row?.days | daysfilter}}</span>
                                 <span *ngIf="row?.dayOption!=='Days provided'">{{row?.dayOption}}</span>
                               </ng-template>
-                            </ngx-datatable-column> -->
+                            </ngx-datatable-column>
                             <ngx-datatable-column name="Time" prop="time" [width]="80">
                               <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                                 <span *ngIf="row?.timeOption=='Time Available'">
@@ -689,6 +689,25 @@
                       [(ngModel)]="activity.dayOption" [ngModelOptions]="{standalone: true}"
                       [class.ng-touched]="requiredRecipients">
                     </ng-select>
+                  </div>
+                </div>
+                <div class="col-12 radio-fields mb-1" *ngIf="activity.dayOption=='Days provided'">
+                  <div>
+                    <label for="grading">Days</label>
+                    <ul class="list-unstyled mb-0">
+                      <li class="d-inline-block mr-2" *ngFor="let day of orderedDays">
+                        <div class="checkbox">
+                          <input type="checkbox" name="{{day}}" [(ngModel)]="days[day]" [ngModelOptions]="{standalone: true}" id="{{day}}" />
+                          <label for="{{day}}">{{day |slice:0:3}}</label>
+                        </div>
+                      </li>
+                      <!-- <li class="d-inline-block mr-2" *ngFor="let item of days| keyvalue">
+                        <div class="checkbox">
+                          <input type="checkbox" name="{{item.key}}" [(ngModel)]="days[item.key]" [ngModelOptions]="{standalone: true}" id="{{item.key}}" />
+                          <label for="{{item.key}}">{{item.key |slice:0:3}}</label>
+                        </div>
+                      </li> -->
+                    </ul>
                   </div>
                 </div>
                 <div class="form_label_input">
