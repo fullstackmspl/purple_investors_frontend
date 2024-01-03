@@ -16,13 +16,14 @@
                       <div class="col-flex-2 filter">
                       </div>
                       <div class="col-flex-2 mb-1 position-relative filterng">
-                        <ng-select
+                        <ng-select class="city-select"
                         [items]="city_List"
                         bindLabel="city"
                         bindValue="_id"
                         placeholder="Select City"
                         [(ngModel)]="cityId"
                         (change)="searchProgram()"
+                        required
                         >
                       </ng-select>
                         <!-- <input id="ngx-filter-ref"
