@@ -782,6 +782,7 @@ export class AddProgramComponent implements OnInit {
           // // this.route.navigate(['tables/program', this.id]);
           // this.isActivityTable = true;
           // this.stepChange('ACTIVITIES');
+          this.setActiveTab('Activities');
           this.getProgramById(this.programId)
           // this.router.navigate(['/programs-list', this.id]);
         }
@@ -804,6 +805,7 @@ export class AddProgramComponent implements OnInit {
           const urlTree: UrlTree = this.router.createUrlTree([], { queryParams });
           const url = urlTree.toString();
           history.replaceState({}, '', url);
+          this.setActiveTab('Activities');
           // // this.session.setItem("ag_", this.programId)
           // this.snack.open('Program Added successfully', 'OK', { duration: 5000 });
           // // this.route.navigate(['tables/program', this.id]);
