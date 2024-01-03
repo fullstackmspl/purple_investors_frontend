@@ -47,7 +47,7 @@ export class AllProgramsComponent implements OnInit {
   filteredData: any;
   city_List: any;
   providerId: any;
-  cityId: any;
+  cityId:string="6578546cc5e9c2b1c8909c24";
 
   constructor(public apiService: ApiServiceService,
     private modalService: NgbModal,
@@ -110,6 +110,7 @@ searchProgram(){
 
     }
     this.getAllCity()
+    this.searchProgram()
   }
   getAllCity() {
     // this.spinner.show(undefined,
