@@ -1,0 +1,349 @@
+<!-- Filter Datatables -->
+<section id="ngx-datatable-filter">
+  <div class="row">
+    <div class="col-12"></div>
+    <div class="col-12">
+      <div class="card">
+        <div class="card-content">
+          <div class="card-body">
+            <!-- ngx-datatable-filter -->
+            <fieldset class="form-group">
+              <div class="row align-items-end mt-0 pagination-body">
+                <div class="col-12 col-sm-12 col-md-3 col-lg-3 mb-2">
+                  <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="40"
+                  [footerHeight]="40" rowHeight="auto" [limit]="limitRef" [rows]="rows" [externalPaging]="true"
+                  [count]="page.totalPages" [offset]="page.pageNumber" (page)="pageChangeData($event)"></ngx-datatable>
+                </div>
+                
+                <div class="col-12 col-sm-12 col-md-9 col-lg-9 mt-2 mb-1">
+                  <div class="row-flex">
+                    <div class="col-flex-2 filter">
+                    </div>
+                    <div class="col-flex-2 mb-1 position-relative">
+                      <input id="ngx-filter-ref"
+                        class="form-control form-control-sm d-inline-block width-300 ml-1 rounded-right shadow searchInput"
+                        type="text" placeholder="Search" #name />
+                      <button class="btn search-btn glow position-absolute">
+                        <i class="ft-search text-white cursor-pointer"></i>
+                      </button>
+                    </div>
+                    <div class="col-flex-2 mb-1">
+                      <button class="btn btn-primary btn-block users-list-clear glow mb-0" (click)="resetFilter()">
+                        Reset
+                        <i class="ft-filter text-white cursor-pointer"></i>
+                      </button>
+                    </div>
+                    <div class="col-flex-2 mb-1">
+                      <button type="reset" class="btn btn-primary btn-block users-list-clear glow mb-0"
+                      (click)="openModal(myModalContent,'','','')" placement="top" ngbTooltip="Add New">
+                        +
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </fieldset>
+            <div>
+              <div *ngFor="let item of rows">
+                <div class="main_heading cursor-pointer" (click)="collapse.toggle()" [attr.aria-expanded]="queueUrlView[i]"
+                  aria-controls="collapseExample">
+                  <h5 class="bg-light-info">
+                    {{item.cityId[0]?.city }}</h5>
+                </div>
+                <ngx-datatable id="demo" #collapse="ngbCollapse" [(ngbCollapse)]="!queueUrlView[i]"  class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="50"
+              [footerHeight]="50" rowHeight="auto" [limit]="limitRef" [rows]="item.urls" [scrollbarH]="true"
+              [columns]="columns" [externalPaging]="true" [count]="item.urls.length" [offset]="page.offset"
+              (page)="pageChangeData($event)">
+              <ngx-datatable-column name="Url" prop="url" [width]="180">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <div class="d-flex align-items-center">
+                   
+                    <div class="cell-line-height cursor-pointer">
+                      <p class="font-medium-1 line-height-1 mb-0">
+                        {{ row?.url }}
+                      </p>
+                    </div>
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+              <!-- <ngx-datatable-column name="Notes" prop="notes" [width]="70">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <div class="cell-line-height">
+                    {{ row?.notes}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Admin Notes" prop="admin_notes" [width]="70">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <div class="cell-line-height">
+                    {{ row?.admin_notes}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column> -->
+              <ngx-datatable-column name="Type" prop="type" [width]="10">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <div class="cell-line-height">
+                    {{ item?.type}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
+              <ngx-datatable-column name="Status" prop="status" [width]="10">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <p [matMenuTriggerFor]="queue_status">
+                        <span *ngIf="row?.status === 'completed'"
+                          [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':row?.status === 'completed'}">
+                          {{row?.status}}
+                        </span>
+                        <span *ngIf="row?.status == 'pending'"
+                          [ngClass]="{'bg-light-warning badge badge-pill cursor-pointer':row?.status == 'pending'}">
+                          {{row?.status}}
+                        </span>
+                        <span *ngIf="row?.status == 'decline'"
+                          [ngClass]="{'bg-light-danger badge badge-pill cursor-pointer':row?.status == 'decline'}">
+                          {{row?.status}}
+                        </span>
+                      </p>
+                      <mat-menu #queue_status="matMenu">
+  
+                        <div>
+                          <div *ngFor="let status of status_List">
+                            <button mat-menu-item *ngIf="status?.name !== row?.status"
+                              (click)="updateStatus(item?._id,row._id,status._id)">
+                              <span>
+                                <span [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':status.name === 'Completed'}"
+                                  placement="top" *ngIf="status.name == 'Completed'">{{status._id}}</span>
+                                <span [ngClass]="{'bg-light-warning badge badge-pill cursor-pointer':status.name === 'Pending'}"
+                                  placement="top" *ngIf="status.name == 'Pending'">{{status._id}}</span>
+                                <span [ngClass]="{'bg-light-danger badge badge-pill cursor-pointer':status.name === 'Decline'}"
+                                  placement="top"
+                                  *ngIf="status.name == 'Decline'">{{status._id}}</span>
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      </mat-menu>
+                </ng-template>
+              </ngx-datatable-column>
+             
+              <ngx-datatable-column name="Actions" [width]="10">
+                <ng-template let-row="row" ngx-datatable-cell-template>
+                  <i class="ft-edit text-primary cursor-pointer mx-1"
+                  (click)="openModal(myModalContent,item,row,row?._id)"></i>
+                  <!-- <i class="ft-trash-2 cursor-pointer danger  mx-1"
+                    (click)="confirmDelete(item._id)"></i> -->
+                  <i class="ft-plus text-primary cursor-pointer  mx-1" (click)="openModalForProvider(myModalContentPro,row?.url)"></i>
+                </ng-template>
+              </ngx-datatable-column>
+            </ngx-datatable>
+              </div>
+            </div>
+            
+            <!-- ngx-datatable-filter -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!--/ Filter Datatables -->
+<div class="d-flex justify-content-between align-items-center">
+  <ngx-spinner></ngx-spinner>
+</div>
+
+<!----- Add User / Update User popup  --------->
+
+<div>
+	<ng-template #myModalContent>
+	  <div class="modal-header">
+		<h4 class="modal-title" *ngIf="row_id">{{row_name}}'s Update</h4>
+    <h4 class="modal-title" *ngIf="!row_id">Add New Queue</h4>
+		<button type="button" class="close" aria-label="Close" (click)="modalService.dismissAll()">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+	  </div>
+	  <div class="modal-body">
+      <div>
+          <form [formGroup]="queueForm">
+            <fieldset class="form-group" *ngIf="!row_id">
+              <label>City</label>
+              <ng-select
+                [items]="city_List"
+                bindLabel="city"
+                bindValue="_id"
+                placeholder="Select city"
+                [(ngModel)]="select_city"
+                [ngModelOptions]="{ standalone: true }"
+                (change)="getCityId($event)"
+                >
+              </ng-select>
+            </fieldset>
+
+            <fieldset class="form-group" *ngIf="!row_id">
+              <label>Url</label>
+              <textarea name="url" id="url" cols="30" rows="3" class="form-control" placeholder="Enter url"
+              formControlName="url" [ngClass]="{
+                'is-invalid': queueFormSubmitted && rf.email.invalid,
+                'is-valid': queueFormSubmitted && !rf.email.invalid
+              }"
+              required #url></textarea>
+              <div
+                *ngIf="rf.url.touched && rf.url?.errors?.required"
+                class="help-block mt-1 text-danger"
+              >
+                <i class="ft-alert-circle align-middle"></i> url is
+                required
+              </div>
+            </fieldset>
+            <fieldset class="form-group" *ngIf="row_id">
+              <label>Url</label>
+              <textarea name="url" id="url" cols="30" rows="3" class="form-control" placeholder="Enter url"
+              formControlName="url" [(ngModel)]="queue_model.urls[0].url" [ngClass]="{
+                'is-invalid': queueFormSubmitted && rf.email.invalid,
+                'is-valid': queueFormSubmitted && !rf.email.invalid
+              }"
+              required #url></textarea>
+              <div
+                *ngIf="rf.url.touched && rf.url?.errors?.required"
+                class="help-block mt-1 text-danger"
+              >
+                <i class="ft-alert-circle align-middle"></i> url is
+                required
+              </div>
+            </fieldset>
+            <fieldset class="form-group" *ngIf="row_id">
+              <label>Status</label>
+              <ng-select
+                [items]="status_List"
+                bindLabel="name"
+                bindValue="_id"
+                placeholder="Select Status"
+                [(ngModel)]="select_status"
+                [ngModelOptions]="{ standalone: true }"
+                (change)="getStatusId($event)" 
+                [appendTo]="'body'"
+                [virtualScroll]="true" [clearSearchOnAdd]="true"
+                >
+              </ng-select>
+            </fieldset>
+            <fieldset class="form-group" *ngIf="!row_id">
+              <label>Type</label>
+              <ng-select
+                [items]="type_List"
+                bindLabel="name"
+                bindValue="_id"
+                placeholder="Select type"
+                [(ngModel)]="select_type"
+                [ngModelOptions]="{ standalone: true }"
+                (change)="getTypeId($event)"
+                >
+              </ng-select>
+            </fieldset>
+            <fieldset class="form-group" *ngIf="!row_id">
+              <label>Notes</label>
+              <textarea name="notes" class="form-control" id="notes" cols="30" rows="4" placeholder="Enter notes" formControlName="notes" [(ngModel)]="queue_model.notes"></textarea>
+            </fieldset>
+            <fieldset class="form-group" *ngIf="!row_id">
+              <label>Admin Notes</label>
+              <textarea name="admin_notes" class="form-control" id="admin_notes" cols="30" rows="4" placeholder="Enter admin notes" formControlName="admin_notes" [(ngModel)]="queue_model.admin_notes"></textarea>
+            </fieldset>
+           
+          </form>
+      </div>
+      
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-secondary" (click)="modalService.dismissAll()">Close</button>
+		<button *ngIf="!row_id" type="button" class="btn btn-primary" (click)="addUser()">Submit</button>
+		<button *ngIf="row_id" type="button" class="btn btn-primary" (click)="updateUrl()">Submit</button>
+
+	  </div>
+	</ng-template>
+</div>
+
+<!-- =======================  provider info ===================================== -->
+<div>
+	<ng-template #myModalContentPro>
+	  <div class="modal-header">
+    <h4 class="modal-title">Add Provider</h4>
+		<button type="button" class="close" aria-label="Close" (click)="modalService.dismissAll()">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+	  </div>
+	  <div class="modal-body">
+         
+
+            <fieldset class="form-group">
+              <label>Name</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.fullname"
+                id="name"
+                placeholder="Enter name"
+                [ngClass]="{
+                  'is-invalid': !provider.fullname,
+                  'is-valid': provider.fullname
+                }"
+                required
+                #name
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Email</label>
+              <input
+                type="email"
+                class="form-control"
+                 [(ngModel)]="provider.email"
+                id="email"
+                placeholder="Enter email"
+                [ngClass]="{
+                  'is-invalid': !provider.email,
+                  'is-valid': provider.email
+                }"
+                required
+                #email
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Phone number</label>
+              <input
+                type="text"
+                class="form-control"
+                 [(ngModel)]="provider.phone_number"
+                id="phone_number"
+                placeholder="Enter phone"
+                [ngClass]="{
+                  'is-invalid': !provider.phone_number,
+                  'is-valid': provider.phone_number
+                }"
+                required
+                #phone_number
+              />
+            </fieldset>
+            <fieldset class="form-group">
+              <label>Address</label>
+              <input
+                type="text"
+                class="form-control"
+                appGoogleAddress
+                autocomplete="off" 
+                (onSelect)="setAddress($event)"
+                 [(ngModel)]="provider.address"
+                id="address"
+                placeholder="Enter address"
+                [ngClass]="{
+                  'is-invalid': !provider.address,
+                  'is-valid': provider.address
+                }"
+                required
+                #address
+              />
+            </fieldset>
+       
+	  </div>
+	  <div class="modal-footer">
+		<button type="button" class="btn btn-secondary" (click)="modalService.dismissAll()">Close</button>
+		<button type="button" class="btn btn-primary" (click)="details(data)">Submit</button>
+	  </div>
+	</ng-template>
+</div>

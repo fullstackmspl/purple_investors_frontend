@@ -15,6 +15,7 @@ import { CityManagementComponent } from './city-management/city-management.compo
 import { TaskComponent } from './task/task.component';
 import { SharedModule } from 'app/shared/shared.module';
 import { MatMenuModule } from '@angular/material/menu';
+import { QueueComponent } from './queue/queue.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +23,8 @@ import { MatMenuModule } from '@angular/material/menu';
     ChatgptComponent,
     ProviderComponent,
     CityManagementComponent,
-    TaskComponent
+    TaskComponent,
+    QueueComponent
   ],
   imports: [
     CommonModule,

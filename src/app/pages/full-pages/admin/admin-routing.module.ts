@@ -5,6 +5,7 @@ import { ChatgptComponent } from './chatgpt/chatgpt.component';
 import { ProviderComponent } from './provider/provider.component';
 import { CityManagementComponent } from './city-management/city-management.component';
 import { TaskComponent } from './task/task.component';
+import { QueueComponent } from './queue/queue.component';
 
 const routes: Routes = [
 
@@ -13,6 +14,7 @@ const routes: Routes = [
     {path:'providers',component:ProviderComponent},
     {path:'city-managements',component:CityManagementComponent},
     {path:'task', component:TaskComponent},
+    {path:'queues', component:QueueComponent},
     {   
       path:'',
       loadChildren:()=> import('./user-management/user-management.module').then(m=>m.UserManagementModule)

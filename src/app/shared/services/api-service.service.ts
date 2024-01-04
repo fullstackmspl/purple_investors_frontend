@@ -4,6 +4,7 @@ import { environment } from 'environments/environment';
 import { Observable, Subject } from 'rxjs';
 import { Program } from '../models/program.model';
 import { Activity } from '../models/activity.model';
+import { Queue } from '../models/queue.model';
 
 @Injectable({
   providedIn: 'root'
@@ -346,6 +347,8 @@ updateActivity(data: any): Observable<any> {
   });
   return subject.asObservable();
 }
+// ----------------------- delete activity ---------------------------------------------------
+
 deleteActivity(id:any): Observable<any> {
   const subject = new Subject<any>();
   this.http.delete(`${this.root}/activity/remove/${id}`,).subscribe(res => {
@@ -355,5 +358,62 @@ deleteActivity(id:any): Observable<any> {
   });
   return subject.asObservable();
 }
-//
+// ----------------------- Add Queue ---------------------------------------------------
+addQueue(model): Observable<Queue[]> {
+  const subject = new Subject<Queue[]>();
+  this.http.post(`${this.root}/queue/create`, model).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+
+// ----------------------- update Queue ---------------------------------------------------
+updateQueue(id:any,data: any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.put(`${this.root}/queue/update/${id}`, data).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+// ----------------------- update Queue Url ---------------------------------------------------
+updateQueueUrl(id:any,urlId:any,data: any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.put(`${this.root}/queue/updateQueueUrl/${id}/${urlId}`, data).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+// ----------------------- delete Queue ---------------------------------------------------
+
+deleteQueue(id:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.delete(`${this.root}/queue/remove/${id}`,).subscribe(res => {
+      subject.next(res);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+// ----------------------- Get All Queue ---------------------------------------------------
+getAllQueue(page_size:any,page_number:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.get(`${this.root}/queue/getAllQueue?page_size=${page_size}&page_number=${page_number}`,).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+
+
 }

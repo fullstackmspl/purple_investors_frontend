@@ -6,8 +6,12 @@ export const HROUTES: RouteInfo[] = [
     path: '/dashboard', title: 'Dashboard', icon: 'ft-home', class: 'dropdown nav-item has-sub', isExternalLink: false,
     submenu: [ ]
   },
+  // {
+  //   path: '/chatgpt', title: 'ChatGpt', icon: 'ft-codepen', class: 'dropdown nav-item has-sub', isExternalLink: false,
+  //   submenu: []
+  // },
   {
-    path: '/chatgpt', title: 'ChatGpt', icon: 'ft-codepen', class: 'dropdown nav-item has-sub', isExternalLink: false,
+    path: '/queues', title: 'Queues', icon: 'ft-codepen', class: 'dropdown nav-item has-sub', isExternalLink: false,
     submenu: []
   },
   {
