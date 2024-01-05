@@ -241,8 +241,8 @@ export class QueueComponent implements OnInit {
       // this.queue_model.notes = data.notes
       // this.select_type = data.type
       // this.queue_model.type = this.select_type
-      // this.select_city = data.cityId[0]?._id
-      // this.queue_model.cityId = this.select_city
+      this.select_city = rowdata.cityId[0]?._id
+      this.queue_model.cityId = this.select_city
       this.select_status = data.status
       this.queue_model.urls=[{url:data.url,status:data.status}]
      
@@ -340,15 +340,24 @@ export class QueueComponent implements OnInit {
       }
     }
    if(this.row_id){
-    this.apiService.updateQueueUrl(this.row_id,this.queue_url_id,body).subscribe((res:any)=>{
-      if(res.statusCode === 200){
-        this.toastr.success('update successfully')
+    // this.apiService.updateQueueUrl(this.row_id,this.queue_url_id,body).subscribe((res:any)=>{
+    //   if(res.statusCode === 200){
+    //     this.toastr.success('update successfully')
+    //     this.modalService.dismissAll()
+    //     this.getAllQueue()
+    //   }
+    //   else{
+    //     this.toastr.error(res.error)
+    //   }
+    // })
+    this.queue_model.cityId = this.select_city
+    this.apiService.updateQueue(this.row_id,this.queue_model).subscribe((res:any)=>{
+      if(res?.isSuccess === true){
+        this.toastr.success('queue update successfull!')
         this.modalService.dismissAll()
-        this.getAllQueue()
+        this.getAllQueue();
       }
-      else{
-        this.toastr.error(res.error)
-      }
+      else this.toastr.error(res?.error)
     })
    }
   }

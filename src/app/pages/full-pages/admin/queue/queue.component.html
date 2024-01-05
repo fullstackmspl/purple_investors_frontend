@@ -105,9 +105,9 @@
                       </p>
                       <mat-menu #queue_status="matMenu">
   
-                        <div>
+                        <div *ngIf="row?.status ==='pending'">
                           <div *ngFor="let status of status_List">
-                            <button mat-menu-item *ngIf="status?.name !== row?.status"
+                            <button mat-menu-item *ngIf="status?.name !== row?.status "
                               (click)="updateStatus(item?._id,row._id,status._id)">
                               <span>
                                 <span [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':status.name === 'Accepted'}"
@@ -164,7 +164,7 @@
 	  <div class="modal-body">
       <div>
           <form [formGroup]="queueForm">
-            <fieldset class="form-group" *ngIf="!row_id">
+            <fieldset class="form-group" *ngIf="!row_id || row_id">
               <label>City</label>
               <ng-select
                 [items]="city_List"
@@ -210,7 +210,7 @@
                 required
               </div>
             </fieldset>
-            <fieldset class="form-group" *ngIf="row_id">
+            <!-- <fieldset class="form-group" *ngIf="row_id">
               <label>Status</label>
               <ng-select
                 [items]="status_List"
@@ -245,7 +245,7 @@
             <fieldset class="form-group" *ngIf="!row_id">
               <label>Admin Notes</label>
               <textarea name="admin_notes" class="form-control" id="admin_notes" cols="30" rows="4" placeholder="Enter admin notes" formControlName="admin_notes" [(ngModel)]="queue_model.admin_notes"></textarea>
-            </fieldset>
+            </fieldset> -->
            
           </form>
       </div>
