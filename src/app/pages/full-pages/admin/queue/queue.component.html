@@ -90,8 +90,8 @@
               <ngx-datatable-column name="Status" prop="status" [width]="10">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <p [matMenuTriggerFor]="queue_status">
-                        <span *ngIf="row?.status === 'completed'"
-                          [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':row?.status === 'completed'}">
+                        <span *ngIf="row?.status === 'accepted'"
+                          [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':row?.status === 'accepted'}">
                           {{row?.status}}
                         </span>
                         <span *ngIf="row?.status == 'pending'"
@@ -110,8 +110,8 @@
                             <button mat-menu-item *ngIf="status?.name !== row?.status"
                               (click)="updateStatus(item?._id,row._id,status._id)">
                               <span>
-                                <span [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':status.name === 'Completed'}"
-                                  placement="top" *ngIf="status.name == 'Completed'">{{status._id}}</span>
+                                <span [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':status.name === 'Accepted'}"
+                                  placement="top" *ngIf="status.name == 'Accepted'">{{status._id}}</span>
                                 <span [ngClass]="{'bg-light-warning badge badge-pill cursor-pointer':status.name === 'Pending'}"
                                   placement="top" *ngIf="status.name == 'Pending'">{{status._id}}</span>
                                 <span [ngClass]="{'bg-light-danger badge badge-pill cursor-pointer':status.name === 'Decline'}"
@@ -131,7 +131,7 @@
                   (click)="openModal(myModalContent,item,row,row?._id)"></i>
                   <!-- <i class="ft-trash-2 cursor-pointer danger  mx-1"
                     (click)="confirmDelete(item._id)"></i> -->
-                  <i class="ft-plus text-primary cursor-pointer  mx-1" (click)="openModalForProvider(myModalContentPro,row?.url)"></i>
+                  <i *ngIf="row?.status ==='accepted'" class="ft-plus text-primary cursor-pointer  mx-1" (click)="openModalForProvider(myModalContentPro,row?.url)"></i>
                 </ng-template>
               </ngx-datatable-column>
             </ngx-datatable>

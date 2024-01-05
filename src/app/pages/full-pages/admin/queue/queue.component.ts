@@ -66,7 +66,7 @@ export class QueueComponent implements OnInit {
   select_type = 'manual'
   status_List=[
     {name:'Pending',_id:'pending'},
-    {name:'Completed',_id:'completed'},
+    {name:'Accepted',_id:'accepted'},
     {name:'Decline',_id:'decline'},
   ]
   select_status = 'pending'
@@ -363,6 +363,10 @@ export class QueueComponent implements OnInit {
       color: '#fff',
       fullScreen: true
     });
+    const modalOptions: NgbModalOptions = {
+      size: 'lg', // 'sm', 'lg', or 'xl'
+      backdrop: 'static',
+    };
   
     if (!!this.newMessage.trim() ) {
       const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng), - from Open AI API in json format with fields as it is "fullname, email, phone_number, location:{coordinates:[lat,lng]}, address "`
@@ -374,15 +378,21 @@ export class QueueComponent implements OnInit {
           // this.ngZone.run(() => {
             const data = res?.data[0]?.message?.content;
             this.json_data = data
+            this.setProvider()
+
             this.messages.push({ sender: 'ChatGpt', text:  data.match(/\{.*\}/s)&&data.match(/\{.*\}/s).length?this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])):data , isMe: false });
-            
             this.newMessage = ''; 
           // });
-
             this.cdr.detectChanges();
+            const modalRef = this.modalService.open(content,modalOptions);
+            modalRef.result.then((result) => {
+              
+            }, (reason) => {
+            });
         }
         else this.toastr.error(res?.error)
       })
+      
     }
   }
   generateHTML(data): string {
