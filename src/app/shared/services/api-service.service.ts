@@ -404,9 +404,9 @@ deleteQueue(id:any): Observable<any> {
   return subject.asObservable();
 }
 // ----------------------- Get All Queue ---------------------------------------------------
-getAllQueue(page_size:any,page_number:any): Observable<any> {
+getAllQueue(status:any,page_size:any,page_number:any): Observable<any> {
   const subject = new Subject<any>();
-  this.http.get(`${this.root}/queue/getAllQueue?page_size=${page_size}&page_number=${page_number}`,).subscribe(res => {
+  this.http.get(`${this.root}/queue/getAllQueue?status=${status}&page_size=${page_size}&page_number=${page_number}`,).subscribe(res => {
       this.userResponse = res;
       subject.next(this.userResponse);
   }, error => {

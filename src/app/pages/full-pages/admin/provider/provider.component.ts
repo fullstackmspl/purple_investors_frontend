@@ -44,6 +44,9 @@ export class ProviderComponent implements OnInit {
   imageUrl='';
 
   row_data:any
+  isBasicEdit : boolean=false
+  isAnalyticsEdit : boolean=false
+
 
   provider={
     fullname:'',
@@ -138,14 +141,25 @@ export class ProviderComponent implements OnInit {
  
   openModal(content,data) {
     this.row_data = data
+    this.row_id = data._id
+    this.provider = data
     const modalOptions: NgbModalOptions = {
       size: 'lg', // 'sm', 'lg', or 'xl'
       backdrop: 'static',
     };
     const modalRef = this.modalService.open(content,modalOptions);
     modalRef.result.then((result) => {
-      
+      this.row_id = null
+      this.row_data = null
+      this.provider = null
+      this.isAnalyticsEdit = false
+      this.isBasicEdit = false
     }, (reason) => {
+      this.row_id = null
+      this.row_data = null
+      this.provider = null
+      this.isAnalyticsEdit = false
+      this.isBasicEdit = false
     });
   }
   async sendMessage() {
@@ -360,9 +374,35 @@ submit(){
   })
 
 }
+updateBasicAnalyticProvider(){
+  if(this.row_id){
+    this.apiService.updateUser(this.row_id,this.provider).subscribe((res:any)=>{
+      if(res?.isSuccess === true){
+        this.toastr.success('provider update successfull')
+        this.spinner.hide()
+        this.modalService.dismissAll()
+        this.getAllUsers()
+      }
+      else this.toastr.error(res?.error)
+      
+    })
+  }
+}
 closeModal(){
   this.spinner.hide()
   this.modalService.dismissAll()
+}
+async setAddress(addressData) {
+  // console.log('address =>>',addressData)
+  this.provider.location= {type:"Point",coordinates:[addressData[0].lng,addressData[0].lat]}
+  this.provider.address= addressData[1].formatted_address
+
+if(!Array.isArray(addressData?.coordinates)){
+  addressData = {...addressData,coordinates:Object.values(addressData.coordinates)}
+}
+this.provider.location = addressData || null;
+
+
 }
 
 }

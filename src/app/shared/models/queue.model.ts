@@ -1,12 +1,9 @@
 export class Queue{
  
     cityId: string;
-    urls: [
-      {
-        url: string,
-        status: "pending"
-      }
-    ];
+    urls: [];
+    urls_limit:5;
+    status: "pending"
     admin_notes: string;
     notes: string;
     type: "manual";

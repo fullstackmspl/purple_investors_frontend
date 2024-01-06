@@ -1,14 +1,22 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { DatatableComponent, ColumnMode } from '@swimlane/ngx-datatable';
 import { Queue } from 'app/shared/models/queue.model';
 import { ApiServiceService } from 'app/shared/services/api-service.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
-import { finalize } from 'rxjs/operators';
 import swal from 'sweetalert2';
 
+const validateUrlCount = (control: FormControl) => {
+  if (typeof control.value !== 'string') {
+    return null;  // If not a string, return null (no error)
+  }
+
+  const urls = control.value.split(',').map(url => url.trim());
+  return urls.length <= 5 ? null : { invalidUrlCount: true };
+};
 @Component({
   selector: 'app-queue',
   templateUrl: './queue.component.html',
@@ -109,20 +117,28 @@ export class QueueComponent implements OnInit {
     yelpProfileURL:'',
     websiteUrl:''
   }
+  activeTab: any;
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
                private spinner: NgxSpinnerService,private formBuilder : FormBuilder,
-               private cdr: ChangeDetectorRef) { 
+               private cdr: ChangeDetectorRef,private route: Router,
+               private activatedRoute: ActivatedRoute,) { 
                 this.user = JSON.parse(localStorage.getItem('user'))
+                this.activeQueueTab('pending')
+
                 }
 
   ngOnInit(): void {
-    this.getAllQueue()
+    this.activatedRoute.queryParams
+    .subscribe((params: any) => {
+      this.activeTab = params?.status;
+    }) 
+    this.setAndGetQueuebyStatus()
     this.getAllCity()
     this.queueForm = this.formBuilder.group({
       cityId: ['', Validators.required],
-      url: ['', [Validators.required]],
+      url: ['', [Validators.required,validateUrlCount]],
       notes: ['',],
       admin_notes: ['',],
      
@@ -131,12 +147,43 @@ export class QueueComponent implements OnInit {
   get rf() {
     return this.queueForm.controls;
   }
+
+  activeQueueTab(tab) {
+    
+      const activetab = tab;
+      if (activetab !== '') {
+        this.route.navigate(
+          [],
+          { relativeTo: this.activatedRoute, queryParams: { status: activetab } }
+        );
+      }
+   
+  }
+  setAndGetQueuebyStatus() {
+    this.activatedRoute.queryParams
+      .subscribe((params: any) => {
+        this.activeTab = params?.status;
+        switch (this.activeTab) {
+          case 'pending':
+            this.getAllQueue(this.activeTab);
+            break;
+          case 'accepted':
+            this.getAllQueue(this.activeTab);
+            break
+          case 'decline':
+            this.getAllQueue(this.activeTab);
+            break;
+
+        }
+      })
+  }
+
   getAllCity(){
     this.apiService.getAllCity(this.limitRef,this.page.pageNumber + 1).subscribe((res: any) => {
       this.city_List = res?.data?.user
     })
   }
-  getAllQueue(){
+  getAllQueue(status){
     this.spinner.show(undefined,
       {
         type: 'ball-triangle-path',
@@ -145,7 +192,7 @@ export class QueueComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllQueue(this.limitRef,this.page.pageNumber + 1).subscribe((res: any) => {
+    this.apiService.getAllQueue(status,this.limitRef,this.page.pageNumber + 1).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.items
       this.page.totalPages = res?.data?.totalCount
@@ -154,7 +201,7 @@ export class QueueComponent implements OnInit {
   
   
   pageChangeData(page:any){
-    this.apiService.getAllQueue(this.limitRef,page.offset +1).subscribe((res: any) => {
+    this.apiService.getAllQueue(status,this.limitRef,page.offset +1).subscribe((res: any) => {
       this.rows = res?.data?.data
       this.page.totalPages = res?.data?.TotalCount
     })
@@ -188,7 +235,7 @@ export class QueueComponent implements OnInit {
               confirmButton: 'btn btn-success'
             },
           })
-          this.getAllQueue()
+          this.setAndGetQueuebyStatus()
         }
         else{
           this.toastr.error(res.error)
@@ -232,10 +279,16 @@ export class QueueComponent implements OnInit {
   }
   
   // ==========================================
-  openModal(content,rowdata,data,urlId) {
+  openModal(content,rowdata,prop) {
+    if(prop ==='manual'){
+      this.select_type = "manual"
+    }
+    if(prop ==='chatgpt'){
+      this.select_type = "chatgpt"
+    }
     if(rowdata){
       this.row_id = rowdata?._id
-      this.queue_url_id = urlId
+      // this.queue_url_id = urlId
       this.row_name = rowdata.cityId[0].city
       // this.queue_model.admin_notes = data.admin_notes
       // this.queue_model.notes = data.notes
@@ -243,8 +296,8 @@ export class QueueComponent implements OnInit {
       // this.queue_model.type = this.select_type
       this.select_city = rowdata.cityId[0]?._id
       this.queue_model.cityId = this.select_city
-      this.select_status = data.status
-      this.queue_model.urls=[{url:data.url,status:data.status}]
+      this.select_status = rowdata.status
+      this.queue_model.urls = rowdata.urls
      
 
       // this.queue_model.urls = data.url?.map(item => ({ url: item.url, status: item.status })) || [];
@@ -260,18 +313,22 @@ export class QueueComponent implements OnInit {
     modalRef.result.then((result) => {
       this.queueForm.reset()
       this.row_id = null
+      this.select_city = null
+
     }, (reason) => {
       this.queueForm.reset()
       this.row_id = null
+      this.select_city = null
     });
   }
  
-  addUser(){
+  addQueue(){
     let urlArray = this.queueForm.value.url.split(',');
-    urlArray = urlArray.map((u) => ({ url: u.trim(), status: this.select_status }));
+    urlArray = urlArray.map((u) => (u.trim()));
       let body={
         cityId: this.select_city,
         urls: urlArray,
+        urls_limit : 5,
         notes: this.queueForm.value.notes,
         admin_notes: this.queueForm.value.admin_notes,
         type: this.select_type,
@@ -282,20 +339,20 @@ export class QueueComponent implements OnInit {
           if(res?.isSuccess === true){
             this.toastr.success('queue add successfull!')
             this.modalService.dismissAll()
-            this.getAllQueue();
+            this.setAndGetQueuebyStatus();
           }
           else this.toastr.error(res?.error)
         })
       }
       if(this.row_id){
         let urlArray = this.queue_model.urls.split(',');
-        urlArray = urlArray.map((u) => ({ url: u.trim(), status: this.select_status }));
+        urlArray = urlArray.map((u) => (u.trim()));
         this.queue_model.urls = urlArray
         this.apiService.updateQueue(this.row_id,this.queue_model).subscribe((res:any)=>{
           if(res?.isSuccess === true){
             this.toastr.success('queue update successfull!')
             this.modalService.dismissAll()
-            this.getAllQueue();
+            this.setAndGetQueuebyStatus();
           }
           else this.toastr.error(res?.error)
         })
@@ -310,18 +367,16 @@ export class QueueComponent implements OnInit {
   getCityId(event){
     this.select_city
   }
-  updateStatus(id,urlId, status_id){
+  updateStatus(id, status_id){
 
     let body={
-      urls: {
         status: status_id
-      }
     }
    if(id){
-    this.apiService.updateQueueUrl(id,urlId,body).subscribe((res:any)=>{
+    this.apiService.updateQueue(id,body).subscribe((res:any)=>{
       if(res.statusCode === 200){
         this.toastr.success('status update successfully')
-        this.getAllQueue()
+        this.setAndGetQueuebyStatus()
       }
       else{
         this.toastr.error(res.error)
@@ -330,9 +385,9 @@ export class QueueComponent implements OnInit {
    }
   }
   updateUrl(){
-    // let urlArray = this.queue_model.urls.split(',');
-    // urlArray = urlArray.map((u) => ({ url: u.trim(), status: this.select_status }));
-    // this.queue_model.urls = urlArray
+    let urlArray = this.queue_model.urls.split(',');
+    urlArray = urlArray.map((u) => ({ url: u.trim(), status: this.select_status }));
+    this.queue_model.urls = urlArray
     let body ={
       urls: {
         url: this.queue_model.urls[0].url,
@@ -340,25 +395,17 @@ export class QueueComponent implements OnInit {
       }
     }
    if(this.row_id){
-    // this.apiService.updateQueueUrl(this.row_id,this.queue_url_id,body).subscribe((res:any)=>{
-    //   if(res.statusCode === 200){
-    //     this.toastr.success('update successfully')
-    //     this.modalService.dismissAll()
-    //     this.getAllQueue()
-    //   }
-    //   else{
-    //     this.toastr.error(res.error)
-    //   }
-    // })
-    this.queue_model.cityId = this.select_city
-    this.apiService.updateQueue(this.row_id,this.queue_model).subscribe((res:any)=>{
-      if(res?.isSuccess === true){
-        this.toastr.success('queue update successfull!')
+    this.apiService.updateQueueUrl(this.row_id,this.queue_url_id,body).subscribe((res:any)=>{
+      if(res.statusCode === 200){
+        this.toastr.success('update successfully')
         this.modalService.dismissAll()
-        this.getAllQueue();
+        this.setAndGetQueuebyStatus()
       }
-      else this.toastr.error(res?.error)
+      else{
+        this.toastr.error(res.error)
+      }
     })
+    
    }
   }
 
