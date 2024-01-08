@@ -409,8 +409,9 @@ export class QueueComponent implements OnInit {
    }
   }
 
-  openModalForProvider(content,url) {
-    this.newMessage = url
+  openModalForProvider(content,data) {
+    this.newMessage = data.urls[0]
+
   
     this.spinner.show(undefined, {
       type: 'ball-triangle-path',
