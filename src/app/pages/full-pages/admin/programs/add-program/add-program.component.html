@@ -449,10 +449,10 @@
                 <div class="form-group">
                   <label>Last Review Date</label>
                   <div class="controls">
-                    <!-- <input type="date" class="form-control" name="bookingCancel" id="bookingCancel" > -->
-                    <input ngbDatepicker (click)="datePicker.toggle()" #datePicker="ngbDatepicker"
+                    <input type="date" class="form-control" [(ngModel)]="program.last_reviewed" name="last_reviewed" id="last_reviewed"  required placeholder="Last Review Date" [ngModelOptions]="{standalone: true}">
+                    <!-- <input ngbDatepicker (click)="datePicker.toggle()" #datePicker="ngbDatepicker"
                       [(ngModel)]="program.last_reviewed" type="text" [ngModelOptions]="{standalone: true}"
-                      class="form-control pickadate" required placeholder="Last Review Date">
+                      class="form-control pickadate" required placeholder="Last Review Date"> -->
                   </div>
                 </div>
                 <div class="d-flex flex-sm-row flex-column justify-content-end">
