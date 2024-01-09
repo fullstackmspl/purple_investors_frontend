@@ -5,6 +5,8 @@ import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { DatatableComponent, ColumnMode } from '@swimlane/ngx-datatable';
 import { Queue } from 'app/shared/models/queue.model';
 import { ApiServiceService } from 'app/shared/services/api-service.service';
+import { WondrflyApiService } from 'app/shared/services/wondrfly-api.service';
+import { MarkdownService } from 'ngx-markdown';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import swal from 'sweetalert2';
@@ -29,17 +31,17 @@ export class QueueComponent implements OnInit {
 
   @ViewChild(DatatableComponent) table: DatatableComponent;
 
-  queueForm:FormGroup
+  queueForm: FormGroup
 
   page = {
-    pageNumber:0,
+    pageNumber: 0,
     offset: 0,
     pageSize: 100,
-    totalPages:0
+    totalPages: 0
   };
   // row data
   public rows = [];
-  public filterRows=[];
+  public filterRows = [];
   public ColumnMode = ColumnMode;
   public limitRef = 100;
   public columns = [
@@ -50,98 +52,110 @@ export class QueueComponent implements OnInit {
   ];
 
 
-  imageUrl='';
-  
-  row_id:any
-  row_name:any
-  gender_List =[
-    {name:'male'},
-    {name:'female'}
+  imageUrl = '';
+
+  row_id: any
+  row_name: any
+  gender_List = [
+    { name: 'male' },
+    { name: 'female' }
   ]
-  role_List =[
-    {name:'SuperAdmin' ,_id:'superadmin'},
-    {name:'Admin' ,_id:'admin'},
-    {name:'MTurkers' ,_id:'mturkers'},
+  role_List = [
+    { name: 'SuperAdmin', _id: 'superadmin' },
+    { name: 'Admin', _id: 'admin' },
+    { name: 'MTurkers', _id: 'mturkers' },
   ]
   select_gender = null
   select_role = null
-  queue_model :any= new Queue
+  queue_model: any = new Queue
 
-  type_List=[
-    {name:'Manual',_id:'manual'},
-    {name:'Chatgpt',_id:'chatgpt'}
+  type_List = [
+    { name: 'Manual', _id: 'manual' },
+    { name: 'Chatgpt', _id: 'chatgpt' }
   ]
+  chatgpt_queue = false
   select_type = 'manual'
-  status_List=[
-    {name:'Pending',_id:'pending'},
-    {name:'Accepted',_id:'accepted'},
-    {name:'Decline',_id:'decline'},
+  select_url_count = 5
+  url_count_list = Array.from({ length: 10 }, (_, i) => i + 1);
+  status_List = [
+    { name: 'Pending', _id: 'pending' },
+    { name: 'Accepted', _id: 'accepted' },
+    { name: 'Decline', _id: 'decline' },
   ]
   select_status = 'pending'
-  select_city=null
-  city_List =[]
+  select_city = null
+  select_subject: any
+  city_List = []
+  subject_List = []
   public queueUrlView: boolean[] = [];
-  queue_url_id:any
+  queue_url_id: any
 
-  messages: { sender: string; text: string; isMe: boolean  }[] = [];
+  messages: { sender: string; text: string; isMe: boolean }[] = [];
   newMessage: string = '';
-  user:any
-  json_data:any
-  website_url:any
+  user: any
+  json_data: any
+  website_url: any
 
-  provider={
-    fullname:'',
+  provider = {
+    fullname: '',
     email: '',
     phone_number: '',
-    dob:'',
-    gender:'',
-    location:{type:"Point",coordinates:[]},
+    dob: '',
+    gender: '',
+    location: { type: "Point", coordinates: [] },
     address: '',
     roles: 'purpleprovider',
-    averageGoogleRating:'' ,
-    averageYelpRating:'' ,
-    bottomGoogleReviews : [],
-    facebookNumberOfFollowers:'',
-    facebookNumberOfLikes:'' ,
-    facebookURL:'' ,
-    googleReviewsURL:'' ,
-    instagramProfileLink:'' ,
-    mostRecentGoogleReviews:[], 
-    numberOfGoogleReviews:'' ,
-    numberOfInstagramFollowers:'' ,
-    numberOfYelpRatings:'' ,
-    topGoogleReviews : [],
-    yelpBottomReviews :  [],
-    yelpMostRecentReviews : [], 
-    yelpTopReviews :  [], 
-    yelpProfileURL:'',
-    websiteUrl:''
+    averageGoogleRating: '',
+    averageYelpRating: '',
+    bottomGoogleReviews: [],
+    facebookNumberOfFollowers: '',
+    facebookNumberOfLikes: '',
+    facebookURL: '',
+    googleReviewsURL: '',
+    instagramProfileLink: '',
+    mostRecentGoogleReviews: [],
+    numberOfGoogleReviews: '',
+    numberOfInstagramFollowers: '',
+    numberOfYelpRatings: '',
+    topGoogleReviews: [],
+    yelpBottomReviews: [],
+    yelpMostRecentReviews: [],
+    yelpTopReviews: [],
+    yelpProfileURL: '',
+    websiteUrl: ''
   }
   activeTab: any;
-  constructor( public apiService:ApiServiceService,
-               private modalService: NgbModal,
-               public toastr: ToastrService,
-               private spinner: NgxSpinnerService,private formBuilder : FormBuilder,
-               private cdr: ChangeDetectorRef,private route: Router,
-               private activatedRoute: ActivatedRoute,) { 
-                this.user = JSON.parse(localStorage.getItem('user'))
-                this.activeQueueTab('pending')
+  tags: any[];
+  select_city_object: any;
+  chatGptProviders: any[];
+  queue_urls: any;
+  constructor(public apiService: ApiServiceService,
+    private modalService: NgbModal,
+    public toastr: ToastrService,
+    private spinner: NgxSpinnerService, private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef, private route: Router,
+    private activatedRoute: ActivatedRoute,
+    private wondrflyapiservice: WondrflyApiService,
+    public markDown: MarkdownService) {
+    this.user = JSON.parse(localStorage.getItem('user'))
+    this.activeQueueTab('pending')
 
-                }
+  }
 
   ngOnInit(): void {
     this.activatedRoute.queryParams
-    .subscribe((params: any) => {
-      this.activeTab = params?.status;
-    }) 
+      .subscribe((params: any) => {
+        this.activeTab = params?.status;
+      })
     this.setAndGetQueuebyStatus()
     this.getAllCity()
+    this.getTags()
     this.queueForm = this.formBuilder.group({
       cityId: ['', Validators.required],
-      url: ['', [Validators.required,validateUrlCount]],
+      url: ['', [Validators.required, validateUrlCount]],
       notes: ['',],
       admin_notes: ['',],
-     
+
     });
   }
   get rf() {
@@ -149,15 +163,15 @@ export class QueueComponent implements OnInit {
   }
 
   activeQueueTab(tab) {
-    
-      const activetab = tab;
-      if (activetab !== '') {
-        this.route.navigate(
-          [],
-          { relativeTo: this.activatedRoute, queryParams: { status: activetab } }
-        );
-      }
-   
+
+    const activetab = tab;
+    if (activetab !== '') {
+      this.route.navigate(
+        [],
+        { relativeTo: this.activatedRoute, queryParams: { status: activetab } }
+      );
+    }
+
   }
   setAndGetQueuebyStatus() {
     this.activatedRoute.queryParams
@@ -178,12 +192,19 @@ export class QueueComponent implements OnInit {
       })
   }
 
-  getAllCity(){
-    this.apiService.getAllCity(this.limitRef,this.page.pageNumber + 1).subscribe((res: any) => {
+  getAllCity() {
+    this.apiService.getAllCity(this.limitRef, this.page.pageNumber + 1).subscribe((res: any) => {
       this.city_List = res?.data?.user
     })
   }
-  getAllQueue(status){
+  getTags() {
+    this.tags = []
+    this.wondrflyapiservice.getTags().subscribe((res: any) => {
+      this.tags = res;
+      this.subject_List = this.tags.filter((item) => item.isActivated === true);
+    });
+  }
+  getAllQueue(status) {
     this.spinner.show(undefined,
       {
         type: 'ball-triangle-path',
@@ -192,21 +213,21 @@ export class QueueComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllQueue(status,this.limitRef,this.page.pageNumber + 1).subscribe((res: any) => {
+    this.apiService.getAllQueue(status, this.limitRef, this.page.pageNumber + 1).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.items
       this.page.totalPages = res?.data?.totalCount
     })
   }
-  
-  
-  pageChangeData(page:any){
-    this.apiService.getAllQueue(status,this.limitRef,page.offset +1).subscribe((res: any) => {
+
+
+  pageChangeData(page: any) {
+    this.apiService.getAllQueue(status, this.limitRef, page.offset + 1).subscribe((res: any) => {
       this.rows = res?.data?.data
       this.page.totalPages = res?.data?.TotalCount
     })
   }
-  getTagsFilter(data:any){
+  getTagsFilter(data: any) {
     // let search=data
     // if(search){
     //   this.apiService.getTagSearch(search).subscribe((res:any)=>{
@@ -217,16 +238,16 @@ export class QueueComponent implements OnInit {
     //   this.getAllTag()
     // }
   }
-  resetFilter(){
+  resetFilter() {
     // this.inputName.nativeElement.value=''
     // this.selected_tag_cat_id ='all'
     // this.getAllTag()
   }
-  
-  deleteQueue(){
-    if(this.row_id){
-      this.apiService.deleteQueue(this.row_id).subscribe((res:any)=>{
-        if(res?.statusCode ===200){
+
+  deleteQueue() {
+    if (this.row_id) {
+      this.apiService.deleteQueue(this.row_id).subscribe((res: any) => {
+        if (res?.statusCode === 200) {
           swal.fire({
             icon: "success",
             title: 'Deleted!',
@@ -237,18 +258,18 @@ export class QueueComponent implements OnInit {
           })
           this.setAndGetQueuebyStatus()
         }
-        else{
+        else {
           this.toastr.error(res.error)
-        } 
-        })
+        }
+      })
     }
-    else{
+    else {
       this.toastr.error('something went wrong !!')
     }
   }
-   // ================== Delete Alert ========================
-   confirmDelete(id:any) {
-    this.row_id=id
+  // ================== Delete Alert ========================
+  confirmDelete(id: any) {
+    this.row_id = id
     swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -262,9 +283,9 @@ export class QueueComponent implements OnInit {
         cancelButton: 'btn btn-danger ml-1'
       },
       buttonsStyling: false,
-    }).then( (result)=> {
-      if (result.value) {  
-        this.deleteQueue()      
+    }).then((result) => {
+      if (result.value) {
+        this.deleteQueue()
       } else if (result.dismiss === swal.DismissReason.cancel) {
         swal.fire({
           title: 'Cancelled',
@@ -277,16 +298,16 @@ export class QueueComponent implements OnInit {
       }
     });
   }
-  
+
   // ==========================================
-  openModal(content,rowdata,prop) {
-    if(prop ==='manual'){
+  openModal(content, rowdata, prop) {
+    if (prop === 'manual') {
       this.select_type = "manual"
     }
-    if(prop ==='chatgpt'){
+    if (prop === 'chatgpt') {
       this.select_type = "chatgpt"
     }
-    if(rowdata){
+    if (rowdata) {
       this.row_id = rowdata?._id
       // this.queue_url_id = urlId
       this.row_name = rowdata.cityId[0].city
@@ -298,7 +319,7 @@ export class QueueComponent implements OnInit {
       this.queue_model.cityId = this.select_city
       this.select_status = rowdata.status
       this.queue_model.urls = rowdata.urls
-     
+
 
       // this.queue_model.urls = data.url?.map(item => ({ url: item.url, status: item.status })) || [];
       // this.queue_model.urls = this.queue_model.urls.map(item => item.url).join(',');
@@ -309,7 +330,7 @@ export class QueueComponent implements OnInit {
       size: 'lg', // 'sm', 'lg', or 'xl'
       backdrop: 'static',
     };
-    const modalRef = this.modalService.open(content,modalOptions);
+    const modalRef = this.modalService.open(content, modalOptions);
     modalRef.result.then((result) => {
       this.queueForm.reset()
       this.row_id = null
@@ -321,98 +342,172 @@ export class QueueComponent implements OnInit {
       this.select_city = null
     });
   }
- 
-  addQueue(){
-    let urlArray = this.queueForm.value.url.split(',');
-    urlArray = urlArray.map((u) => (u.trim()));
-      let body={
-        cityId: this.select_city,
-        urls: urlArray,
-        urls_limit : 5,
-        notes: this.queueForm.value.notes,
-        admin_notes: this.queueForm.value.admin_notes,
-        type: this.select_type,
-      }      
-
-       if(!this.row_id){
-        this.apiService.addQueue(body).subscribe((res:any)=>{
-          if(res?.isSuccess === true){
-            this.toastr.success('queue add successfull!')
-            this.modalService.dismissAll()
-            this.setAndGetQueuebyStatus();
-          }
-          else this.toastr.error(res?.error)
-        })
-      }
-      if(this.row_id){
-        let urlArray = this.queue_model.urls.split(',');
-        urlArray = urlArray.map((u) => (u.trim()));
-        this.queue_model.urls = urlArray
-        this.apiService.updateQueue(this.row_id,this.queue_model).subscribe((res:any)=>{
-          if(res?.isSuccess === true){
-            this.toastr.success('queue update successfull!')
-            this.modalService.dismissAll()
-            this.setAndGetQueuebyStatus();
-          }
-          else this.toastr.error(res?.error)
-        })
-      }
+  refreshChatGptData(){
+    this.chatgpt_queue = false
+          this.select_city = null
+          this.select_url_count = 5
+          this.select_subject = null
+          this.queue_urls = []
+          this.queueForm.reset()
   }
-  getStatusId(event){
+  chatGptSearch() {
+    if(this.select_city && this.select_url_count && this.select_subject){
+    let city = this.city_List.find((item) => item._id === this.select_city)
+    this.select_city_object = city
+    this.spinner.show(undefined, {
+      type: 'ball-triangle-path',
+      size: 'medium',
+      bdColor: 'rgba(0, 0, 0, 0.8)',
+      color: '#fff',
+      fullScreen: true
+    });
+    let serchText = `Please provide ${this.select_url_count} website urls of providers of ${this.select_subject} in ${city.city}.`
+    console.log(serchText)
+    this.apiService.chatgptSearch('6578625ec5e9c2b1c8909c58', this.user._id, serchText).subscribe((res: any) => {
+      if (res?.isSuccess) {
+        this.spinner.hide()
+        // this.ngZone.run(() => {
+        const data = res?.data[0]?.message?.content;
+        this.json_data = data
+        this.markDown.getSource(this.json_data).subscribe((res) => { this.json_data = res })
+        console.log(typeof (this.json_data))
+        const urlRegex = /\b(?:https?|ftp):\/\/[^\s\)]+/g;
+        const urls = this.json_data.match(urlRegex);
+        console.log(urls);
+        const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
+
+        // Array to store extracted objects
+        const providers = [];
+        let match;
+        while ((match = regex.exec(this.json_data)) !== null) {
+          const [, name, url] = match;
+          providers.push({ name, url });
+        }
+        this.chatGptProviders = providers
+        console.log(providers);
+        this.queue_urls = urls
+        this.chatgpt_queue = true
+        //   this.setProvider()
+
+        //   this.messages.push({ sender: 'ChatGpt', text:  data.match(/\{.*\}/s)&&data.match(/\{.*\}/s).length?this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])):data , isMe: false });
+        //   this.newMessage = ''; 
+        // // });
+        //   this.cdr.detectChanges();
+        //   const modalRef = this.modalService.open(content,modalOptions);
+        //   modalRef.result.then((result) => {
+
+        //   }, (reason) => {
+        //   });
+      }
+      else this.toastr.error(res?.error)
+    })
+  }
+  else{
+    return
+  }
+  }
+  chatGptMsgReturn() {
+    return `${this.select_subject} Activity Providers in ${this.select_city_object?.city}`
+  }
+  addQueue() {
+    let urlArray = []
+    if (this.select_type == 'manual') {
+      urlArray = this.queueForm.value.url.split(',');
+      urlArray = urlArray.map((u) => (u.trim()));
+    }
+    if (this.select_type == 'chatgpt') {
+      urlArray = this.queue_urls
+    }
+    let body = {
+      cityId: this.select_city,
+      urls: urlArray,
+      urls_limit: 5,
+      notes: this.queueForm.value.notes,
+      admin_notes: this.queueForm.value.admin_notes,
+      type: this.select_type,
+    }
+
+    if (!this.row_id) {
+      this.apiService.addQueue(body).subscribe((res: any) => {
+        if (res?.isSuccess === true) {
+          this.toastr.success('queue add successfull!')
+          this.modalService.dismissAll()
+          this.setAndGetQueuebyStatus();
+          this.refreshChatGptData()
+        }
+        else this.toastr.error(res?.error)
+      })
+    }
+    if (this.row_id) {
+      let urlArray = this.queue_model.urls.split(',');
+      urlArray = urlArray.map((u) => (u.trim()));
+      this.queue_model.urls = urlArray
+      this.apiService.updateQueue(this.row_id, this.queue_model).subscribe((res: any) => {
+        if (res?.isSuccess === true) {
+          this.toastr.success('queue update successfull!')
+          this.modalService.dismissAll()
+          this.setAndGetQueuebyStatus();
+          this.refreshChatGptData()
+        }
+        else this.toastr.error(res?.error)
+      })
+    }
+  }
+  getStatusId(event) {
     this.select_status
   }
-  getTypeId(event){
+  getTypeId(event) {
     this.select_type
   }
-  getCityId(event){
+  getCityId(event) {
     this.select_city
   }
-  updateStatus(id, status_id){
+  updateStatus(id, status_id) {
 
-    let body={
-        status: status_id
+    let body = {
+      status: status_id
     }
-   if(id){
-    this.apiService.updateQueue(id,body).subscribe((res:any)=>{
-      if(res.statusCode === 200){
-        this.toastr.success('status update successfully')
-        this.setAndGetQueuebyStatus()
-      }
-      else{
-        this.toastr.error(res.error)
-      }
-    })
-   }
+    if (id) {
+      this.apiService.updateQueue(id, body).subscribe((res: any) => {
+        if (res.statusCode === 200) {
+          this.toastr.success('status update successfully')
+          this.setAndGetQueuebyStatus()
+        }
+        else {
+          this.toastr.error(res.error)
+        }
+      })
+    }
   }
-  updateUrl(){
+  updateUrl() {
     let urlArray = this.queue_model.urls.split(',');
     urlArray = urlArray.map((u) => ({ url: u.trim(), status: this.select_status }));
     this.queue_model.urls = urlArray
-    let body ={
+    let body = {
       urls: {
         url: this.queue_model.urls[0].url,
         status: this.select_status
       }
     }
-   if(this.row_id){
-    this.apiService.updateQueueUrl(this.row_id,this.queue_url_id,body).subscribe((res:any)=>{
-      if(res.statusCode === 200){
-        this.toastr.success('update successfully')
-        this.modalService.dismissAll()
-        this.setAndGetQueuebyStatus()
-      }
-      else{
-        this.toastr.error(res.error)
-      }
-    })
-    
-   }
+    if (this.row_id) {
+      this.apiService.updateQueueUrl(this.row_id, this.queue_url_id, body).subscribe((res: any) => {
+        if (res.statusCode === 200) {
+          this.toastr.success('update successfully')
+          this.modalService.dismissAll()
+          this.setAndGetQueuebyStatus()
+        }
+        else {
+          this.toastr.error(res.error)
+        }
+      })
+
+    }
   }
 
-  openModalForProvider(content,data) {
+  openModalForProvider(content, data) {
     this.newMessage = data.urls[0]
 
-  
+
     this.spinner.show(undefined, {
       type: 'ball-triangle-path',
       size: 'medium',
@@ -424,32 +519,32 @@ export class QueueComponent implements OnInit {
       size: 'lg', // 'sm', 'lg', or 'xl'
       backdrop: 'static',
     };
-  
-    if (!!this.newMessage.trim() ) {
+
+    if (!!this.newMessage.trim()) {
       const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng), - from Open AI API in json format with fields as it is "fullname, email, phone_number, location:{coordinates:[lat,lng]}, address "`
-     
+
       this.messages.push({ sender: 'You', text: this.newMessage, isMe: true });
-      this.apiService.chatgptSearch('6578625ec5e9c2b1c8909c58',this.user._id,exactMsg).subscribe((res:any)=>{
-        if(res?.isSuccess){
+      this.apiService.chatgptSearch('6578625ec5e9c2b1c8909c58', this.user._id, exactMsg).subscribe((res: any) => {
+        if (res?.isSuccess) {
           this.spinner.hide()
           // this.ngZone.run(() => {
-            const data = res?.data[0]?.message?.content;
-            this.json_data = data
-            this.setProvider()
+          const data = res?.data[0]?.message?.content;
+          this.json_data = data
+          this.setProvider()
 
-            this.messages.push({ sender: 'ChatGpt', text:  data.match(/\{.*\}/s)&&data.match(/\{.*\}/s).length?this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])):data , isMe: false });
-            this.newMessage = ''; 
+          this.messages.push({ sender: 'ChatGpt', text: data.match(/\{.*\}/s) && data.match(/\{.*\}/s).length ? this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])) : data, isMe: false });
+          this.newMessage = '';
           // });
-            this.cdr.detectChanges();
-            const modalRef = this.modalService.open(content,modalOptions);
-            modalRef.result.then((result) => {
-              
-            }, (reason) => {
-            });
+          this.cdr.detectChanges();
+          const modalRef = this.modalService.open(content, modalOptions);
+          modalRef.result.then((result) => {
+
+          }, (reason) => {
+          });
         }
         else this.toastr.error(res?.error)
       })
-      
+
     }
   }
   generateHTML(data): string {
@@ -476,40 +571,40 @@ export class QueueComponent implements OnInit {
     return html;
   }
 
-  setProvider(){
+  setProvider() {
     let jsonString = this.json_data.match(/\{.*\}/s)[0];
     this.provider = JSON.parse(jsonString)
     this.provider.roles = 'purpleprovider'
 
   }
   async setAddress(addressData) {
-      // console.log('address =>>',addressData)
-      this.provider.location= {type:"Point",coordinates:[addressData[0].lng,addressData[0].lat]}
-      this.provider.address= addressData[1].formatted_address
+    // console.log('address =>>',addressData)
+    this.provider.location = { type: "Point", coordinates: [addressData[0].lng, addressData[0].lat] }
+    this.provider.address = addressData[1].formatted_address
 
-    if(!Array.isArray(addressData?.coordinates)){
-      addressData = {...addressData,coordinates:Object.values(addressData.coordinates)}
+    if (!Array.isArray(addressData?.coordinates)) {
+      addressData = { ...addressData, coordinates: Object.values(addressData.coordinates) }
     }
     this.provider.location = addressData || null;
 
-    
+
   }
-  details(data){
+  details(data) {
     try {
-    
-     this.provider.websiteUrl = this.website_url
-       this.apiService.addUser(this.provider).subscribe((res:any)=>{
-         if(res?.isSuccess === true){
-           this.toastr.success('provider registered successfull!')
-           this.modalService.dismissAll()
-         }
-         else this.toastr.error(res?.error)
-         this.modalService.dismissAll();
-       })
-     
+
+      this.provider.websiteUrl = this.website_url
+      this.apiService.addUser(this.provider).subscribe((res: any) => {
+        if (res?.isSuccess === true) {
+          this.toastr.success('provider registered successfull!')
+          this.modalService.dismissAll()
+        }
+        else this.toastr.error(res?.error)
+        this.modalService.dismissAll();
+      })
+
     } catch (error) {
-     console.error('Error parsing JSON:', error);
+      console.error('Error parsing JSON:', error);
     }
-   }
-  
+  }
+
 }

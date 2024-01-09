@@ -342,7 +342,7 @@ export class AddProgramComponent implements OnInit {
       this.capacity = this.program.capacity
       this.program.email = this.program.emails[0]
       if (this.program.last_reviewed) {
-        this.program.last_reviewed = this.parseISODate(this.program.last_reviewed)
+    this.program.last_reviewed = moment(this.program.last_reviewed).format('YYYY-MM-DD')
       }
     })
   }
@@ -758,10 +758,11 @@ export class AddProgramComponent implements OnInit {
     this.program.capacity = this.capacity
     this.program.emails = [this.program.email]
     if (this.program.last_reviewed) {
-      const date = new Date(this.program.last_reviewed.year, this.program.last_reviewed.month - 1, this.program.last_reviewed.day);
-      // Convert the date to ISO string
-      const isoDate = date.toISOString();
-      this.program.last_reviewed = isoDate
+    this.program.last_reviewed = `${moment(this.program.last_reviewed).format('YYYY-MM-DD')}T09:00:26.184Z`
+
+      // const date = new Date(this.program.last_reviewed.year, this.program.last_reviewed.month - 1, this.program.last_reviewed.day);
+      // // Convert the date to ISO string
+      // const isoDate = date.toISOString();
     }
     if (this.isEdit) {
       this.apiservice.updateProgram(this.program).subscribe((res: any) => {
@@ -795,8 +796,9 @@ export class AddProgramComponent implements OnInit {
       this.apiservice.addProgram(this.program).subscribe((res: any) => {
         // this.loader.close();
         if (res.isSuccess === true) {
+        this.program.last_reviewed = moment(this.program.last_reviewed).format('YYYY-MM-DD')
           this.spinner.hide();
-          this.programId = res.data._id || res.data.id;
+          // this.programId = res.data._id || res.data.id;
           let id = ''
           if (this.programId) {
             id=this.programId

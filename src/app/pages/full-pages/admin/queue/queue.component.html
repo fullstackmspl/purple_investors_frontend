@@ -246,13 +246,21 @@
 	<ng-template #myModalContent>
 	  <div class="modal-header">
 		<h4 class="modal-title" *ngIf="row_id">{{row_name}}'s Update</h4>
-    <h4 class="modal-title" *ngIf="!row_id">Add New Queue</h4>
-		<button type="button" class="close" aria-label="Close" (click)="modalService.dismissAll()">
+    <h4 class="modal-title" *ngIf="!row_id">{{chatgpt_queue?chatGptMsgReturn():'Add New Queue'}}</h4>
+		<button type="button" class="close" aria-label="Close" (click)="refreshChatGptData();modalService.dismissAll()">
 		  <span aria-hidden="true">&times;</span>
 		</button>
 	  </div>
 	  <div class="modal-body">
       <div>
+        <div *ngIf="chatgpt_queue;else chatgpt_queue_view">
+          <ul>
+            <li *ngFor="let provider of chatGptProviders">
+              <strong>{{ provider.name }} : </strong> {{ provider.url }}
+            </li>
+          </ul>
+        </div>
+        <ng-template #chatgpt_queue_view>
           <form [formGroup]="queueForm">
             <fieldset class="form-group" *ngIf="!row_id || row_id">
               <label>City</label>
@@ -267,8 +275,30 @@
                 >
               </ng-select>
             </fieldset>
-
-            <fieldset class="form-group" *ngIf="!row_id">
+            <fieldset class="form-group" *ngIf="(!row_id || row_id) && select_type=='chatgpt'">
+              <label>Subject</label>
+              <ng-select
+                [items]="subject_List"
+                bindLabel="name"
+                bindValue="name"
+                placeholder="Select subject"
+                [(ngModel)]="select_subject"
+                [ngModelOptions]="{ standalone: true }"
+                >
+              </ng-select>
+            </fieldset>
+            <fieldset class="form-group" *ngIf="(!row_id || row_id) && select_type=='chatgpt'">
+              <label>Urls count</label>
+              <ng-select
+                [items]="url_count_list"
+                placeholder="Select url count"
+                [(ngModel)]="select_url_count"
+                [ngModelOptions]="{ standalone: true }"
+                (change)="getCityId($event)"
+                >
+              </ng-select>
+            </fieldset>
+            <fieldset class="form-group" *ngIf="!row_id && select_type=='manual'">
               <label>Url</label>
               <textarea name="url" id="url" cols="30" rows="3" class="form-control" placeholder="Enter url"
               formControlName="url" [ngClass]="{
@@ -287,7 +317,7 @@
                 <i class="ft-alert-circle align-middle"></i> Please enter up to 5 URLs separated by commas
               </div>
             </fieldset>
-            <fieldset class="form-group" *ngIf="row_id">
+            <fieldset class="form-group" *ngIf="row_id && select_type=='manual'" >
               <label>Url</label>
               <textarea name="url" id="url" cols="30" rows="3" class="form-control" placeholder="Enter url"
               formControlName="url" [(ngModel)]="queue_model.urls" [ngClass]="{
@@ -341,13 +371,15 @@
             </fieldset> -->
            
           </form>
+        </ng-template>
       </div>
       
 	  </div>
 	  <div class="modal-footer">
-		<button type="button" class="btn btn-secondary" (click)="modalService.dismissAll()">Close</button>
-		<button type="button" class="btn btn-primary" (click)="addQueue()">Submit</button>
+		<button type="button" [hidden]="chatgpt_queue" class="btn btn-secondary" (click)="modalService.dismissAll()">Close</button>
+		<button type="button" [hidden]="chatgpt_queue" class="btn btn-primary" (click)="select_type=='chatgpt'?chatGptSearch():addQueue()">{{select_type=='chatgpt'?'Search':'Submit'}}</button>
 		<!-- <button *ngIf="row_id" type="button" class="btn btn-primary" (click)="updateUrl()">Submit</button> -->
+    <button type="button"*ngIf="chatgpt_queue" class="btn btn-primary" (click)="addQueue()">Submit</button>
 
 	  </div>
 	</ng-template>
