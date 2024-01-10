@@ -110,7 +110,6 @@ export class ChatgptComponent implements OnInit {
 
   }
   async setAddress(addressData) {
-      // console.log('address =>>',addressData)
       this.provider.location= {type:"Point",coordinates:[addressData[0].lng,addressData[0].lat]}
       this.provider.address= addressData[1].formatted_address
 

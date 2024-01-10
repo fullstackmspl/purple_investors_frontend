@@ -506,7 +506,8 @@ export class QueueComponent implements OnInit {
 
   openModalForProvider(content, data) {
     this.newMessage = data.urls[0]
-
+    this.row_id = data._id
+    this.website_url = this.newMessage
 
     this.spinner.show(undefined, {
       type: 'ball-triangle-path',
@@ -522,7 +523,6 @@ export class QueueComponent implements OnInit {
 
     if (!!this.newMessage.trim()) {
       const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng), - from Open AI API in json format with fields as it is "fullname, email, phone_number, location:{coordinates:[lat,lng]}, address "`
-
       this.messages.push({ sender: 'You', text: this.newMessage, isMe: true });
       this.apiService.chatgptSearch('6578625ec5e9c2b1c8909c58', this.user._id, exactMsg).subscribe((res: any) => {
         if (res?.isSuccess) {
@@ -595,8 +595,14 @@ export class QueueComponent implements OnInit {
       this.provider.websiteUrl = this.website_url
       this.apiService.addUser(this.provider).subscribe((res: any) => {
         if (res?.isSuccess === true) {
+          let body ={
+            addProvider : true
+          }
+          this.apiService.updateQueue(this.row_id, body).subscribe((res: any) => {
+          })
           this.toastr.success('provider registered successfull!')
           this.modalService.dismissAll()
+          this.setAndGetQueuebyStatus()
         }
         else this.toastr.error(res?.error)
         this.modalService.dismissAll();

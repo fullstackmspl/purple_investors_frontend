@@ -143,7 +143,7 @@
                   (click)="openModal(myModalContent,row,'')"></i>
                   <i class="ft-trash-2 cursor-pointer danger  mx-1"
                     (click)="confirmDelete(row?._id)"></i>
-                  <i *ngIf="row?.status ==='accepted'" class="ft-plus text-primary cursor-pointer  mx-1" (click)="openModalForProvider(myModalContentPro,row)"></i>
+                  <i *ngIf="row?.addProvider !== true && row?.status ==='accepted'" class="ft-plus text-primary cursor-pointer  mx-1" (click)="openModalForProvider(myModalContentPro,row)"></i>
                 </ng-template>
               </ngx-datatable-column>
                 </ngx-datatable>
