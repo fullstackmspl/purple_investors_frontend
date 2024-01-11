@@ -219,6 +219,12 @@ export class ProviderComponent implements OnInit {
     let jsonString = this.json_data.match(/\{.*\}/s)[0];
     this.provider = JSON.parse(jsonString)
     this.provider.roles = 'purpleprovider'
+    for (let key in this.provider) {
+      if (this.provider.hasOwnProperty(key)) {
+        this.provider[key]=this.convertToString(this.provider[key])
+          console.log(key, this.provider[key]);
+      }
+  }
   }
   details(data){
     try {
@@ -360,6 +366,17 @@ openModalForProvider(content, id,row_data) {
           }
         );
     // }
+  }
+}
+convertToString(input) {
+  if (Array.isArray(input)) {
+    return input.join(',');
+  } else if (typeof input === 'object' && input !== null) {
+    return Object.entries(input)
+      .map(([key, value]) => `${key}:${value}`)
+      .join(',');
+  } else {
+    return String(input);
   }
 }
 submit(){
