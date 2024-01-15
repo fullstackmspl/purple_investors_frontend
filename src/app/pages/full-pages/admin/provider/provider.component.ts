@@ -221,6 +221,7 @@ export class ProviderComponent implements OnInit {
     this.provider.roles = 'purpleprovider'
     for (let key in this.provider) {
       if (this.provider.hasOwnProperty(key)) {
+        console.log(key, this.provider[key]);
         this.provider[key]=this.convertToString(this.provider[key])
           console.log(key, this.provider[key]);
       }
@@ -303,9 +304,9 @@ openModalForProvider(content, id,row_data) {
       fullScreen: true
     });
     // if (this.newMessage.trim() !== '') {
-      const exactMsg2 = `${row_data?.websiteUrl} please find exact all data fields in string format such as Google Reviews URL,Number of Google Reviews,Average Google Rating,3 Top (Highest rated) Google reviews,3 Bottom (Lowest rated) Google reviews,3 Most Recent Google Reviews, Facebook URL,Facebook Number of Followers,Facebook Number of likes,Yelp Profile URL,Number of Yelp ratings,Average Yelp rating, 3 Yelp Top (Highest rated) reviews,3 Yelp Bottom (Lowest rated) reviews,3 Yelp Most Recent Reviews,Instagram Profile Link,Number of Instagram Followers  and i need fields as it is "fullname, email, phone_number, location, address, roles, averageGoogleRating, averageYelpRating, bottomGoogleReviews, facebookNumberOfFollowers, facebookNumberOfLikes, facebookURL, googleReviewsURL, instagramProfileLink, mostRecentGoogleReviews, numberOfGoogleReviews, numberOfInstagramFollowers, numberOfYelpRatings, topGoogleReviews, yelpBottomReviews, yelpMostRecentReviews, yelpTopReviews, yelpProfileURL from Open AI API in json format"`;
+      const exactMsg2 = `${row_data?.websiteUrl} please find exact data in type string format such as Google Reviews URL,Number of Google Reviews,Average Google Rating,3 Top (Highest rated) Google reviews,3 Bottom (Lowest rated) Google reviews,3 Most Recent Google Reviews, Facebook URL,Facebook Number of Followers,Facebook Number of likes,Yelp Profile URL,Number of Yelp ratings,Average Yelp rating, 3 Yelp Top (Highest rated) reviews,3 Yelp Bottom (Lowest rated) reviews,3 Yelp Most Recent Reviews,Instagram Profile Link,Number of Instagram Followers  and i need fields as it is "fullname, email, phone_number, location, address, roles, averageGoogleRating, averageYelpRating, bottomGoogleReviews, facebookNumberOfFollowers, facebookNumberOfLikes, facebookURL, googleReviewsURL, instagramProfileLink, mostRecentGoogleReviews, numberOfGoogleReviews, numberOfInstagramFollowers, numberOfYelpRatings, topGoogleReviews, yelpBottomReviews, yelpMostRecentReviews, yelpTopReviews, yelpProfileURL from Open AI API in json format"`;
   
-      this.messages.push({ sender: 'You', text: this.newMessage, isMe: true });
+      // this.messages.push({ sender: 'You', text: this.newMessage, isMe: true });
   
       this.apiService
         .chatgptSearch('6578625ec5e9c2b1c8909c58', this.user._id, exactMsg2)
@@ -320,11 +321,11 @@ openModalForProvider(content, id,row_data) {
             if (res?.isSuccess) {
               const data = res?.data[0]?.message?.content;
               this.json_data = data;
-              this.messages.push({
-                sender: 'ChatGpt',
-                text: data.match(/\{.*\}/s) && data.match(/\{.*\}/s).length ? this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])) : data,
-                isMe: false
-              });
+              // this.messages.push({
+              //   sender: 'ChatGpt',
+              //   text: data.match(/\{.*\}/s) && data.match(/\{.*\}/s).length ? this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])) : data,
+              //   isMe: false
+              // });
               this.newMessage = '';
   
               this.setProvider();
@@ -370,7 +371,11 @@ openModalForProvider(content, id,row_data) {
 }
 convertToString(input) {
   if (Array.isArray(input)) {
-    return input.join(',');
+    if (input.every(item => typeof item === 'object')) {
+      return input.map(obj => Object.entries(obj).map(([key, value]) => `${key}:${value}`).join(',')).join(',');
+    } else {
+      return input.join(',');
+    }
   } else if (typeof input === 'object' && input !== null) {
     return Object.entries(input)
       .map(([key, value]) => `${key}:${value}`)
