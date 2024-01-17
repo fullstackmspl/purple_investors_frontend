@@ -49,10 +49,40 @@
                   </div>
                 </div>
               </div>
-              <div class="col-12 col-sm-12 col-md-3 col-lg-3 mb-2">
-                <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="40"
-                [footerHeight]="40" rowHeight="auto" [limit]="limitRef" [rows]="rows" [externalPaging]="true"
-                [count]="page.totalPages" [offset]="page.pageNumber" (page)="pageChangeData($event)"></ngx-datatable>
+              <div class="row mt-2">
+                <div class="col-12 col-sm-12 col-md-5 col-lg-5 mt-2 mb-1">
+                  <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="40"
+                  [footerHeight]="40" rowHeight="auto" [limit]="limitRef" [rows]="rows" [externalPaging]="true"
+                  [count]="page.totalPages" [offset]="page.pageNumber" (page)="pageChangeData($event)"></ngx-datatable>
+                </div>
+                <div class="col-12 col-sm-12 col-md-7 col-lg-7 mt-2 mb-1">
+                  <div class="row-flex">
+                    <div class="col-flex-2 mb-1 position-relative filterng">
+                      <ng-select class="city-select"
+                      [items]="city_List"
+                      bindLabel="city"
+                      bindValue="_id"
+                      placeholder="Select City"
+                      [(ngModel)]="cityId"
+                      (change)="searchQueue()"
+                      required
+                      >
+                    </ng-select>
+                    </div>
+                    <!-- <div class="col-flex-2 mb-1 position-relative filterng" >
+                      <ng-select
+                      [items]="filteredData"
+                       (search)="onSearchProvider($event)"
+                      bindLabel="fullname"
+                      bindValue="_id"
+                      [(ngModel)]="providerId"
+                      (change)="searchProgram()"
+                      placeholder="Search Provider"
+                      >
+                    </ng-select>
+                    </div> -->
+                  </div>
+                </div>
               </div>
             </fieldset>
             <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="50"

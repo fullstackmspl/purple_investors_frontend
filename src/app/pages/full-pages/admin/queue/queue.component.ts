@@ -95,6 +95,7 @@ export class QueueComponent implements OnInit {
   user: any
   json_data: any
   website_url: any
+  cityId:string="6578546cc5e9c2b1c8909c24";
 
   provider = {
     fullname: '',
@@ -122,13 +123,17 @@ export class QueueComponent implements OnInit {
     yelpMostRecentReviews: [],
     yelpTopReviews: [],
     yelpProfileURL: '',
-    websiteUrl: ''
+    websiteUrl: '',
+    cityId:this.cityId
   }
   activeTab: any;
   tags: any[];
   select_city_object: any;
   chatGptProviders: any[];
   queue_urls: any;
+  filteredData: any;
+  providerId: any;
+
   constructor(public apiService: ApiServiceService,
     private modalService: NgbModal,
     public toastr: ToastrService,
@@ -193,7 +198,7 @@ export class QueueComponent implements OnInit {
   }
 
   getAllCity() {
-    this.apiService.getAllCity(this.limitRef, this.page.pageNumber + 1).subscribe((res: any) => {
+    this.apiService.getAllCity(1000, this.page.pageNumber + 1).subscribe((res: any) => {
       this.city_List = res?.data?.user
     })
   }
@@ -213,7 +218,7 @@ export class QueueComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllQueue(status, this.limitRef, this.page.pageNumber + 1).subscribe((res: any) => {
+    this.apiService.getAllQueue(this.cityId,status, this.limitRef, this.page.pageNumber + 1).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.items
       this.page.totalPages = res?.data?.totalCount
@@ -222,7 +227,7 @@ export class QueueComponent implements OnInit {
 
 
   pageChangeData(page: any) {
-    this.apiService.getAllQueue(status, this.limitRef, page.offset + 1).subscribe((res: any) => {
+    this.apiService.getAllQueue(this.cityId,this.activeTab, this.limitRef, page.offset + 1).subscribe((res: any) => {
       this.rows = res?.data?.data
       this.page.totalPages = res?.data?.TotalCount
     })
@@ -384,13 +389,12 @@ export class QueueComponent implements OnInit {
           providers.push({ name, url });
         }
         this.chatGptProviders = providers
-        console.log(providers);
         this.queue_urls = urls
         this.chatgpt_queue = true
         //   this.setProvider()
 
         //   this.messages.push({ sender: 'ChatGpt', text:  data.match(/\{.*\}/s)&&data.match(/\{.*\}/s).length?this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])):data , isMe: false });
-        //   this.newMessage = ''; 
+        //   this.newMessage = '';
         // // });
         //   this.cdr.detectChanges();
         //   const modalRef = this.modalService.open(content,modalOptions);
@@ -575,6 +579,7 @@ export class QueueComponent implements OnInit {
     let jsonString = this.json_data.match(/\{.*\}/s)[0];
     this.provider = JSON.parse(jsonString)
     this.provider.roles = 'purpleprovider'
+    this.provider.cityId = this.cityId
 
   }
   async setAddress(addressData) {
@@ -612,5 +617,18 @@ export class QueueComponent implements OnInit {
       console.error('Error parsing JSON:', error);
     }
   }
-
+  searchQueue(){
+    this.apiService.getAllQueue(this.cityId,this.activeTab, this.limitRef, this.page.pageNumber + 1).subscribe((res: any) => {
+      this.spinner.hide();
+      this.rows = res?.data?.items
+      this.page.totalPages = res?.data?.totalCount
+    })
+  }
+  onSearchProvider(term): void {
+    console.log('onSearchProvider', term);
+    this.apiService.searchProviders(term.term).subscribe((result) => {
+      this.filteredData = result.data;
+      this.spinner.hide();
+    });
+  }
 }

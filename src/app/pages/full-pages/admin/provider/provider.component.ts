@@ -81,6 +81,10 @@ export class ProviderComponent implements OnInit {
   json_data:any
   user:any
   row_id:any
+  cityId:string="6578546cc5e9c2b1c8909c24";
+  filteredData: any;
+  providerId: any;
+  city_List =[]
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
@@ -92,6 +96,7 @@ export class ProviderComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAllUsers()
+    this.getAllCity()
   }
   get rf() {
     return this.userForm.controls;
@@ -105,7 +110,7 @@ export class ProviderComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllProviders().subscribe((res: any) => {
+    this.apiService.getAllProviders(this.cityId).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.data
       this.rows.reverse()
@@ -435,5 +440,20 @@ this.provider.location = addressData || null;
 
 
 }
+getAllCity() {
+  this.apiService.getAllCity(1000, this.page.pageNumber + 1).subscribe((res: any) => {
+    this.city_List = res?.data?.user
+  })
+}
+searchProvider(){
+  this.apiService.getAllProviders(this.cityId).subscribe((res: any) => {
+    this.spinner.hide();
+    this.rows = res?.data?.data
+    this.rows.reverse()
+    this.page.totalPages = res?.data?.TotalCount
+   
+  })
+}
+
 
 }
