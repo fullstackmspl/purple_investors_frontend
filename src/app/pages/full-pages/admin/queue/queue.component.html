@@ -8,7 +8,7 @@
           <div class="card-body">
             <!-- ngx-datatable-filter -->
             <fieldset class="form-group">
-              <div class="row align-items-end mt-0 pagination-body">
+              <div class="row align-items-end mt-0 pagination-body mb-0">
                 <div class="col-12 col-sm-12 col-md-3 col-lg-3 mt-1">
                   <div class="btn-group enrollment-list-btn-info" role="group">
                     <button id="status-btns" type="button" *ngFor="let status of status_List" class="btn"
@@ -49,13 +49,15 @@
                   </div>
                 </div>
               </div>
-              <div class="row mt-2">
-                <div class="col-12 col-sm-12 col-md-5 col-lg-5 mt-2 mb-1">
-                  <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="40"
-                  [footerHeight]="40" rowHeight="auto" [limit]="limitRef" [rows]="rows" [externalPaging]="true"
-                  [count]="page.totalPages" [offset]="page.pageNumber" (page)="pageChangeData($event)"></ngx-datatable>
+              <div class="row align-items-end mt-0 mb-1">
+                <div class="col-12 col-sm-12 col-md-5 col-lg-5 ">
+                  <div class="pagination">
+                    <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="40"
+                      [footerHeight]="40" rowHeight="auto" [limit]="limitRef" [rows]="rows" [externalPaging]="true"
+                      [count]="page.totalPages" [offset]="page.pageNumber" (page)="pageChangeData($event)"></ngx-datatable>
+                  </div>
                 </div>
-                <div class="col-12 col-sm-12 col-md-7 col-lg-7 mt-2 mb-1">
+                <div class="col-12 col-sm-12 col-md-7 col-lg-7">
                   <div class="row-flex">
                     <div class="col-flex-2 mb-1 position-relative filterng">
                       <ng-select class="city-select"

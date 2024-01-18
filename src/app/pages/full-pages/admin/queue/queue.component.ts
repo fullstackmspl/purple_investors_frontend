@@ -227,9 +227,18 @@ export class QueueComponent implements OnInit {
 
 
   pageChangeData(page: any) {
+    this.spinner.show(undefined,
+      {
+        type: 'ball-triangle-path',
+        size: 'medium',
+        bdColor: 'rgba(0, 0, 0, 0.8)',
+        color: '#fff',
+        fullScreen: true
+      });
     this.apiService.getAllQueue(this.cityId,this.activeTab, this.limitRef, page.offset + 1).subscribe((res: any) => {
-      this.rows = res?.data?.data
-      this.page.totalPages = res?.data?.TotalCount
+      this.spinner.hide();
+      this.rows = res?.data?.items
+      this.page.totalPages = res?.data?.totalCount
     })
   }
   getTagsFilter(data: any) {
