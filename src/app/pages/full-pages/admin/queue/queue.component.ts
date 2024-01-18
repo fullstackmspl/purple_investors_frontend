@@ -555,7 +555,10 @@ export class QueueComponent implements OnInit {
           }, (reason) => {
           });
         }
-        else this.toastr.error(res?.error)
+        else {
+          this.toastr.error(res?.error)
+          this.spinner.hide()
+        }
       })
 
     }

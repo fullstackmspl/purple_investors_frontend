@@ -110,7 +110,7 @@ export class ProviderComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllProviders(this.cityId).subscribe((res: any) => {
+    this.apiService.getAllProviders(this.cityId,this.limitRef,this.page.pageNumber+1).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.data
       this.rows.reverse()
@@ -121,11 +121,21 @@ export class ProviderComponent implements OnInit {
   
   
   pageChangeData(page:any){
-    // this.apiService.getTagsList(page.offset +1,page.pageSize).subscribe((res:any)=>{
-    //   this.rows=res.data.items
-    //   this.page.totalPages=res.data.totalCount
-  
-    // })
+    this.spinner.show(undefined,
+      {
+        type: 'ball-triangle-path',
+        size: 'medium',
+        bdColor: 'rgba(0, 0, 0, 0.8)',
+        color: '#fff',
+        fullScreen: true
+      });
+    this.apiService.getAllProviders(this.cityId,this.limitRef,page.offset + 1).subscribe((res: any) => {
+      this.spinner.hide();
+      this.rows = res?.data?.data
+      this.rows.reverse()
+      this.page.totalPages = res?.data?.TotalCount
+     
+    })
   }
   getTagsFilter(data:any){
     // let search=data
@@ -446,7 +456,7 @@ getAllCity() {
   })
 }
 searchProvider(){
-  this.apiService.getAllProviders(this.cityId).subscribe((res: any) => {
+  this.apiService.getAllProviders(this.cityId,this.limitRef,this.page.pageNumber+1).subscribe((res: any) => {
     this.spinner.hide();
     this.rows = res?.data?.data
     this.rows.reverse()

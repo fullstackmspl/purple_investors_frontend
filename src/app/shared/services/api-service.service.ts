@@ -59,9 +59,9 @@ getUserById(id:any): Observable<any> {
   return subject.asObservable();
 }
 // ----------------------- Get All Providers ---------------------------------------------------
-getAllProviders(id): Observable<any> {
+getAllProviders(id,page_size:any,page_number:any): Observable<any> {
   const subject = new Subject<any>();
-  this.http.get(`${this.root}/user/getProviders/${id}`,).subscribe(res => {
+  this.http.get(`${this.root}/user/getProviders/${id}?page_size=${page_size}&page_number=${page_number}`,).subscribe(res => {
       this.userResponse = res;
       subject.next(this.userResponse);
   }, error => {
