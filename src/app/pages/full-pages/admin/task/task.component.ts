@@ -69,6 +69,7 @@ export class TaskComponent implements OnInit {
   taskType:any
   keysWithNoValue:any ={}
   task_users:any
+  activePage =1
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
@@ -108,7 +109,7 @@ export class TaskComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllTask(this.limitRef,this.page.pageNumber + 1).subscribe((res: any) => {
+    this.apiService.getAllTask(this.limitRef,this.activePage).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.data
       this.rows.reverse()
@@ -135,8 +136,9 @@ export class TaskComponent implements OnInit {
   }
 
   pageChangeData(page:any){
+    this.activePage = page.offset +1
     this.apiService.getAllTask(this.limitRef,page.offset +1).subscribe((res: any) => {
-      this.rows = res?.data?.user
+      this.rows = res?.data?.data
       this.rows.reverse()
       this.page.totalPages = res?.data?.TotalCount
     })
@@ -303,6 +305,7 @@ export class TaskComponent implements OnInit {
         if(res?.isSuccess === true){
           this.toastr.success('status update successfull!')
           this.modalService.dismissAll()
+          this.activePage =1
           if(this.user.roles ==='mturkers'){
             this.getAllTaskByUser()
           }
@@ -357,6 +360,7 @@ export class TaskComponent implements OnInit {
         if(res?.isSuccess === true){
           this.toastr.success(`${this.task_users} to update successfull!`)
           this.modalService.dismissAll()
+          this.activePage =1
           if(this.user.roles ==='mturkers'){
             this.getAllTaskByUser()
           }
@@ -431,6 +435,7 @@ export class TaskComponent implements OnInit {
             this.spinner.hide()
             this.toastr.success("provider update successfull!")
             this.modalService.dismissAll()
+            this.activePage =1
             if(this.user.roles ==='mturkers'){
               this.getAllTaskByUser()
             }

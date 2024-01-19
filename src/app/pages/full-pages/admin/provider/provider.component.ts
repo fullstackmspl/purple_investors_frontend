@@ -85,6 +85,8 @@ export class ProviderComponent implements OnInit {
   filteredData: any;
   providerId: any;
   city_List =[]
+  activePage = 1
+
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
@@ -110,7 +112,7 @@ export class ProviderComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllProviders(this.cityId,this.limitRef,this.page.pageNumber+1).subscribe((res: any) => {
+    this.apiService.getAllProviders(this.cityId,this.limitRef, this.activePage).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.data
       this.rows.reverse()
@@ -121,6 +123,7 @@ export class ProviderComponent implements OnInit {
   
   
   pageChangeData(page:any){
+    this.activePage = page.offset + 1
     this.spinner.show(undefined,
       {
         type: 'ball-triangle-path',
@@ -410,6 +413,7 @@ submit(){
 
   this.apiService.updateUser(this.row_id,this.provider).subscribe((res:any)=>{
     if(res?.isSuccess === true){
+      this.activePage =1
       this.toastr.success('provider update successfull')
       this.spinner.hide()
       this.modalService.dismissAll()

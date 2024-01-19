@@ -9,13 +9,13 @@
             <!-- ngx-datatable-filter -->
             <fieldset class="form-group">
               <div class="row align-items-end mt-0 pagination-body">
-                <div class="col-12 col-sm-12 col-md-3 col-lg-3 mb-2">
+                <div class="col-12 col-sm-12 col-md-4 col-lg-4 mb-2">
                   <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="40"
                   [footerHeight]="40" rowHeight="auto" [limit]="limitRef" [rows]="rows" [externalPaging]="true"
                   [count]="page.totalPages" [offset]="page.pageNumber" (page)="pageChangeData($event)"></ngx-datatable>
                 </div>
                 
-                <div class="col-12 col-sm-12 col-md-9 col-lg-9 mt-2 mb-1">
+                <div class="col-12 col-sm-12 col-md-8 col-lg-8 mt-2 mb-1">
                   <div class="row-flex">
                     <div class="col-flex-2 filter">
                     </div>
@@ -45,7 +45,7 @@
             </fieldset>
             <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="50"
               [footerHeight]="50" rowHeight="auto" [limit]="limitRef" [rows]="rows" [scrollbarH]="true"
-              [columns]="columns" [externalPaging]="true" [count]="page.totalPages" [offset]="page.offset"
+              [columns]="columns" [externalPaging]="false" [count]="page.totalPages" [offset]="page.offset"
               (page)="pageChangeData($event)">
               <ngx-datatable-column name="Name" prop="name" [width]="60">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>

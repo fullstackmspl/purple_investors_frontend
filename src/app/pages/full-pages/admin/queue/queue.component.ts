@@ -133,7 +133,7 @@ export class QueueComponent implements OnInit {
   queue_urls: any;
   filteredData: any;
   providerId: any;
-
+  activePage = 1
   constructor(public apiService: ApiServiceService,
     private modalService: NgbModal,
     public toastr: ToastrService,
@@ -218,7 +218,7 @@ export class QueueComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllQueue(this.cityId,status, this.limitRef, this.page.pageNumber + 1).subscribe((res: any) => {
+    this.apiService.getAllQueue(this.cityId,status, this.limitRef, this.activePage).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.items
       this.page.totalPages = res?.data?.totalCount
@@ -227,6 +227,7 @@ export class QueueComponent implements OnInit {
 
 
   pageChangeData(page: any) {
+    this.activePage = page.offset + 1
     this.spinner.show(undefined,
       {
         type: 'ball-triangle-path',
@@ -615,14 +616,17 @@ export class QueueComponent implements OnInit {
           let body ={
             addProvider : true
           }
+          this.activePage = 1
           this.apiService.updateQueue(this.row_id, body).subscribe((res: any) => {
           })
           this.toastr.success('provider registered successfull!')
           this.modalService.dismissAll()
           this.setAndGetQueuebyStatus()
         }
-        else this.toastr.error(res?.error)
-        this.modalService.dismissAll();
+        else{
+          this.toastr.error(res?.error)
+          this.modalService.dismissAll();
+        } 
       })
 
     } catch (error) {
@@ -643,4 +647,5 @@ export class QueueComponent implements OnInit {
       this.spinner.hide();
     });
   }
+  
 }
