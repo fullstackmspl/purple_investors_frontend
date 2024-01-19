@@ -36,7 +36,7 @@ export class QueueComponent implements OnInit {
   page = {
     pageNumber: 0,
     offset: 0,
-    pageSize: 100,
+    pageSize: 10,
     totalPages: 0
   };
   // row data
@@ -616,7 +616,7 @@ export class QueueComponent implements OnInit {
           let body ={
             addProvider : true
           }
-          this.activePage = 1
+         
           this.apiService.updateQueue(this.row_id, body).subscribe((res: any) => {
           })
           this.toastr.success('provider registered successfull!')
@@ -641,7 +641,6 @@ export class QueueComponent implements OnInit {
     })
   }
   onSearchProvider(term): void {
-    console.log('onSearchProvider', term);
     this.apiService.searchProviders(term.term).subscribe((result) => {
       this.filteredData = result.data;
       this.spinner.hide();

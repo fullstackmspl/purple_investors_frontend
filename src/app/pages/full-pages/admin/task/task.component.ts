@@ -305,7 +305,6 @@ export class TaskComponent implements OnInit {
         if(res?.isSuccess === true){
           this.toastr.success('status update successfull!')
           this.modalService.dismissAll()
-          this.activePage =1
           if(this.user.roles ==='mturkers'){
             this.getAllTaskByUser()
           }
@@ -360,7 +359,6 @@ export class TaskComponent implements OnInit {
         if(res?.isSuccess === true){
           this.toastr.success(`${this.task_users} to update successfull!`)
           this.modalService.dismissAll()
-          this.activePage =1
           if(this.user.roles ==='mturkers'){
             this.getAllTaskByUser()
           }
@@ -435,7 +433,6 @@ export class TaskComponent implements OnInit {
             this.spinner.hide()
             this.toastr.success("provider update successfull!")
             this.modalService.dismissAll()
-            this.activePage =1
             if(this.user.roles ==='mturkers'){
               this.getAllTaskByUser()
             }

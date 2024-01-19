@@ -54,7 +54,7 @@
                   <div class="pagination">
                     <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="40"
                       [footerHeight]="40" rowHeight="auto" [limit]="limitRef" [rows]="rows" [externalPaging]="true"
-                      [count]="page.totalPages" [offset]="page.pageNumber" (page)="pageChangeData($event)"></ngx-datatable>
+                      [count]="page.totalPages" [offset]="(activePage - 1) * limitRef" (page)="pageChangeData($event)"></ngx-datatable>
                   </div>
                 </div>
                 <div class="col-12 col-sm-12 col-md-7 col-lg-7">
