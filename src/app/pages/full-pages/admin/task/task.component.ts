@@ -137,7 +137,16 @@ export class TaskComponent implements OnInit {
 
   pageChangeData(page:any){
     this.activePage = page.offset +1
+    this.spinner.show(undefined,
+      {
+        type: 'ball-triangle-path',
+        size: 'medium',
+        bdColor: 'rgba(0, 0, 0, 0.8)',
+        color: '#fff',
+        fullScreen: true
+      });
     this.apiService.getAllTask(this.limitRef,page.offset +1).subscribe((res: any) => {
+      this.spinner.hide()
       this.rows = res?.data?.data
       this.rows.reverse()
       this.page.totalPages = res?.data?.TotalCount
