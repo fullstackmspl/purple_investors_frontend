@@ -10,6 +10,11 @@
             <fieldset class="form-group">
               <div class="row align-items-end mt-0 pagination-body">
                 <div class="col-12 col-sm-12 col-md-3 col-lg-3">
+                  <div class="btn-group enrollment-list-btn-info" role="group">
+                    <button id="status-btns" type="button" *ngFor="let status of status_List" class="btn"
+                      [ngClass]="{'btn-primary':activeTab==status?._id,'btn-outline-primary':activeTab!=status?._id}"
+                      (click)="activeProviderTab(status?._id)">{{status?.name}}</button>
+                  </div>
                 </div>
 
                 <div class="col-12 col-sm-12 col-md-9 col-lg-9">
@@ -60,6 +65,18 @@
                       required
                       >
                     </ng-select>
+                    </div>
+                    <div class="col-flex-2 mb-1 position-relative filterng">
+                      <ng-select class="city-select"
+                        [items]="filter_List"
+                        bindLabel="name"
+                        bindValue="id"
+                        placeholder="Select Filter"
+                        [(ngModel)]="selected_filter"
+                        (change)="getFilterId($event)"
+                        required
+                        >
+                      </ng-select>
                     </div>
                     <!-- <div class="col-flex-2 mb-1 position-relative filterng" >
                       <ng-select
@@ -119,13 +136,52 @@
                   </div>
                 </ng-template>
               </ngx-datatable-column>
+              <ngx-datatable-column name="Status" prop="status" [width]="10">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <p [matMenuTriggerFor]="queue_status">
+                        <span *ngIf="row?.status === 'Verified'"
+                          [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':row?.status === 'Verified'}">
+                          {{row?.status}}
+                        </span>
+                        <span *ngIf="row?.status == 'Archived'"
+                          [ngClass]="{'bg-light-warning badge badge-pill cursor-pointer':row?.status == 'Archived'}">
+                          {{row?.status}}
+                        </span>
+                        <span *ngIf="row?.status == 'Unverfied'"
+                          [ngClass]="{'bg-light-danger badge badge-pill cursor-pointer':row?.status == 'Unverfied'}">
+                          {{row?.status}}
+                        </span>
+                      </p>
+                      <mat-menu #queue_status="matMenu">
+  
+                        <div *ngIf="row?.status ==='pending'">
+                          <div *ngFor="let status of status_List">
+                            <button mat-menu-item *ngIf="status?._id !== row?.status "
+                              (click)="updateStatus(row?._id,status._id)">
+                              <span>
+                                <span [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':status.name === 'Verified'}"
+                                  placement="top" *ngIf="status.name == 'Verified'">{{status._id}}</span>
+                                <span [ngClass]="{'bg-light-warning badge badge-pill cursor-pointer':status.name === 'Archived'}"
+                                  placement="top" *ngIf="status.name == 'Archived'">{{status._id}}</span>
+                                <span [ngClass]="{'bg-light-danger badge badge-pill cursor-pointer':status.name === 'Unverfied'}"
+                                  placement="top"
+                                  *ngIf="status.name == 'Unverfied'">{{status._id}}</span>
+                              </span>
+                            </button>
+                          </div>
+                        </div>
+                      </mat-menu>
+                </ng-template>
+              </ngx-datatable-column>
               <ngx-datatable-column name="Actions" [width]="10">
                 <ng-template let-row="row" ngx-datatable-cell-template>
                   <span>
-                    <i class="ft-plus text-primary cursor-pointer mx-1"
+                    <i *ngIf="row?.userUpdateCount===0" class="ft-plus text-primary cursor-pointer mx-1" placement="top" ngbTooltip="Run Analytics"
                     (click)="openModalForProvider(myModalContentProvider,row?._id,row)"></i>
                   </span>
-                  
+                  <span>
+                    <i *ngIf="row?.userUpdateCount!==0" class="ft-play text-primary cursor-pointer mx-1" placement="top" ngbTooltip="ReRun Analytics" (click)="openModalForProvider(myModalContentProvider,row?._id,row)"></i>
+                  </span>
                   <i class="ft-edit text-primary cursor-pointer mx-1"  placement="left" ngbTooltip="basic data update"
                   (click)="openModal(myModalContent,row)"></i>
                   <i class="ft-edit text-primary cursor-pointer mx-1"  placement="left" ngbTooltip="analytics data update"

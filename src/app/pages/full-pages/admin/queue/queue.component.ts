@@ -81,6 +81,7 @@ export class QueueComponent implements OnInit {
     { name: 'Pending', _id: 'pending' },
     { name: 'Accepted', _id: 'accepted' },
     { name: 'Decline', _id: 'decline' },
+    { name:'Processed',id:'processed'}
   ]
   select_status = 'pending'
   select_city = null
@@ -134,6 +135,11 @@ export class QueueComponent implements OnInit {
   filteredData: any;
   providerId: any;
   activePage = 1
+  filter_List =[
+    {name:'By Name' ,id:'byName'},
+    {name:'Latest' ,id:'byDate'}
+  ]
+  selected_filter ='byName'
   constructor(public apiService: ApiServiceService,
     private modalService: NgbModal,
     public toastr: ToastrService,
@@ -218,7 +224,7 @@ export class QueueComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllQueue(this.cityId,status, this.limitRef, this.activePage).subscribe((res: any) => {
+    this.apiService.getAllQueue(this.cityId,status,this.selected_filter, this.limitRef, this.activePage).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.items
       this.page.totalPages = res?.data?.totalCount
@@ -236,7 +242,7 @@ export class QueueComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllQueue(this.cityId,this.activeTab, this.limitRef, page.offset + 1).subscribe((res: any) => {
+    this.apiService.getAllQueue(this.cityId,this.activeTab,this.selected_filter, this.limitRef, page.offset + 1).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.items
       this.page.totalPages = res?.data?.totalCount
@@ -614,9 +620,10 @@ export class QueueComponent implements OnInit {
       this.apiService.addUser(this.provider).subscribe((res: any) => {
         if (res?.isSuccess === true) {
           let body ={
-            addProvider : true
+            addProvider : true,
+            status :'processed'
           }
-         
+          
           this.apiService.updateQueue(this.row_id, body).subscribe((res: any) => {
           })
           this.toastr.success('provider registered successfull!')
@@ -634,7 +641,7 @@ export class QueueComponent implements OnInit {
     }
   }
   searchQueue(){
-    this.apiService.getAllQueue(this.cityId,this.activeTab, this.limitRef, this.page.pageNumber + 1).subscribe((res: any) => {
+    this.apiService.getAllQueue(this.cityId,this.activeTab,this.selected_filter, this.limitRef, this.page.pageNumber + 1).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.items
       this.page.totalPages = res?.data?.totalCount
@@ -646,5 +653,8 @@ export class QueueComponent implements OnInit {
       this.spinner.hide();
     });
   }
-  
+  getFilterId(event){
+    this.selected_filter
+    this.getAllQueue(this.activeTab)
+  }
 }

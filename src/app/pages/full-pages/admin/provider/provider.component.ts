@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { DatatableComponent, ColumnMode } from '@swimlane/ngx-datatable';
 import { ApiServiceService } from 'app/shared/services/api-service.service';
@@ -86,24 +86,64 @@ export class ProviderComponent implements OnInit {
   providerId: any;
   city_List =[]
   activePage = 1
-
+  filter_List =[
+    {name:'By Name' ,id:'byName'},
+    {name:'Latest' ,id:'byDate'}
+  ]
+  selected_filter ='byName'
+  status_List = [
+    { name: 'Unverfied', _id: 'Unverfied' },
+    { name: 'Verified', _id: 'Verified' },
+    { name: 'Archived', _id: 'Archived' },
+  ]
+  activeTab:any
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
-               private router:Router,
+               private router:Router,private activatedRoute: ActivatedRoute,
                private spinner: NgxSpinnerService,private formBuilder : FormBuilder,
                private cdr: ChangeDetectorRef) { 
                 this.user = JSON.parse(localStorage.getItem('user'))
+                this.activeProviderTab('Unverfied')
                 }
 
   ngOnInit(): void {
-    this.getAllUsers()
+    this.setAndGetProviderbyStatus()
     this.getAllCity()
+  }
+  activeProviderTab(tab) {
+
+    const activetab = tab;
+    if (activetab !== '') {
+      this.router.navigate(
+        [],
+        { relativeTo: this.activatedRoute, queryParams: { status: activetab } }
+      );
+    }
+
+  }
+  setAndGetProviderbyStatus() {
+    this.activatedRoute.queryParams
+      .subscribe((params: any) => {
+        this.activeTab = params?.status;
+        switch (this.activeTab) {
+          case 'Unverfied':
+            this.getAllUsers(this.activeTab);
+            break;
+          case 'Verified':
+            this.getAllUsers(this.activeTab);
+            break
+          case 'Archived':
+            this.getAllUsers(this.activeTab);
+            break;
+
+        }
+      })
   }
   get rf() {
     return this.userForm.controls;
   }
-  getAllUsers(){
+  getAllUsers(status){
     this.spinner.show(undefined,
       {
         type: 'ball-triangle-path',
@@ -112,10 +152,9 @@ export class ProviderComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllProviders(this.cityId,this.limitRef, this.activePage).subscribe((res: any) => {
+    this.apiService.getAllProviders(this.cityId,this.selected_filter,status,this.limitRef, this.activePage).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.data
-      this.rows.reverse()
       this.page.totalPages = res?.data?.TotalCount
      
     })
@@ -132,10 +171,9 @@ export class ProviderComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllProviders(this.cityId,this.limitRef,page.offset + 1).subscribe((res: any) => {
+    this.apiService.getAllProviders(this.cityId,this.selected_filter,this.activeTab,this.limitRef,page.offset + 1).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.data
-      this.rows.reverse()
       this.page.totalPages = res?.data?.TotalCount
      
     })
@@ -239,16 +277,13 @@ export class ProviderComponent implements OnInit {
     this.provider.roles = 'purpleprovider'
     for (let key in this.provider) {
       if (this.provider.hasOwnProperty(key)) {
-        console.log(key, this.provider[key]);
         this.provider[key]=this.convertToString(this.provider[key])
-          console.log(key, this.provider[key]);
       }
   }
   }
   details(data){
     try {
     
-      console.log('pro',this.provider)
       //  this.apiService.addUser(this.provider).subscribe((res:any)=>{
       //    if(res?.isSuccess === true){
       //      this.toastr.success('provider registered successfull!')
@@ -417,7 +452,7 @@ submit(){
       this.toastr.success('provider update successfull')
       this.spinner.hide()
       this.modalService.dismissAll()
-      this.getAllUsers()
+      this.setAndGetProviderbyStatus()
     }
     else this.toastr.error(res?.error)
     
@@ -431,7 +466,7 @@ updateBasicAnalyticProvider(){
         this.toastr.success('provider update successfull')
         this.spinner.hide()
         this.modalService.dismissAll()
-        this.getAllUsers()
+        this.setAndGetProviderbyStatus()
       }
       else this.toastr.error(res?.error)
       
@@ -460,14 +495,16 @@ getAllCity() {
   })
 }
 searchProvider(){
-  this.apiService.getAllProviders(this.cityId,this.limitRef,this.page.pageNumber+1).subscribe((res: any) => {
+  this.apiService.getAllProviders(this.cityId,this.selected_filter,this.activeTab,this.limitRef,this.page.pageNumber+1).subscribe((res: any) => {
     this.spinner.hide();
     this.rows = res?.data?.data
-    this.rows.reverse()
     this.page.totalPages = res?.data?.TotalCount
    
   })
 }
-
+getFilterId(event){
+  this.selected_filter
+  this.getAllUsers(this.activeTab)
+}
 
 }
