@@ -143,29 +143,29 @@
                           [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':row?.status === 'Verified'}">
                           {{row?.status}}
                         </span>
-                        <span *ngIf="row?.status == 'Archived'"
-                          [ngClass]="{'bg-light-warning badge badge-pill cursor-pointer':row?.status == 'Archived'}">
+                        <span *ngIf="row?.status === 'Archived'"
+                          [ngClass]="{'bg-light-warning badge badge-pill cursor-pointer':row?.status === 'Archived'}">
                           {{row?.status}}
                         </span>
-                        <span *ngIf="row?.status == 'Unverfied'"
-                          [ngClass]="{'bg-light-danger badge badge-pill cursor-pointer':row?.status == 'Unverfied'}">
+                        <span *ngIf="row?.status === 'Unverfied'"
+                          [ngClass]="{'bg-light-danger badge badge-pill cursor-pointer':row?.status === 'Unverfied'}">
                           {{row?.status}}
                         </span>
                       </p>
                       <mat-menu #queue_status="matMenu">
   
-                        <div *ngIf="row?.status ==='pending'">
+                        <div >
                           <div *ngFor="let status of status_List">
                             <button mat-menu-item *ngIf="status?._id !== row?.status "
                               (click)="updateStatus(row?._id,status._id)">
                               <span>
                                 <span [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':status.name === 'Verified'}"
-                                  placement="top" *ngIf="status.name == 'Verified'">{{status._id}}</span>
+                                  placement="top" *ngIf="status.name === 'Verified'">{{status._id}}</span>
                                 <span [ngClass]="{'bg-light-warning badge badge-pill cursor-pointer':status.name === 'Archived'}"
-                                  placement="top" *ngIf="status.name == 'Archived'">{{status._id}}</span>
+                                  placement="top" *ngIf="status.name === 'Archived'">{{status._id}}</span>
                                 <span [ngClass]="{'bg-light-danger badge badge-pill cursor-pointer':status.name === 'Unverfied'}"
                                   placement="top"
-                                  *ngIf="status.name == 'Unverfied'">{{status._id}}</span>
+                                  *ngIf="status.name === 'Unverfied'">{{status._id}}</span>
                               </span>
                             </button>
                           </div>

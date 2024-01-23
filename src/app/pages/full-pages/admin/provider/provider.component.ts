@@ -506,5 +506,22 @@ getFilterId(event){
   this.selected_filter
   this.getAllUsers(this.activeTab)
 }
+updateStatus(id, status_id) {
+
+  let body = {
+    status: status_id
+  }
+  if (id) {
+    this.apiService.updateUser(id, body).subscribe((res: any) => {
+      if (res.statusCode === 200) {
+        this.toastr.success('status update successfully')
+        this.setAndGetProviderbyStatus()
+      }
+      else {
+        this.toastr.error(res.error)
+      }
+    })
+  }
+}
 
 }
