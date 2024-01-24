@@ -54,7 +54,7 @@
                   <div class="pagination">
                     <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="40"
                       [footerHeight]="40" rowHeight="auto" [limit]="limitRef" [rows]="rows" [externalPaging]="true"
-                      [count]="page.totalPages" [offset]="(activePage - 1) * limitRef" (page)="pageChangeData($event)"></ngx-datatable>
+                      [count]="page.totalPages" [offset]="page.offset" (page)="pageChangeData($event)"></ngx-datatable>
                   </div>
                 </div>
                 <div class="col-12 col-sm-12 col-md-7 col-lg-7">
@@ -158,10 +158,14 @@
                           [ngClass]="{'bg-light-danger badge badge-pill cursor-pointer':row?.status == 'decline'}">
                           {{row?.status}}
                         </span>
+                        <span *ngIf="row?.status === 'processed'"
+                          [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':row?.status === 'processed'}">
+                          {{row?.status}}
+                        </span>
                       </p>
                       <mat-menu #queue_status="matMenu">
   
-                        <div *ngIf="row?.status ==='pending'">
+                        <div *ngIf="row?.status ==='pending' || row?.status ==='accepted'">
                           <div *ngFor="let status of status_List">
                             <button mat-menu-item *ngIf="status?._id !== row?.status "
                               (click)="updateStatus(row?._id,status._id)">
@@ -173,6 +177,8 @@
                                 <span [ngClass]="{'bg-light-danger badge badge-pill cursor-pointer':status.name === 'Decline'}"
                                   placement="top"
                                   *ngIf="status.name == 'Decline'">{{status._id}}</span>
+                                  <span *ngIf="status._id === 'processed'" [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':status._id === 'processed'}"
+                                  placement="top" >{{status._id}}</span>
                               </span>
                             </button>
                           </div>

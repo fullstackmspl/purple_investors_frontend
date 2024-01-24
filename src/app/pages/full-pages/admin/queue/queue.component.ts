@@ -81,7 +81,7 @@ export class QueueComponent implements OnInit {
     { name: 'Pending', _id: 'pending' },
     { name: 'Accepted', _id: 'accepted' },
     { name: 'Decline', _id: 'decline' },
-    { name:'Processed',id:'processed'}
+    { name:'Processed',_id:'processed'}
   ]
   select_status = 'pending'
   select_city = null
@@ -198,7 +198,9 @@ export class QueueComponent implements OnInit {
           case 'decline':
             this.getAllQueue(this.activeTab);
             break;
-
+            case 'processed':
+              this.getAllQueue(this.activeTab);
+              break;
         }
       })
   }
