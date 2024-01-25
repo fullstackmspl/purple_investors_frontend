@@ -448,7 +448,6 @@ submit(){
 
   this.apiService.updateUser(this.row_id,this.provider).subscribe((res:any)=>{
     if(res?.isSuccess === true){
-      this.activePage =1
       this.toastr.success('provider update successfull')
       this.spinner.hide()
       this.modalService.dismissAll()
