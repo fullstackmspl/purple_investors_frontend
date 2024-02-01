@@ -150,12 +150,12 @@
                           [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':row?.status === 'accepted'}">
                           {{row?.status}}
                         </span>
-                        <span *ngIf="row?.status == 'pending'"
-                          [ngClass]="{'bg-light-warning badge badge-pill cursor-pointer':row?.status == 'pending'}">
+                        <span *ngIf="row?.status === 'pending'"
+                          [ngClass]="{'bg-light-warning badge badge-pill cursor-pointer':row?.status === 'pending'}">
                           {{row?.status}}
                         </span>
-                        <span *ngIf="row?.status == 'decline'"
-                          [ngClass]="{'bg-light-danger badge badge-pill cursor-pointer':row?.status == 'decline'}">
+                        <span *ngIf="row?.status === 'decline'"
+                          [ngClass]="{'bg-light-danger badge badge-pill cursor-pointer':row?.status === 'decline'}">
                           {{row?.status}}
                         </span>
                         <span *ngIf="row?.status === 'processed'"
@@ -171,12 +171,12 @@
                               (click)="updateStatus(row?._id,status._id)">
                               <span>
                                 <span [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':status.name === 'Accepted'}"
-                                  placement="top" *ngIf="status.name == 'Accepted'">{{status._id}}</span>
+                                  placement="top" *ngIf="status.name === 'Accepted'">{{status._id}}</span>
                                 <span [ngClass]="{'bg-light-warning badge badge-pill cursor-pointer':status.name === 'Pending'}"
-                                  placement="top" *ngIf="status.name == 'Pending'">{{status._id}}</span>
+                                  placement="top" *ngIf="status.name === 'Pending'">{{status._id}}</span>
                                 <span [ngClass]="{'bg-light-danger badge badge-pill cursor-pointer':status.name === 'Decline'}"
                                   placement="top"
-                                  *ngIf="status.name == 'Decline'">{{status._id}}</span>
+                                  *ngIf="status.name === 'Decline'">{{status._id}}</span>
                                   <span *ngIf="status._id === 'processed'" [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':status._id === 'processed'}"
                                   placement="top" >{{status._id}}</span>
                               </span>
