@@ -180,7 +180,7 @@ searchProgram(){
   }
   deleteProgram() {
     this.apiService.deleteProgram(this.program).subscribe((res: any) => {
-      this.getProgramsByUserId()
+      this.searchProgram()
     })
   }
   showCategoryNames(categories) {
