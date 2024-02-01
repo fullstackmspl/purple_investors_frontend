@@ -60,7 +60,6 @@ export class AllProgramsComponent implements OnInit {
     });
   }
   customSearchFn(term: string, item: any): boolean {
-    console.log('customSearchFn', term, item);
     return item.name.toLowerCase().includes(term.toLowerCase());
   }
 
@@ -68,14 +67,11 @@ searchProgram(){
   this.apiService.searchProgram(this.providerId, this.cityId).subscribe((res: any) => {
     this.rows = res?.data
     this.spinner.hide();
-    console.log(res, this.rows)
     // this.rows.reverse()
     this.page.totalPages = res?.data?.totalCount
-    console.log(res, this.rows)
   })
 }
   onSearchProvider(term): void {
-    console.log('onSearchProvider', term);
     // this.spinner.show(undefined,
     //   {
     //     type: 'ball-triangle-path',
@@ -147,7 +143,6 @@ searchProgram(){
       this.spinner.hide();
       // this.rows.reverse()
       this.page.totalPages = res?.data?.totalCount
-      console.log(res, this.rows)
     })
   }
   editProgram(row) {
@@ -211,5 +206,21 @@ searchProgram(){
     // this.selected_tag_cat_id ='all'
     // this.getAllTag()
   }
-
+  copyProgram(id){
+    this.spinner.show(undefined,
+      {
+        type: 'ball-triangle-path',
+        size: 'medium',
+        bdColor: 'rgba(0, 0, 0, 0.8)',
+        color: '#fff',
+        fullScreen: true
+      });
+    this.apiService.programCopy(id).subscribe((res:any)=>{
+      if(res.statusCode === 200){
+        this.spinner.hide()
+        this.toastr.success('Program copy successfully')
+        this.searchProgram()
+      }
+    })
+  }
 }

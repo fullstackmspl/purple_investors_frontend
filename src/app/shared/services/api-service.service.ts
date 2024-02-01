@@ -277,7 +277,17 @@ getProgramById(id:any): Observable<any> {
   });
   return subject.asObservable();
 }
-
+// ----------------------- Copy Program ---------------------------------------------------
+programCopy(id:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.get(`${this.root}/program/createDuplicateById/${id}`,).subscribe(res => {
+      subject.next(res);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+// =====
 deleteProgram(id:any): Observable<any> {
   const subject = new Subject<any>();
   this.http.delete(`${this.root}/program/remove/${id}`,).subscribe(res => {
