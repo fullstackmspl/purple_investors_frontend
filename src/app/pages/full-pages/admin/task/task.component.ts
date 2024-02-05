@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { DatatableComponent, ColumnMode } from '@swimlane/ngx-datatable';
@@ -41,7 +41,7 @@ export class TaskComponent implements OnInit {
 
   imageUrl='';
   task_model={
-    name: '',
+    fullname: '',
     description: '',
     task_date: new Date(),
     notes: '',
@@ -73,7 +73,8 @@ export class TaskComponent implements OnInit {
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
-               private spinner: NgxSpinnerService,private formBuilder : FormBuilder) {
+               private spinner: NgxSpinnerService,private formBuilder : FormBuilder,
+               private ref: ChangeDetectorRef) {
                 this.user = JSON.parse(localStorage.getItem('user'))
                 }
 
@@ -86,7 +87,7 @@ export class TaskComponent implements OnInit {
     }
     this.getAllUsers()
     this.taskForm = this.formBuilder.group({
-      name: ['', Validators.required],
+      fullname: ['', Validators.required],
       description: ['', ],
       task_date: ['', ],
       notes: ['', ],
@@ -171,9 +172,9 @@ export class TaskComponent implements OnInit {
   openModal(content,id,data) {
     if(id){
       this.row_id = id
-      this.row_name = data.name
+      this.row_name = data.fullname
       // ============================
-      this.task_model.name = data.name
+      this.task_model.fullname = data.fullname
       this.task_model.description = data.description
       this.task_model.task_date = data.task_date
       this.task_model.working_hour = data.working_hour
@@ -198,7 +199,7 @@ export class TaskComponent implements OnInit {
 
   addTask(){
     let body={
-      name: this.taskForm.value.name,
+      fullname: this.taskForm.value.fullname,
       description: this.taskForm.value.description,
       task_date: new Date(),
       notes: this.taskForm.value.notes,
@@ -495,6 +496,9 @@ export class TaskComponent implements OnInit {
     return Object.entries(obj)
       .filter(([key, value]) => value === '' || value === null || value === undefined)
       .map(([key, value]) => ({ key, value }));
+  }
+  ngDoCheck(){
+    this.ref.detectChanges();
   }
 
 }

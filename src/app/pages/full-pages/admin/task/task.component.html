@@ -205,18 +205,18 @@
               <input
                 type="text"
                 class="form-control"
-                formControlName="name" [(ngModel)]="task_model.name"
+                formControlName="fullname" [(ngModel)]="task_model.fullname"
                 id="name"
                 placeholder="Enter name"
                 [ngClass]="{
-                  'is-invalid': taskFormSubmitted && rf.name.invalid,
-                  'is-valid': taskFormSubmitted && !rf.name.invalid
+                  'is-invalid': taskFormSubmitted && rf.fullname.invalid,
+                  'is-valid': taskFormSubmitted && !rf.fullname.invalid
                 }"
                 required
-                #name
+                #fullname
               />
               <div
-                *ngIf="rf.name.touched && rf.name.errors?.required"
+                *ngIf="rf.fullname.touched && rf.fullname.errors?.required"
                 class="help-block mt-1 text-danger"
               >
                 <i class="ft-alert-circle align-middle"></i> name is
@@ -270,7 +270,7 @@
 <div>
 	<ng-template #myModalContentView>
 	  <div class="modal-header">
-		<h4 class="modal-title" >{{row_data?.name}}'s Details</h4>
+		<h4 class="modal-title" >{{row_data?.fullname}}'s Details</h4>
 		<button type="button" class="close" aria-label="Close" (click)="modalService.dismissAll()">
 		  <span aria-hidden="true">&times;</span>
 		</button>
@@ -279,7 +279,7 @@
          <table>
           <div>
             <th>Name &nbsp;</th>
-            <td>{{row_data?.name}}</td>
+            <td>{{row_data?.fullname}}</td>
           </div>
           <div>
             <th>Task Date &nbsp;</th>
