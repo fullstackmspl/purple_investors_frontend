@@ -330,6 +330,9 @@ export class QueueComponent implements OnInit {
     if (prop === 'chatgpt') {
       this.select_type = "chatgpt"
     }
+    if (prop === 'gemini') {
+      this.select_type = "gemini"
+    }
     if (rowdata) {
       this.row_id = rowdata?._id
       // this.queue_url_id = urlId
@@ -406,7 +409,64 @@ export class QueueComponent implements OnInit {
           const [, name, url] = match;
           providers.push({ name, url });
         }
+        console.log('providers',providers)
         this.chatGptProviders = providers
+        this.queue_urls = urls
+        this.chatgpt_queue = true
+        //   this.setProvider()
+
+        //   this.messages.push({ sender: 'ChatGpt', text:  data.match(/\{.*\}/s)&&data.match(/\{.*\}/s).length?this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])):data , isMe: false });
+        //   this.newMessage = '';
+        // // });
+        //   this.cdr.detectChanges();
+        //   const modalRef = this.modalService.open(content,modalOptions);
+        //   modalRef.result.then((result) => {
+
+        //   }, (reason) => {
+        //   });
+      }
+      else this.toastr.error(res?.error)
+    })
+  }
+  else{
+    return
+  }
+  }
+  geminiSearch(){
+    if(this.select_city && this.select_url_count && this.select_subject){
+    let city = this.city_List.find((item) => item._id === this.select_city)
+    this.select_city_object = city
+    this.spinner.show(undefined, {
+      type: 'ball-triangle-path',
+      size: 'medium',
+      bdColor: 'rgba(0, 0, 0, 0.8)',
+      color: '#fff',
+      fullScreen: true
+    });
+    let serchText = `Please provide ${this.select_url_count} website urls of providers of ${this.select_subject} in ${city.city}.`
+    console.log(serchText)
+    this.apiService.geminiSearch('65dc77e7bdac3c909c8e1793',serchText,this.user._id).subscribe((res: any) => {
+      if (res?.isSuccess) {
+        this.spinner.hide()
+        // this.ngZone.run(() => {
+        const data = res?.data;
+        this.json_data = data
+        this.markDown.getSource(this.json_data).subscribe((res) => { this.json_data = res })
+        console.log(typeof (this.json_data))
+        const urlRegex = /\b(?:https?|ftp):\/\/[^\s\)]+/g;
+        const urls = this.json_data.match(urlRegex);
+        console.log(urls);
+        // const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
+
+        // Array to store extracted objects
+        const providers = [];
+        let match;
+        // while ((match = regex.exec(this.json_data)) !== null) {
+        //   const [, name, url] = match;
+        //   providers.push({ name, url });
+        // }
+        providers.push(urls.map(item=>item))
+        this.chatGptProviders = providers[0]
         this.queue_urls = urls
         this.chatgpt_queue = true
         //   this.setProvider()
@@ -438,6 +498,9 @@ export class QueueComponent implements OnInit {
       urlArray = urlArray.map((u) => (u.trim()));
     }
     if (this.select_type == 'chatgpt') {
+      urlArray = this.queue_urls
+    }
+    if (this.select_type === 'gemini') {
       urlArray = this.queue_urls
     }
     let body = {

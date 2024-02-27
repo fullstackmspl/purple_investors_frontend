@@ -46,6 +46,12 @@
                         + Chatgpt
                       </button>
                     </div>
+                    <div class="col-flex-2">
+                      <button type="reset" class="btn btn-primary btn-block users-list-clear glow mb-0"
+                      (click)="openModal(myModalContent,'','gemini')" placement="top" ngbTooltip="Add New">
+                        + Gemini
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -306,7 +312,8 @@
         <div *ngIf="chatgpt_queue;else chatgpt_queue_view">
           <ul>
             <li *ngFor="let provider of chatGptProviders">
-              <strong>{{ provider.name }} : </strong> {{ provider.url }}
+              <strong *ngIf="provider.name && provider.url">{{ provider.name }} : </strong> {{ provider.url }}
+              <strong *ngIf="!provider.name && !provider.url">{{ provider }} </strong>
             </li>
           </ul>
         </div>
@@ -325,7 +332,7 @@
                 >
               </ng-select>
             </fieldset>
-            <fieldset class="form-group" *ngIf="(!row_id || row_id) && select_type=='chatgpt'">
+            <fieldset class="form-group" *ngIf="(!row_id || row_id) && select_type=='chatgpt' || select_type=='gemini'">
               <label>Subject</label>
               <ng-select
                 [items]="subject_List"
@@ -337,7 +344,7 @@
                 >
               </ng-select>
             </fieldset>
-            <fieldset class="form-group" *ngIf="(!row_id || row_id) && select_type=='chatgpt'">
+            <fieldset class="form-group" *ngIf="(!row_id || row_id) && select_type=='chatgpt' || select_type=='gemini'">
               <label>Urls count</label>
               <ng-select
                 [items]="url_count_list"
@@ -428,8 +435,9 @@
 	  <div class="modal-footer">
 		<button type="button" [hidden]="chatgpt_queue" class="btn btn-secondary" (click)="modalService.dismissAll()">Close</button>
 		<button type="button" [hidden]="chatgpt_queue" class="btn btn-primary" (click)="select_type=='chatgpt'?chatGptSearch():addQueue()">{{select_type=='chatgpt'?'Search':'Submit'}}</button>
+    <button type="button" [hidden]="chatgpt_queue" class="btn btn-primary" (click)="select_type=='gemini'?geminiSearch():addQueue()">{{select_type=='gemini'?'Search':'Submit'}}</button>
 		<!-- <button *ngIf="row_id" type="button" class="btn btn-primary" (click)="updateUrl()">Submit</button> -->
-    <button type="button"*ngIf="chatgpt_queue" class="btn btn-primary" (click)="addQueue()">Submit</button>
+    <button [hidden]="select_type=='gemini'" type="button"*ngIf="chatgpt_queue" class="btn btn-primary" (click)="addQueue()">Submit</button>
 
 	  </div>
 	</ng-template>

@@ -114,6 +114,16 @@ chatgptSearch(bundle_id: any,user_id:any,search:any): Observable<any> {
   });
   return subject.asObservable();
 }
+// ----------------------- Search Gemini ---------------------------------------------------
+geminiSearch(bundle_id: any,search:any,user_id:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.get(`${this.root}/gemini/search?bundle_id=${bundle_id}&search_value=${search}&user_id=${user_id}`,).subscribe(res => {
+      subject.next(res);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
 // ----------------------- Add City ---------------------------------------------------
 addCity(data: any): Observable<any> {
   const subject = new Subject<any>();
