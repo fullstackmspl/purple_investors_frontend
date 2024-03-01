@@ -437,7 +437,7 @@
 		<button type="button" [hidden]="chatgpt_queue" class="btn btn-primary" (click)="select_type=='chatgpt'?chatGptSearch():addQueue()">{{select_type=='chatgpt'?'Search':'Submit'}}</button>
     <button type="button" [hidden]="chatgpt_queue" class="btn btn-primary" (click)="select_type=='gemini'?geminiSearch():addQueue()">{{select_type=='gemini'?'Search':'Submit'}}</button>
 		<!-- <button *ngIf="row_id" type="button" class="btn btn-primary" (click)="updateUrl()">Submit</button> -->
-    <button [hidden]="select_type=='gemini'" type="button"*ngIf="chatgpt_queue" class="btn btn-primary" (click)="addQueue()">Submit</button>
+    <button type="button"*ngIf="chatgpt_queue" class="btn btn-primary" (click)="addQueue()">Submit</button>
 
 	  </div>
 	</ng-template>

@@ -388,7 +388,6 @@ export class QueueComponent implements OnInit {
       fullScreen: true
     });
     let serchText = `Please provide ${this.select_url_count} website urls of providers of ${this.select_subject} in ${city.city}.`
-    console.log(serchText)
     this.apiService.chatgptSearch('6578625ec5e9c2b1c8909c58', this.user._id, serchText).subscribe((res: any) => {
       if (res?.isSuccess) {
         this.spinner.hide()
@@ -444,7 +443,6 @@ export class QueueComponent implements OnInit {
       fullScreen: true
     });
     let serchText = `Please provide ${this.select_url_count} website urls of providers of ${this.select_subject} in ${city.city}.`
-    console.log(serchText)
     this.apiService.geminiSearch('65dc77e7bdac3c909c8e1793',serchText,this.user._id).subscribe((res: any) => {
       if (res?.isSuccess) {
         this.spinner.hide()
@@ -455,7 +453,6 @@ export class QueueComponent implements OnInit {
         console.log(typeof (this.json_data))
         const urlRegex = /\b(?:https?|ftp):\/\/[^\s\)]+/g;
         const urls = this.json_data.match(urlRegex);
-        console.log(urls);
         // const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
 
         // Array to store extracted objects
@@ -605,35 +602,68 @@ export class QueueComponent implements OnInit {
       size: 'lg', // 'sm', 'lg', or 'xl'
       backdrop: 'static',
     };
+    if(data.type ==='chatgpt'){
+      if (!!this.newMessage.trim()) {
+        const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng), - from Open AI API in json format with fields as it is "fullname, email, phone_number, location:{coordinates:[lat,lng]}, address "`
+        this.messages.push({ sender: 'You', text: this.newMessage, isMe: true });
+        this.apiService.chatgptSearch('6578625ec5e9c2b1c8909c58', this.user._id, exactMsg).subscribe((res: any) => {
+          if (res?.isSuccess) {
+            this.spinner.hide()
+            // this.ngZone.run(() => {`
+            const data = res?.data[0]?.message?.content;
+            this.json_data = data
+            this.setProvider()
 
-    if (!!this.newMessage.trim()) {
-      const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng), - from Open AI API in json format with fields as it is "fullname, email, phone_number, location:{coordinates:[lat,lng]}, address "`
-      this.messages.push({ sender: 'You', text: this.newMessage, isMe: true });
-      this.apiService.chatgptSearch('6578625ec5e9c2b1c8909c58', this.user._id, exactMsg).subscribe((res: any) => {
-        if (res?.isSuccess) {
-          this.spinner.hide()
-          // this.ngZone.run(() => {
-          const data = res?.data[0]?.message?.content;
-          this.json_data = data
-          this.setProvider()
+            this.messages.push({ sender: 'ChatGpt', text: data.match(/\{.*\}/s) && data.match(/\{.*\}/s).length ? this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])) : data, isMe: false });
+            this.newMessage = '';
+            // });
+            this.cdr.detectChanges();
+            const modalRef = this.modalService.open(content, modalOptions);
+            modalRef.result.then((result) => {
 
-          this.messages.push({ sender: 'ChatGpt', text: data.match(/\{.*\}/s) && data.match(/\{.*\}/s).length ? this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])) : data, isMe: false });
-          this.newMessage = '';
-          // });
-          this.cdr.detectChanges();
-          const modalRef = this.modalService.open(content, modalOptions);
-          modalRef.result.then((result) => {
+            }, (reason) => {
+            });
+          }
+          else {
+            this.toastr.error(res?.error)
+            this.spinner.hide()
+          }
+        })
 
-          }, (reason) => {
-          });
-        }
-        else {
-          this.toastr.error(res?.error)
-          this.spinner.hide()
-        }
-      })
-
+      }
     }
+    if(data.type ==='gemini'){
+      if (!!this.newMessage.trim()) {
+        const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng), - from Google AI in json format with fields as it is "fullname, email, phone_number, location:{coordinates:[lat,lng]}, address`
+        this.messages.push({ sender: 'You', text: this.newMessage, isMe: true });
+        this.apiService.geminiSearch('65dc77e7bdac3c909c8e1793',exactMsg,this.user._id).subscribe((res: any) => {
+          if (res?.isSuccess) {
+            this.spinner.hide()
+            // this.ngZone.run(() => {
+            const data = res?.data;
+            this.json_data = data
+            this.setProvider()
+
+            this.messages.push({ sender: 'Gemini', text: data.match(/\{.*\}/s) && data.match(/\{.*\}/s).length ? this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])) : data, isMe: false });
+            this.newMessage = '';
+            // });
+            this.cdr.detectChanges();
+            const modalRef = this.modalService.open(content, modalOptions);
+            modalRef.result.then((result) => {
+
+            }, (reason) => {
+            });
+          }
+          else {
+            this.toastr.error(res?.error)
+            this.spinner.hide()
+          }
+        })
+
+      }
+    }
+
+
   }
   generateHTML(data): string {
     let html = '<div>';
@@ -688,7 +718,7 @@ export class QueueComponent implements OnInit {
             addProvider : true,
             status :'processed'
           }
-          
+
           this.apiService.updateQueue(this.row_id, body).subscribe((res: any) => {
           })
           this.toastr.success('provider registered successfull!')
@@ -698,7 +728,7 @@ export class QueueComponent implements OnInit {
         else{
           this.toastr.error(res?.error)
           this.modalService.dismissAll();
-        } 
+        }
       })
 
     } catch (error) {
