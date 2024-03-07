@@ -361,11 +361,14 @@ export class QueueComponent implements OnInit {
       this.queueForm.reset()
       this.row_id = null
       this.select_city = null
+      this.select_type = null
 
     }, (reason) => {
       this.queueForm.reset()
       this.row_id = null
       this.select_city = null
+      this.select_type = null
+
     });
   }
   refreshChatGptData(){
@@ -408,7 +411,6 @@ export class QueueComponent implements OnInit {
           const [, name, url] = match;
           providers.push({ name, url });
         }
-        console.log('providers',providers)
         this.chatGptProviders = providers
         this.queue_urls = urls
         this.chatgpt_queue = true
@@ -443,7 +445,7 @@ export class QueueComponent implements OnInit {
       fullScreen: true
     });
     let serchText = `Please provide ${this.select_url_count} website urls of providers of ${this.select_subject} in ${city.city}.`
-    this.apiService.geminiSearch('65dc77e7bdac3c909c8e1793',serchText,this.user._id).subscribe((res: any) => {
+    this.apiService.geminiSearch(serchText,this.user._id).subscribe((res: any) => {
       if (res?.isSuccess) {
         this.spinner.hide()
         // this.ngZone.run(() => {
@@ -634,9 +636,9 @@ export class QueueComponent implements OnInit {
     }
     if(data.type ==='gemini'){
       if (!!this.newMessage.trim()) {
-        const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng), - from Google AI in json format with fields as it is "fullname, email, phone_number, location:{coordinates:[lat,lng]}, address`
+        const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng), - from Vertex AI in json format with fields as it is "fullname, email, phone_number, location:{coordinates:[lat,lng]}, address `
         this.messages.push({ sender: 'You', text: this.newMessage, isMe: true });
-        this.apiService.geminiSearch('65dc77e7bdac3c909c8e1793',exactMsg,this.user._id).subscribe((res: any) => {
+        this.apiService.geminiSearch(exactMsg,this.user._id).subscribe((res: any) => {
           if (res?.isSuccess) {
             this.spinner.hide()
             // this.ngZone.run(() => {
@@ -690,10 +692,14 @@ export class QueueComponent implements OnInit {
   }
 
   setProvider() {
-    let jsonString = this.json_data.match(/\{.*\}/s)[0];
+    let jsonString = this.json_data.match(/\{.*\}/s);
+    console.log('jsonString =>>', jsonString)
     this.provider = JSON.parse(jsonString)
     this.provider.roles = 'purpleprovider'
     this.provider.cityId = this.cityId
+    console.log('jsonString =>>', this.provider)
+
+    // this.setAddress()
 
   }
   async setAddress(addressData) {
