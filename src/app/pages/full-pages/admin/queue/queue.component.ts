@@ -250,22 +250,6 @@ export class QueueComponent implements OnInit {
       this.page.totalPages = res?.data?.totalCount
     })
   }
-  getTagsFilter(data: any) {
-    // let search=data
-    // if(search){
-    //   this.apiService.getTagSearch(search).subscribe((res:any)=>{
-    //     this.rows=res.data
-    //   })
-    // }
-    // else{
-    //   this.getAllTag()
-    // }
-  }
-  resetFilter() {
-    // this.inputName.nativeElement.value=''
-    // this.selected_tag_cat_id ='all'
-    // this.getAllTag()
-  }
 
   deleteQueue() {
     if (this.row_id) {
@@ -335,22 +319,12 @@ export class QueueComponent implements OnInit {
     }
     if (rowdata) {
       this.row_id = rowdata?._id
-      // this.queue_url_id = urlId
       this.row_name = rowdata.cityId[0].city
-      // this.queue_model.admin_notes = data.admin_notes
-      // this.queue_model.notes = data.notes
-      // this.select_type = data.type
-      // this.queue_model.type = this.select_type
       this.select_city = rowdata.cityId[0]?._id
       this.queue_model.cityId = this.select_city
       this.select_status = rowdata.status
       this.queue_model.urls = rowdata.urls
 
-
-      // this.queue_model.urls = data.url?.map(item => ({ url: item.url, status: item.status })) || [];
-      // this.queue_model.urls = this.queue_model.urls.map(item => item.url).join(',');
-
-      // ============================
     }
     const modalOptions: NgbModalOptions = {
       size: 'lg', // 'sm', 'lg', or 'xl'
@@ -414,17 +388,6 @@ export class QueueComponent implements OnInit {
         this.chatGptProviders = providers
         this.queue_urls = urls
         this.chatgpt_queue = true
-        //   this.setProvider()
-
-        //   this.messages.push({ sender: 'ChatGpt', text:  data.match(/\{.*\}/s)&&data.match(/\{.*\}/s).length?this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])):data , isMe: false });
-        //   this.newMessage = '';
-        // // });
-        //   this.cdr.detectChanges();
-        //   const modalRef = this.modalService.open(content,modalOptions);
-        //   modalRef.result.then((result) => {
-
-        //   }, (reason) => {
-        //   });
       }
       else this.toastr.error(res?.error)
     })
@@ -455,30 +418,12 @@ export class QueueComponent implements OnInit {
         console.log(typeof (this.json_data))
         const urlRegex = /\b(?:https?|ftp):\/\/[^\s\)]+/g;
         const urls = this.json_data.match(urlRegex);
-        // const regex = /\[([^\]]+)\]\(([^)]+)\)/g;
-
         // Array to store extracted objects
         const providers = [];
-        let match;
-        // while ((match = regex.exec(this.json_data)) !== null) {
-        //   const [, name, url] = match;
-        //   providers.push({ name, url });
-        // }
         providers.push(urls.map(item=>item))
         this.chatGptProviders = providers[0]
         this.queue_urls = urls
         this.chatgpt_queue = true
-        //   this.setProvider()
-
-        //   this.messages.push({ sender: 'ChatGpt', text:  data.match(/\{.*\}/s)&&data.match(/\{.*\}/s).length?this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])):data , isMe: false });
-        //   this.newMessage = '';
-        // // });
-        //   this.cdr.detectChanges();
-        //   const modalRef = this.modalService.open(content,modalOptions);
-        //   modalRef.result.then((result) => {
-
-        //   }, (reason) => {
-        //   });
       }
       else this.toastr.error(res?.error)
     })
@@ -693,17 +638,12 @@ export class QueueComponent implements OnInit {
 
   setProvider() {
     let jsonString = this.json_data.match(/\{.*\}/s);
-    console.log('jsonString =>>', jsonString)
     this.provider = JSON.parse(jsonString)
     this.provider.roles = 'purpleprovider'
     this.provider.cityId = this.cityId
-    console.log('jsonString =>>', this.provider)
-
-    // this.setAddress()
 
   }
   async setAddress(addressData) {
-    // console.log('address =>>',addressData)
     this.provider.location = { type: "Point", coordinates: [addressData[0].lng, addressData[0].lat] }
     this.provider.address = addressData[1].formatted_address
 

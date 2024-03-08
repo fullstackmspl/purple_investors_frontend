@@ -29,7 +29,7 @@
                       </button>
                     </div>
                     <div class="col-flex-2 ">
-                      <button class="btn btn-primary btn-block users-list-clear glow mb-0" (click)="resetFilter()">
+                      <button class="btn btn-primary btn-block users-list-clear glow mb-0" >
                         Reset
                         <i class="ft-filter text-white cursor-pointer"></i>
                       </button>
@@ -89,18 +89,6 @@
                         >
                       </ng-select>
                     </div>
-                    <!-- <div class="col-flex-2 mb-1 position-relative filterng" >
-                      <ng-select
-                      [items]="filteredData"
-                       (search)="onSearchProvider($event)"
-                      bindLabel="fullname"
-                      bindValue="_id"
-                      [(ngModel)]="providerId"
-                      (change)="searchProgram()"
-                      placeholder="Search Provider"
-                      >
-                    </ng-select>
-                    </div> -->
                   </div>
                 </div>
               </div>
@@ -128,20 +116,6 @@
                   </div>
                 </ng-template>
               </ngx-datatable-column>
-              <!-- <ngx-datatable-column name="Notes" prop="notes" [width]="70">
-                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
-                  <div class="cell-line-height">
-                    {{ row?.notes}}
-                  </div>
-                </ng-template>
-              </ngx-datatable-column>
-              <ngx-datatable-column name="Admin Notes" prop="admin_notes" [width]="70">
-                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
-                  <div class="cell-line-height">
-                    {{ row?.admin_notes}}
-                  </div>
-                </ng-template>
-              </ngx-datatable-column> -->
               <ngx-datatable-column name="Type" prop="type" [width]="10">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <div class="cell-line-height">
@@ -203,88 +177,6 @@
                 </ng-template>
               </ngx-datatable-column>
                 </ngx-datatable>
-            <!-- <div>
-              <div *ngFor="let item of rows">
-                <div class="main_heading cursor-pointer" (click)="collapse.toggle()" [attr.aria-expanded]="queueUrlView[i]"
-                  aria-controls="collapseExample">
-                  <h5 class="bg-light-info">
-                    {{item.cityId[0]?.city }}</h5>
-                </div>
-                <ngx-datatable id="demo" #collapse="ngbCollapse" [(ngbCollapse)]="!queueUrlView[i]"  class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="50"
-              [footerHeight]="50" rowHeight="auto" [limit]="limitRef" [rows]="item.urls" [scrollbarH]="true"
-              [columns]="columns" [externalPaging]="true" [count]="item.urls.length" [offset]="page.offset"
-              (page)="pageChangeData($event)">
-              <ngx-datatable-column name="Url" prop="url" [width]="180">
-                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
-                  <div class="d-flex align-items-center">
-                   
-                    <div class="cell-line-height cursor-pointer">
-                      <p class="font-medium-1 line-height-1 mb-0">
-                        {{ row?.url }}
-                      </p>
-                    </div>
-                  </div>
-                </ng-template>
-              </ngx-datatable-column>
-              <ngx-datatable-column name="Type" prop="type" [width]="10">
-                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
-                  <div class="cell-line-height">
-                    {{ item?.type}}
-                  </div>
-                </ng-template>
-              </ngx-datatable-column>
-              <ngx-datatable-column name="Status" prop="status" [width]="10">
-                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
-                  <p [matMenuTriggerFor]="queue_status">
-                        <span *ngIf="row?.status === 'accepted'"
-                          [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':row?.status === 'accepted'}">
-                          {{row?.status}}
-                        </span>
-                        <span *ngIf="row?.status == 'pending'"
-                          [ngClass]="{'bg-light-warning badge badge-pill cursor-pointer':row?.status == 'pending'}">
-                          {{row?.status}}
-                        </span>
-                        <span *ngIf="row?.status == 'decline'"
-                          [ngClass]="{'bg-light-danger badge badge-pill cursor-pointer':row?.status == 'decline'}">
-                          {{row?.status}}
-                        </span>
-                      </p>
-                      <mat-menu #queue_status="matMenu">
-  
-                        <div *ngIf="row?.status ==='pending'">
-                          <div *ngFor="let status of status_List">
-                            <button mat-menu-item *ngIf="status?.name !== row?.status "
-                              (click)="updateStatus(item?._id,row._id,status._id)">
-                              <span>
-                                <span [ngClass]="{'bg-light-success badge badge-pill cursor-pointer':status.name === 'Accepted'}"
-                                  placement="top" *ngIf="status.name == 'Accepted'">{{status._id}}</span>
-                                <span [ngClass]="{'bg-light-warning badge badge-pill cursor-pointer':status.name === 'Pending'}"
-                                  placement="top" *ngIf="status.name == 'Pending'">{{status._id}}</span>
-                                <span [ngClass]="{'bg-light-danger badge badge-pill cursor-pointer':status.name === 'Decline'}"
-                                  placement="top"
-                                  *ngIf="status.name == 'Decline'">{{status._id}}</span>
-                              </span>
-                            </button>
-                          </div>
-                        </div>
-                      </mat-menu>
-                </ng-template>
-              </ngx-datatable-column>
-             
-              <ngx-datatable-column name="Actions" [width]="10">
-                <ng-template let-row="row" ngx-datatable-cell-template>
-                  <i class="ft-edit text-primary cursor-pointer mx-1"
-                  (click)="openModal(myModalContent,item,row,row?._id)"></i>
-                  <i class="ft-trash-2 cursor-pointer danger  mx-1"
-                    (click)="confirmDelete(item._id)"></i>
-                  <i *ngIf="row?.status ==='accepted'" class="ft-plus text-primary cursor-pointer  mx-1" (click)="openModalForProvider(myModalContentPro,row?.url)"></i>
-                </ng-template>
-              </ngx-datatable-column>
-                </ngx-datatable>
-              </div>
-            </div> -->
-            
-            <!-- ngx-datatable-filter -->
           </div>
         </div>
       </div>
@@ -390,43 +282,6 @@
                 required
               </div>
             </fieldset>
-            <!-- <fieldset class="form-group" *ngIf="row_id">
-              <label>Status</label>
-              <ng-select
-                [items]="status_List"
-                bindLabel="name"
-                bindValue="_id"
-                placeholder="Select Status"
-                [(ngModel)]="select_status"
-                [ngModelOptions]="{ standalone: true }"
-                (change)="getStatusId($event)" 
-                [appendTo]="'body'"
-                [virtualScroll]="true" [clearSearchOnAdd]="true"
-                >
-              </ng-select>
-            </fieldset>
-            <fieldset class="form-group" *ngIf="!row_id">
-              <label>Type</label>
-              <ng-select
-                [items]="type_List"
-                bindLabel="name"
-                bindValue="_id"
-                placeholder="Select type"
-                [(ngModel)]="select_type"
-                [ngModelOptions]="{ standalone: true }"
-                (change)="getTypeId($event)"
-                >
-              </ng-select>
-            </fieldset>
-            <fieldset class="form-group" *ngIf="!row_id">
-              <label>Notes</label>
-              <textarea name="notes" class="form-control" id="notes" cols="30" rows="4" placeholder="Enter notes" formControlName="notes" [(ngModel)]="queue_model.notes"></textarea>
-            </fieldset>
-            <fieldset class="form-group" *ngIf="!row_id">
-              <label>Admin Notes</label>
-              <textarea name="admin_notes" class="form-control" id="admin_notes" cols="30" rows="4" placeholder="Enter admin notes" formControlName="admin_notes" [(ngModel)]="queue_model.admin_notes"></textarea>
-            </fieldset> -->
-           
           </form>
         </ng-template>
       </div>

@@ -173,11 +173,6 @@
                     (click)="confirmDelete(row._id)"></i>
                   <i class="ft-eye text-primary cursor-pointer mx-1"
                   (click)="openModalView(myModalContentView,row)"></i>
-
-                    <i *ngIf="row?.task_type && row.task_type.trim()==='Please add any missing data for email, phone, and locations for this form and Please proofread the business name, email, phone, and locations to ensure their correctness on this form'" class="ft-plus text-primary cursor-pointer mx-1" placement="top" ngbTooltip="Run Analytics"
-                    (click)="openModalForProvider(myModalContentProvider,row?._id,row)"></i>
-
-                    <i *ngIf="row?.task_type && row.task_type.trim()==='Please proofread the given details add missing details in this form'" class="ft-play text-primary cursor-pointer mx-1" placement="top" ngbTooltip="ReRun Analytics" (click)="openModalForProvider(myModalContentProvider,row?._id,row)"></i>
                 </ng-template>
               </ngx-datatable-column>
             </ngx-datatable>
