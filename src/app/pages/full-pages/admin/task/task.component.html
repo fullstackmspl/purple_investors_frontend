@@ -167,6 +167,21 @@
               </ngx-datatable-column> -->
               <ngx-datatable-column name="Actions" [width]="50">
                 <ng-template let-row="row" ngx-datatable-cell-template>
+                  <ng-container *ngIf="row.task_type === 'Please proofread the given add and missing details in this form'; else otherCondition">
+                    <!-- Content for Condition1 -->
+                    <i class="ft-plus text-primary cursor-pointer mx-1" placement="top" ngbTooltip="advance data" (click)="openModalForProvider(myModalContentProvider,row?._id,row ,'advance data')"></i>
+                </ng-container>
+                <ng-template #otherCondition>
+                    <!-- Content for other conditions -->
+                    <i class="ft-plus text-primary cursor-pointer mx-1" placement="top" ngbTooltip="basic data" (click)="openModalForProvider(myModalContentProvider,row?._id,row,'basic data')"></i>
+                </ng-template>
+                  <!-- <span>
+                    <i *ngIf="row.task_type.trim() ==='Please proofread the given add and missing details in this form'" class="ft-plus text-primary cursor-pointer mx-1" placement="top" ngbTooltip="advance data"
+                    (click)="openModalForProvider(myModalContentProvider,row?._id,row)"></i>
+                  </span>
+                  <span>
+                    <i *ngIf="row.task_type.trim() ==='Please add any missing data for email, phone, and locations for this form and Please proofread the business name, email, phone, and locations to ensure their correctness on this form'" class="ft-plus text-primary cursor-pointer mx-1" placement="top" ngbTooltip="basic data" (click)="openModalForProvider(myModalContentProvider,row?._id,row)"></i>
+                  </span> -->
                   <i class="ft-edit text-primary cursor-pointer mx-1"
                   (click)="openModal(myModalContent,row?._id,row)"></i>
                   <i class="ft-trash-2 cursor-pointer danger mx-1"
@@ -223,10 +238,10 @@
                 required
               </div>
             </fieldset>
-            <fieldset class="form-group">
+            <!-- <fieldset class="form-group">
               <label>description</label>
               <textarea name="description" class="form-control" formControlName="description" [(ngModel)]="task_model.description" id="description" cols="30" rows="3"></textarea>
-            </fieldset>
+            </fieldset> -->
             <fieldset class="form-group">
               <label>Notes</label>
               <textarea name="notes" class="form-control" formControlName="notes" [(ngModel)]="task_model.notes" id="notes" cols="30" rows="3"></textarea>
@@ -235,7 +250,7 @@
               <label>Admin Notes</label>
               <textarea name="admin_notes" class="form-control" formControlName="admin_notes" [(ngModel)]="task_model.admin_notes" id="admin_notes" cols="30" rows="3"></textarea>
             </fieldset>
-            <fieldset class="form-group">
+            <!-- <fieldset class="form-group">
               <label>Working Hour</label>
               <input
                 type="text"
@@ -254,7 +269,7 @@
                 id="budget"
                 placeholder="Enter budget"
               />
-            </fieldset>
+            </fieldset> -->
           </form>
        
 	  </div>
@@ -283,9 +298,9 @@
           </div>
           <div>
             <th>Task Date &nbsp;</th>
-            <td>{{row_data?.task_date | date:'mediumDate'}}</td>
+            <td>{{row_data?.updated_at | date:'mediumDate'}}</td>
           </div>
-          <div>
+          <!-- <div>
             <th>Description &nbsp;</th>
             <td [innerText]="row_data?.description"></td>
           </div>
@@ -296,7 +311,7 @@
           <div>
             <th>Working Hour &nbsp;</th>
             <td>{{row_data?.working_hour}}</td>
-          </div>
+          </div> -->
           <div>
             <th>Notes &nbsp;</th>
             <td [innerText]="row_data?.notes"></td>
@@ -391,7 +406,7 @@
 		</button>
 	  </div>
 	  <div class="modal-body">
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop == 'basic data' || data_prop == 'advance data' ">
               <label>Name</label>
               <input
                 type="text"
@@ -407,7 +422,7 @@
                 #name
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop == 'basic data' || data_prop == 'advance data'">
               <label>Email</label>
               <input
                 type="email"
@@ -423,7 +438,7 @@
                 #email
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop == 'basic data' || data_prop == 'advance data'">
               <label>Phone number</label>
               <input
                 type="text"
@@ -439,7 +454,7 @@
                 #phone_number
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop == 'basic data' || data_prop == 'advance data'">
               <label>Address</label>
               <input
                 type="text"
@@ -458,7 +473,7 @@
                 #address
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop !== 'basic data'">
               <label>Average Google Rating</label>
               <input
                 type="text"
@@ -474,7 +489,7 @@
                 #averageGoogleRating
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop !== 'basic data'">
               <label>Average Yelp Rating</label>
               <input
                 type="text"
@@ -490,7 +505,7 @@
                 #averageYelpRating
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop !== 'basic data'">
               <label>Bottom Google Reviews</label>
               <input
                 type="text"
@@ -506,7 +521,7 @@
                 #bottomGoogleReviews
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop !== 'basic data'">
               <label>Facebook Number Of Followers</label>
               <input
                 type="text"
@@ -522,7 +537,7 @@
                 #facebookNumberOfFollowers
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop !== 'basic data'">
               <label>Facebook Number Of Likes</label>
               <input
                 type="text"
@@ -538,7 +553,7 @@
                 #facebookNumberOfLikes
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop !== 'basic data'">
               <label>Facebook URL</label>
               <input
                 type="text"
@@ -555,7 +570,7 @@
               />
             </fieldset>
 
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop !== 'basic data'">
               <label>Google Reviews URL</label>
               <input
                 type="text"
@@ -571,7 +586,7 @@
                 #googleReviewsURL
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop !== 'basic data'">
               <label>Instagram Profile Link</label>
               <input
                 type="text"
@@ -587,7 +602,7 @@
                 #instagramProfileLink
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop !== 'basic data'">
               <label>Most Recent Google Reviews</label>
               <input
                 type="text"
@@ -603,7 +618,7 @@
                 #mostRecentGoogleReviews
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop !== 'basic data'">
               <label>Number Of Google Reviews</label>
               <input
                 type="text"
@@ -619,7 +634,7 @@
                 #numberOfGoogleReviews
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop !== 'basic data'">
               <label>Number Of Instagram Followers</label>
               <input
                 type="text"
@@ -635,7 +650,7 @@
                 #numberOfInstagramFollowers
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop !== 'basic data'">
               <label>Number Of Yelp Ratings</label>
               <input
                 type="text"
@@ -651,7 +666,7 @@
                 #numberOfYelpRatings
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop !== 'basic data'">
               <label>Top Google Reviews</label>
               <input
                 type="text"
@@ -667,7 +682,7 @@
                 #topGoogleReviews
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop !== 'basic data'">
               <label>Yelp Bottom Reviews</label>
               <input
                 type="text"
@@ -683,7 +698,7 @@
                 #yelpBottomReviews
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group"*ngIf="data_prop !== 'basic data'">
               <label>Yelp Most Recent Reviews</label>
               <input
                 type="text"
@@ -699,7 +714,7 @@
                 #yelpMostRecentReviews
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop !== 'basic data'">
               <label>Yelp Top Reviews</label>
               <input
                 type="text"
@@ -715,7 +730,7 @@
                 #yelpTopReviews
               />
             </fieldset>
-            <fieldset class="form-group">
+            <fieldset class="form-group" *ngIf="data_prop !== 'basic data'">
               <label>Yelp Profile URL</label>
               <input
                 type="text"

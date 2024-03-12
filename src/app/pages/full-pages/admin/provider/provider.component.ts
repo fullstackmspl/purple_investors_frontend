@@ -281,6 +281,19 @@ export class ProviderComponent implements OnInit {
       }
   }
   }
+  setProvider1(){
+    let jsonString = this.json_data.match(/\{.*\}/s);
+    this.provider = JSON.parse(jsonString)
+    this.provider.roles = 'purpleprovider'
+    // let jsonString = this.json_data.match(/\{.*\}/s);
+    // this.provider = JSON.parse(jsonString)
+    // this.provider.roles = 'purpleprovider'
+    for (let key in this.provider) {
+      if (this.provider.hasOwnProperty(key)) {
+        this.provider[key]=this.convertToString(this.provider[key])
+      }
+  }
+  }
   details(data){
     try {
     
@@ -348,7 +361,7 @@ openModalForProvider(content, id,row_data) {
     this.toastr.error('website url missing!')
   }
 
-  if(row_data.websiteUrl !== undefined){
+  if(row_data.websiteUrl !== undefined && row_data.type ==='chatgpt'){
     this.spinner.show(undefined, {
       type: 'ball-triangle-path',
       size: 'medium',
@@ -383,6 +396,80 @@ openModalForProvider(content, id,row_data) {
   
               this.setProvider();
               this.cdr.detectChanges();
+              this.provider.address = row_data?.address
+              // this.provider.location = row_data?.location
+              this.provider.fullname = row_data?.fullname
+              this.provider.email = row_data?.email
+              this.provider.phone_number = row_data?.phone_number
+              this.provider.dob = '2000-01-01'
+              this.provider.gender = 'male'
+              this.provider.roles ='purpleprovider'
+              // Open NgbModal after API response
+              const modalOptions: NgbModalOptions = {
+                size: 'lg', // 'sm', 'lg', or 'xl'
+                backdrop: 'static',
+              };
+              const modalRef = this.modalService.open(content, modalOptions);
+              modalRef.result.then(
+                (result) => {
+                  // Modal closed
+                  this.row_id = null
+                  row_data = null
+                },
+                (reason) => {
+                  // Modal dismissed
+                  this.row_id = null
+                  row_data = null
+                }
+              );
+            } else {
+              this.toastr.error(res?.error);
+            }
+          },
+          (error) => {
+            // Handle API error if needed
+            this.toastr.error('website url missing!')
+  
+          }
+        );
+    // }
+  }
+  if(row_data.websiteUrl !== undefined && row_data.type ==='gemini'){
+    this.spinner.show(undefined, {
+      type: 'ball-triangle-path',
+      size: 'medium',
+      bdColor: 'rgba(0, 0, 0, 0.8)',
+      color: '#fff',
+      fullScreen: true
+    });
+    // if (this.newMessage.trim() !== '') {
+      const exactMsg2 = `${row_data?.websiteUrl} please find exact data in type string format such as Google Reviews URL,Number of Google Reviews,Average Google Rating,3 Top (Highest rated) Google reviews,3 Bottom (Lowest rated) Google reviews,3 Most Recent Google Reviews, Facebook URL,Facebook Number of Followers,Facebook Number of likes,Yelp Profile URL,Number of Yelp ratings,Average Yelp rating, 3 Yelp Top (Highest rated) reviews,3 Yelp Bottom (Lowest rated) reviews,3 Yelp Most Recent Reviews,Instagram Profile Link,Number of Instagram Followers  and i need fields as it is "fullname, email, phone_number, location, address,averageGoogleRating, averageYelpRating, bottomGoogleReviews, facebookNumberOfFollowers, facebookNumberOfLikes, facebookURL, googleReviewsURL, instagramProfileLink, mostRecentGoogleReviews, numberOfGoogleReviews, numberOfInstagramFollowers, numberOfYelpRatings, topGoogleReviews, yelpBottomReviews, yelpMostRecentReviews, yelpTopReviews, yelpProfileURL from Vertex AI in json format"`;
+  
+      // this.messages.push({ sender: 'You', text: this.newMessage, isMe: true });
+  
+      this.apiService
+        .geminiSearch(exactMsg2,this.user._id)
+        .pipe(
+          finalize(() => {
+            // Hide spinner regardless of API success or failure
+            this.spinner.hide();
+          })
+        )
+        .subscribe(
+          (res: any) => {
+            if (res?.isSuccess) {
+              const data = res?.data;
+              this.json_data = data;
+              // this.messages.push({
+              //   sender: 'ChatGpt',
+              //   text: data.match(/\{.*\}/s) && data.match(/\{.*\}/s).length ? this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])) : data,
+              //   isMe: false
+              // });
+              this.newMessage = '';
+              this.cdr.detectChanges();
+
+              this.setProvider1();
+
               this.provider.address = row_data?.address
               // this.provider.location = row_data?.location
               this.provider.fullname = row_data?.fullname

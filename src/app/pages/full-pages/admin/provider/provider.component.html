@@ -136,6 +136,13 @@
                   </div>
                 </ng-template>
               </ngx-datatable-column>
+              <ngx-datatable-column name="Type" prop="type" [width]="30">
+                <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
+                  <div class="cell-line-height">
+                    {{ row?.type}}
+                  </div>
+                </ng-template>
+              </ngx-datatable-column>
               <ngx-datatable-column name="Status" prop="status" [width]="10">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
                   <p [matMenuTriggerFor]="queue_status">

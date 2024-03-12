@@ -125,7 +125,8 @@ export class QueueComponent implements OnInit {
     yelpTopReviews: [],
     yelpProfileURL: '',
     websiteUrl: '',
-    cityId:this.cityId
+    cityId:this.cityId,
+    type:''
   }
   activeTab: any;
   tags: any[];
@@ -140,6 +141,7 @@ export class QueueComponent implements OnInit {
     {name:'Latest' ,id:'byDate'}
   ]
   selected_filter ='byName'
+  queueType:any
   constructor(public apiService: ApiServiceService,
     private modalService: NgbModal,
     public toastr: ToastrService,
@@ -537,7 +539,7 @@ export class QueueComponent implements OnInit {
     this.newMessage = data.urls[0]
     this.row_id = data._id
     this.website_url = this.newMessage
-
+    this.queueType = data.type
     this.spinner.show(undefined, {
       type: 'ball-triangle-path',
       size: 'medium',
@@ -641,7 +643,7 @@ export class QueueComponent implements OnInit {
     this.provider = JSON.parse(jsonString)
     this.provider.roles = 'purpleprovider'
     this.provider.cityId = this.cityId
-
+    this.provider.type = this.queueType
   }
   async setAddress(addressData) {
     this.provider.location = { type: "Point", coordinates: [addressData[0].lng, addressData[0].lat] }
