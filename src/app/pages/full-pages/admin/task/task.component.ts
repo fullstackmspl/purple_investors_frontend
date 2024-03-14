@@ -103,6 +103,8 @@ export class TaskComponent implements OnInit {
   json_data:any
   newMessage:any
   data_prop: any;
+  isBasicEdit : boolean=false
+  isAnalyticsEdit : boolean=false
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
@@ -715,6 +717,56 @@ export class TaskComponent implements OnInit {
   closeModal(){
     this.spinner.hide()
     this.modalService.dismissAll()
+  }
+
+  openModalEdit(content,data) {
+    this.row_data = data
+    console.log('data',data)
+    this.row_id = data._id
+    this.provider = data
+    const modalOptions: NgbModalOptions = {
+      size: 'lg', // 'sm', 'lg', or 'xl'
+      backdrop: 'static',
+    };
+    const modalRef = this.modalService.open(content,modalOptions);
+    modalRef.result.then((result) => {
+      this.row_id = null
+      this.row_data = null
+      this.provider = null
+      this.isAnalyticsEdit = false
+      this.isBasicEdit = false
+    }, (reason) => {
+      this.row_id = null
+      this.row_data = null
+      this.provider = null
+      this.isAnalyticsEdit = false
+      this.isBasicEdit = false
+    });
+  }
+  updateBasicAnalyticProvider(){
+    if(this.row_id){
+      this.apiService.updateUser(this.row_id,this.provider).subscribe((res:any)=>{
+        if(res?.isSuccess === true){
+          this.toastr.success('provider update successfull')
+          this.spinner.hide()
+          this.modalService.dismissAll()
+          if(this.user.roles ==='mturkers'){
+            this.getAllTaskByUser()
+          }
+          if(this.user.roles !=='mturkers'){
+            this.getAllTask()
+          }
+        }
+        else this.toastr.error(res?.error)
+        
+      })
+    }
+  }
+  openLinkProgram(){
+    window.open('https://heyletsplay.sharepoint.com/:w:/s/Product/ESDkUWuV0i5HuR2bVnfgc58B7IPI7d5qjoFwb5j4KxW5bQ?e=QLbsTu', '_blank');
+  }
+  openLinkProvider(){
+    window.open('https://heyletsplay.sharepoint.com/:w:/s/Product/EdAeg6ffe7tLuPOHrBKR2p0BrWnyUPUh_AWF9wrS_TfglA?e=ipQecL', '_blank');
   }
 }
 

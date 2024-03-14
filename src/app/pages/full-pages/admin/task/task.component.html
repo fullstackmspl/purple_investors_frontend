@@ -17,8 +17,6 @@
                 
                 <div class="col-12 col-sm-12 col-md-8 col-lg-8 mt-2 mb-1">
                   <div class="row-flex">
-                    <div class="col-flex-2 filter">
-                    </div>
                     <div class="col-flex-2 mb-1 position-relative">
                       <input id="ngx-filter-ref"
                         class="form-control form-control-sm d-inline-block width-300 ml-1 rounded-right shadow searchInput"
@@ -42,7 +40,16 @@
                   </div>
                 </div>
               </div>
+             
             </fieldset>
+            <div>
+                
+              <div class="d-flex my-2">
+                <a class="mx-1 text-primary" (click)="openLinkProgram()">Program Guidelines </a>
+                <a class="mx-1 text-primary"  (click)="openLinkProvider()">Provider Guidelines</a>
+              </div>
+              
+          </div>
             <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="50"
               [footerHeight]="50" rowHeight="auto" [limit]="limitRef" [rows]="rows" [scrollbarH]="true"
               [columns]="columns" [externalPaging]="false" [count]="page.totalPages" [offset]="page.offset"
@@ -169,11 +176,11 @@
                 <ng-template let-row="row" ngx-datatable-cell-template>
                   <ng-container *ngIf="row.task_type === 'Please proofread the given add and missing details in this form'; else otherCondition">
                     <!-- Content for Condition1 -->
-                    <i class="ft-plus text-primary cursor-pointer mx-1" placement="top" ngbTooltip="advance data" (click)="openModalForProvider(myModalContentProvider,row?._id,row ,'advance data')"></i>
+                    <i class="ft-edit text-primary cursor-pointer mx-1" placement="top" ngbTooltip="advance data" (click)="openModalEdit(myModalContentAdvance,row ,'advance data')"></i>
                 </ng-container>
                 <ng-template #otherCondition>
                     <!-- Content for other conditions -->
-                    <i class="ft-plus text-primary cursor-pointer mx-1" placement="top" ngbTooltip="basic data" (click)="openModalForProvider(myModalContentProvider,row?._id,row,'basic data')"></i>
+                    <i class="ft-edit text-primary cursor-pointer mx-1" placement="top" ngbTooltip="basic data" (click)="openModalEdit(myModalContentBasic,row,'basic data')"></i>
                 </ng-template>
                   <!-- <span>
                     <i *ngIf="row.task_type.trim() ==='Please proofread the given add and missing details in this form'" class="ft-plus text-primary cursor-pointer mx-1" placement="top" ngbTooltip="advance data"
@@ -182,8 +189,8 @@
                   <span>
                     <i *ngIf="row.task_type.trim() ==='Please add any missing data for email, phone, and locations for this form and Please proofread the business name, email, phone, and locations to ensure their correctness on this form'" class="ft-plus text-primary cursor-pointer mx-1" placement="top" ngbTooltip="basic data" (click)="openModalForProvider(myModalContentProvider,row?._id,row)"></i>
                   </span> -->
-                  <i class="ft-edit text-primary cursor-pointer mx-1"
-                  (click)="openModal(myModalContent,row?._id,row)"></i>
+                  <!-- <i class="ft-edit text-primary cursor-pointer mx-1"
+                  (click)="openModal(myModalContent,row?._id,row)"></i> -->
                   <i class="ft-trash-2 cursor-pointer danger mx-1"
                     (click)="confirmDelete(row._id)"></i>
                   <i class="ft-eye text-primary cursor-pointer mx-1"
@@ -202,6 +209,561 @@
 <div class="d-flex justify-content-between align-items-center">
   <ngx-spinner></ngx-spinner>
 </div>
+
+
+<!----- Providers Basic Details Popup  --------->
+
+<div>
+	<ng-template #myModalContentBasic>
+	  <div class="modal-header">
+		<h4 class="modal-title" >{{row_data?.fullname}}'s Details</h4>
+		<button type="button" class="close" aria-label="Close" (click)="modalService.dismissAll()">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+	  </div>
+	  <div class="modal-body">
+         <table *ngIf="!isBasicEdit">
+          <div class="edit-icon">
+            <i class="ft-edit text-primary cursor-pointer mx-1" (click)="isBasicEdit =!isBasicEdit"></i>
+          </div>
+          <div>
+            <th>Name &nbsp;</th>
+            <td>{{row_data?.fullname}}</td>
+          </div>
+          <div>
+            <th>Email &nbsp;</th>
+            <td>{{row_data?.email}}</td>
+          </div>
+          <div>
+            <th>Phone &nbsp;</th>
+            <td>{{row_data?.phone_number}}</td>
+          </div>
+          <div>
+            <th>Address &nbsp;</th>
+            <td>{{row_data?.address}}</td>
+          </div>
+          <div>
+            <th>Website Url &nbsp;</th>
+            <td>{{row_data?.websiteUrl}}</td>
+          </div>
+          
+         </table>
+         <div *ngIf="isBasicEdit">
+          <div class="edit-icon">
+            <i class="ft-eye text-primary cursor-pointer mx-1" (click)="isBasicEdit =!isBasicEdit"></i>
+          </div>
+          <fieldset class="form-group">
+            <label>Name</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.fullname"
+              id="name"
+              placeholder="Enter name"
+              [ngClass]="{
+                'is-invalid': !provider.fullname,
+                'is-valid': provider.fullname
+              }"
+              required
+              #name
+            />
+          </fieldset>
+          <fieldset class="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              class="form-control"
+               [(ngModel)]="provider.email"
+              id="email"
+              placeholder="Enter email"
+              [ngClass]="{
+                'is-invalid': !provider.email,
+                'is-valid': provider.email
+              }"
+              required
+              #email
+            />
+          </fieldset>
+          <fieldset class="form-group">
+            <label>Phone number</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.phone_number"
+              id="phone_number"
+              placeholder="Enter phone"
+              [ngClass]="{
+                'is-invalid': !provider.phone_number,
+                'is-valid': provider.phone_number
+              }"
+              required
+              #phone_number
+            />
+          </fieldset>
+          <fieldset class="form-group address">
+            <label>Address</label>
+            <input
+              type="text"
+              class="form-control"
+              appGoogleAddress
+              autocomplete="off"
+              (onSelect)="setAddress($event)"
+               [(ngModel)]="provider.address"
+              id="address"
+              placeholder="Enter address"
+              [ngClass]="{
+                'is-invalid': !provider.address,
+                'is-valid': provider.address
+              }"
+              required
+              #address
+            />
+          </fieldset>
+         </div>
+
+	  </div>
+	  <div class="modal-footer" *ngIf="isBasicEdit">
+		<button type="button" class="btn btn-secondary" (click)="modalService.dismissAll()">Close</button>
+		<button type="button" class="btn btn-primary" (click)="updateBasicAnalyticProvider()">Submit</button>
+	  </div>
+	</ng-template>
+</div>
+
+<!----- Providers Analytics Details Popup  --------->
+
+<div>
+	<ng-template #myModalContentAdvance>
+	  <div class="modal-header">
+		<h4 class="modal-title" >{{row_data?.fullname}}'s Details</h4>
+		<button type="button" class="close" aria-label="Close" (click)="modalService.dismissAll()">
+		  <span aria-hidden="true">&times;</span>
+		</button>
+	  </div>
+	  <div class="modal-body">
+         <table *ngIf="!isAnalyticsEdit">
+          <div class="edit-icon">
+            <i class="ft-edit text-primary cursor-pointer mx-1" (click)="isAnalyticsEdit =!isAnalyticsEdit"></i>
+          </div>
+          <div>
+            <th>Google Reviews URL &nbsp;</th>
+            <td>{{row_data?.googleReviewsURL}}</td>
+          </div>
+          <div>
+            <th>Number Of Google Reviews &nbsp;</th>
+            <td>{{row_data?.numberOfGoogleReviews}}</td>
+          </div>
+          <div>
+            <th>Average Google Rating &nbsp;</th>
+            <td>{{row_data?.averageGoogleRating}}</td>
+          </div>
+          <div>
+            <th>Top Google Reviews &nbsp;</th>
+            <td *ngIf="row_data?.topGoogleReviews">
+              {{row_data?.topGoogleReviews}}
+              <!-- <div *ngFor="let item of row_data?.topGoogleReviews[0]">
+                <div>
+                  <td id="box-width"> <b>Rating :</b> {{item?.rating}}</td>
+                </div>
+                <div>
+                  <td> <b>Text :</b> {{item?.text}}</td>
+                </div>
+              </div> -->
+            </td>
+          </div>
+          <div>
+            <th>Bottom Google Reviews &nbsp;</th>
+            <td *ngIf="row_data?.bottomGoogleReviews">
+              {{row_data?.bottomGoogleReviews}}
+              <!-- <div *ngFor="let item of row_data?.bottomGoogleReviews[0]">
+                <div>
+                  <td id="box-width"> <b>Rating :</b> {{item?.rating}}</td>
+                </div>
+                <div>
+                  <td> <b>Text :</b> {{item?.text}}</td>
+                </div>
+
+              </div> -->
+            </td>
+          </div>
+          <div>
+            <th>Most Recent Google Reviews &nbsp;</th>
+            <td *ngIf="row_data?.mostRecentGoogleReviews">
+              {{row_data?.mostRecentGoogleReviews}}
+              <!-- <div *ngFor="let item of row_data?.mostRecentGoogleReviews">
+                <div>
+                  <td id="box-width"> <b>Rating :</b> {{item?.rating}}</td>
+                </div>
+                <div>
+                  <td> <b>Text :</b> {{item?.text}}</td>
+                </div>
+              </div> -->
+            </td>
+          </div>
+          <div>
+            <th>Facebook URL &nbsp;</th>
+            <td>{{row_data?.facebookURL}}</td>
+          </div>
+          <div>
+            <th>Facebook Number Of Followers &nbsp;</th>
+            <td>{{row_data?.facebookNumberOfFollowers}}</td>
+          </div>
+          <div>
+            <th>Facebook Number Of Likes &nbsp;</th>
+            <td>{{row_data?.facebookNumberOfLikes}}</td>
+          </div>
+          <div>
+            <th>Yelp Profile URL &nbsp;</th>
+            <td>{{row_data?.yelpProfileURL}}</td>
+          </div>
+          <div>
+            <th>Number Of Yelp Ratings &nbsp;</th>
+            <td>{{row_data?.numberOfYelpRatings}}</td>
+          </div>
+          <div>
+            <th>Average Yelp Rating &nbsp;</th>
+            <td>{{row_data?.averageYelpRating}}</td>
+          </div>
+          <div>
+            <th>Yelp Top Reviews &nbsp;</th>
+            <td *ngIf="row_data?.yelpTopReviews">
+              {{row_data?.yelpTopReviews}}
+              <!-- <div *ngFor="let item of row_data?.yelpTopReviews[0]">
+                <div>
+                  <td id="box-width"> <b>Rating :</b> {{item?.rating}}</td>
+                </div>
+                <div>
+                  <td> <b>Text :</b> {{item?.text}}</td>
+                </div>
+              </div> -->
+            </td>
+
+          </div>
+          <div>
+            <th>Yelp Bottom Reviews &nbsp;</th>
+            <td *ngIf="row_data?.yelpBottomReviews">
+              {{row_data?.yelpBottomReviews}}
+              <!-- <div *ngFor="let item of row_data?.yelpBottomReviews[0]">
+                <div>
+                  <td id="box-width"> <b>Rating :</b> {{item?.rating}}</td>
+                </div>
+                <div>
+                  <td> <b>Text :</b> {{item?.text}}</td>
+                </div>
+              </div> -->
+            </td>
+          </div>
+          <div>
+            <th>Yelp Most Recent Reviews &nbsp;</th>
+            <td *ngIf="row_data?.yelpMostRecentReviews">
+              {{row_data?.yelpMostRecentReviews}}
+              <!-- <div *ngFor="let item of row_data?.yelpMostRecentReviews[0]">
+                <div>
+                  <td id="box-width"> <b>Rating :</b> {{item?.rating}}</td>
+                </div>
+                <div>
+                  <td> <b>Text :</b> {{item?.text}}</td>
+                </div>
+              </div> -->
+            </td>
+          </div>
+          <div>
+            <th>Instagram Profile Link &nbsp;</th>
+            <td>{{row_data?.instagramProfileLink}}</td>
+          </div>
+          <div>
+            <th>Number Of Instagram Followers &nbsp;</th>
+            <td>{{row_data?.numberOfInstagramFollowers}}</td>
+          </div> 
+          
+         </table>
+         <div *ngIf="isAnalyticsEdit">
+          <div class="edit-icon">
+            <i class="ft-eye text-primary cursor-pointer mx-1" (click)="isAnalyticsEdit =!isAnalyticsEdit"></i>
+          </div>
+          <fieldset class="form-group">
+            <label>Average Google Rating</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.averageGoogleRating"
+              id="averageGoogleRating"
+              placeholder="Enter Average Google Rating"
+              [ngClass]="{
+                'is-invalid': !provider.averageGoogleRating,
+                'is-valid': provider.averageGoogleRating
+              }"
+              required
+              #averageGoogleRating
+            />
+          </fieldset>
+          <fieldset class="form-group">
+            <label>Average Yelp Rating</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.averageYelpRating"
+              id="averageYelpRating"
+              placeholder="Enter Average Yelp Rating"
+              [ngClass]="{
+                'is-invalid': !provider.averageYelpRating,
+                'is-valid': provider.averageYelpRating
+              }"
+              required
+              #averageYelpRating
+            />
+          </fieldset>
+          <fieldset class="form-group">
+            <label>Bottom Google Reviews</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.bottomGoogleReviews"
+              id="bottomGoogleReviews"
+              placeholder="Enter Bottom Google Reviews"
+              [ngClass]="{
+                'is-invalid': !provider.bottomGoogleReviews,
+                'is-valid': provider.bottomGoogleReviews
+              }"
+              required
+              #bottomGoogleReviews
+            />
+          </fieldset>
+          <fieldset class="form-group">
+            <label>Facebook Number Of Followers</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.facebookNumberOfFollowers"
+              id="facebookNumberOfFollowers"
+              placeholder="Enter Facebook Number Of Followers"
+              [ngClass]="{
+                'is-invalid': !provider.facebookNumberOfFollowers,
+                'is-valid': provider.facebookNumberOfFollowers
+              }"
+              required
+              #facebookNumberOfFollowers
+            />
+          </fieldset>
+          <fieldset class="form-group">
+            <label>Facebook Number Of Likes</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.facebookNumberOfLikes"
+              id="facebookNumberOfLikes"
+              placeholder="Enter Facebook Number Of Likes"
+              [ngClass]="{
+                'is-invalid': !provider.facebookNumberOfLikes,
+                'is-valid': provider.facebookNumberOfLikes
+              }"
+              required
+              #facebookNumberOfLikes
+            />
+          </fieldset>
+          <fieldset class="form-group">
+            <label>Facebook URL</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.facebookURL"
+              id="facebookURL"
+              placeholder="Enter Facebook URL"
+              [ngClass]="{
+                'is-invalid': !provider.facebookURL,
+                'is-valid': provider.facebookURL
+              }"
+              required
+              #facebookURL
+            />
+          </fieldset>
+
+          <fieldset class="form-group">
+            <label>Google Reviews URL</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.googleReviewsURL"
+              id="googleReviewsURL"
+              placeholder="Enter Google Reviews URL"
+              [ngClass]="{
+                'is-invalid': !provider.googleReviewsURL,
+                'is-valid': provider.googleReviewsURL
+              }"
+              required
+              #googleReviewsURL
+            />
+          </fieldset>
+          <fieldset class="form-group">
+            <label>Instagram Profile Link</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.instagramProfileLink"
+              id="instagramProfileLink"
+              placeholder="Enter Instagram Profile Link"
+              [ngClass]="{
+                'is-invalid': !provider.instagramProfileLink,
+                'is-valid': provider.instagramProfileLink
+              }"
+              required
+              #instagramProfileLink
+            />
+          </fieldset>
+          <fieldset class="form-group">
+            <label>Most Recent Google Reviews</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.mostRecentGoogleReviews"
+              id="mostRecentGoogleReviews"
+              placeholder="Enter Most Recent Google Reviews"
+              [ngClass]="{
+                'is-invalid': !provider.mostRecentGoogleReviews,
+                'is-valid': provider.mostRecentGoogleReviews
+              }"
+              required
+              #mostRecentGoogleReviews
+            />
+          </fieldset>
+          <fieldset class="form-group">
+            <label>Number Of Google Reviews</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.numberOfGoogleReviews"
+              id="numberOfGoogleReviews"
+              placeholder="Enter Number Of Google Reviews"
+              [ngClass]="{
+                'is-invalid': !provider.numberOfGoogleReviews,
+                'is-valid': provider.numberOfGoogleReviews
+              }"
+              required
+              #numberOfGoogleReviews
+            />
+          </fieldset>
+          <fieldset class="form-group">
+            <label>Number Of Instagram Followers</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.numberOfInstagramFollowers"
+              id="numberOfInstagramFollowers"
+              placeholder="Enter Number Of Instagram Followers"
+              [ngClass]="{
+                'is-invalid': !provider.numberOfInstagramFollowers,
+                'is-valid': provider.numberOfInstagramFollowers
+              }"
+              required
+              #numberOfInstagramFollowers
+            />
+          </fieldset>
+          <fieldset class="form-group">
+            <label>Number Of Yelp Ratings</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.numberOfYelpRatings"
+              id="numberOfYelpRatings"
+              placeholder="Enter Number Of Yelp Ratings"
+              [ngClass]="{
+                'is-invalid': !provider.numberOfYelpRatings,
+                'is-valid': provider.numberOfYelpRatings
+              }"
+              required
+              #numberOfYelpRatings
+            />
+          </fieldset>
+          <fieldset class="form-group">
+            <label>Top Google Reviews</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.topGoogleReviews"
+              id="topGoogleReviews"
+              placeholder="Enter Top Google Reviews"
+              [ngClass]="{
+                'is-invalid': !provider.topGoogleReviews,
+                'is-valid': provider.topGoogleReviews
+              }"
+              required
+              #topGoogleReviews
+            />
+          </fieldset>
+          <fieldset class="form-group">
+            <label>Yelp Bottom Reviews</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.yelpBottomReviews"
+              id="yelpBottomReviews"
+              placeholder="Enter Yelp Bottom Reviews"
+              [ngClass]="{
+                'is-invalid': !provider.yelpBottomReviews,
+                'is-valid': provider.yelpBottomReviews
+              }"
+              required
+              #yelpBottomReviews
+            />
+          </fieldset>
+          <fieldset class="form-group">
+            <label>Yelp Most Recent Reviews</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.yelpMostRecentReviews"
+              id="yelpMostRecentReviews"
+              placeholder="Enter Yelp Most Recent Reviews"
+              [ngClass]="{
+                'is-invalid': !provider.yelpMostRecentReviews,
+                'is-valid': provider.yelpMostRecentReviews
+              }"
+              required
+              #yelpMostRecentReviews
+            />
+          </fieldset>
+          <fieldset class="form-group">
+            <label>Yelp Top Reviews</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.yelpTopReviews"
+              id="yelpTopReviews"
+              placeholder="Enter Yelp Top Reviews"
+              [ngClass]="{
+                'is-invalid': !provider.yelpTopReviews,
+                'is-valid': provider.yelpTopReviews
+              }"
+              required
+              #yelpTopReviews
+            />
+          </fieldset>
+          <fieldset class="form-group">
+            <label>Yelp Profile URL</label>
+            <input
+              type="text"
+              class="form-control"
+               [(ngModel)]="provider.yelpProfileURL"
+              id="yelpProfileURL"
+              placeholder="Enter Yelp Profile URL"
+              [ngClass]="{
+                'is-invalid': !provider.yelpProfileURL,
+                'is-valid': provider.yelpProfileURL
+              }"
+              required
+              #yelpProfileURL
+            />
+          </fieldset>
+         </div>
+
+	  </div>
+	  <div class="modal-footer" *ngIf="isAnalyticsEdit">
+		<button type="button" class="btn btn-secondary" (click)="modalService.dismissAll()">Close</button>
+		<button type="button" class="btn btn-primary" (click)="updateBasicAnalyticProvider()">Submit</button>
+	  </div>
+	</ng-template>
+</div>
+
+
 <!----- Add City / Update City popup  --------->
 
 <div>

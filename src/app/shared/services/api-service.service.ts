@@ -118,7 +118,8 @@ chatgptSearch(bundle_id: any,user_id:any,search:any): Observable<any> {
 geminiSearch(search:any,user_id:any): Observable<any> {
   const subject = new Subject<any>();
   this.http.get(`${this.root}/gemini/searchVertexAi?search_value=${search}&user_id=${user_id}`,).subscribe(res => {
-      subject.next(res);
+    this.userResponse = res;
+    subject.next(this.userResponse);
   }, error => {
       subject.next(error.error);
   });
