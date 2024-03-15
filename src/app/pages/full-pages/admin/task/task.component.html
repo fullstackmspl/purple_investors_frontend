@@ -20,8 +20,8 @@
                     <div class="col-flex-2 mb-1 position-relative">
                       <input id="ngx-filter-ref"
                         class="form-control form-control-sm d-inline-block width-300 ml-1 rounded-right shadow searchInput"
-                        type="text" placeholder="Search" #name />
-                      <button class="btn search-btn glow position-absolute">
+                        type="text" placeholder="Search" #name (keydown.enter)="taskSearch(searchVal)" [(ngModel)]="searchVal" />
+                      <button class="btn search-btn glow position-absolute" (click)="taskSearch(searchVal)">
                         <i class="ft-search text-white cursor-pointer"></i>
                       </button>
                     </div>

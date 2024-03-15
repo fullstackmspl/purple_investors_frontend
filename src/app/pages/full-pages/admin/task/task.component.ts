@@ -105,6 +105,8 @@ export class TaskComponent implements OnInit {
   data_prop: any;
   isBasicEdit : boolean=false
   isAnalyticsEdit : boolean=false
+  @ViewChild('name') inputName
+  searchVal :any
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
@@ -148,7 +150,7 @@ export class TaskComponent implements OnInit {
     this.apiService.getAllTask(this.limitRef,this.activePage).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.data
-      this.rows.reverse()
+      // this.rows.reverse()
       this.page.totalPages = res?.data?.TotalCount
 
     })
@@ -165,7 +167,7 @@ export class TaskComponent implements OnInit {
     this.apiService.getTaskByUserId(this.user._id,this.limitRef,this.page.pageNumber + 1).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.items
-      this.rows.reverse()
+      // this.rows.reverse()
       this.page.totalPages = res?.data?.totalCount
 
     })
@@ -184,7 +186,7 @@ export class TaskComponent implements OnInit {
     this.apiService.getAllTask(this.limitRef,page.offset +1).subscribe((res: any) => {
       this.spinner.hide()
       this.rows = res?.data?.data
-      this.rows.reverse()
+      // this.rows.reverse()
       this.page.totalPages = res?.data?.TotalCount
     })
   }
@@ -199,11 +201,7 @@ export class TaskComponent implements OnInit {
     //   this.getAllTag()
     // }
   }
-  resetFilter(){
-    // this.inputName.nativeElement.value=''
-    // this.selected_tag_cat_id ='all'
-    // this.getAllTag()
-  }
+  
   openModal(content,id,data) {
     if(id){
       this.row_id = id
@@ -767,6 +765,31 @@ export class TaskComponent implements OnInit {
   }
   openLinkProvider(){
     window.open('https://heyletsplay.sharepoint.com/:w:/s/Product/EdAeg6ffe7tLuPOHrBKR2p0BrWnyUPUh_AWF9wrS_TfglA?e=ipQecL', '_blank');
+  }
+
+  taskSearch(search){
+    this.spinner.show(undefined,
+      {
+        type: 'ball-triangle-path',
+        size: 'medium',
+        bdColor: 'rgba(0, 0, 0, 0.8)',
+        color: '#fff',
+        fullScreen: true
+      });
+    this.apiService.taskFilter(search).subscribe((res:any)=>{
+      this.spinner.hide()
+      this.rows = res?.data
+      this.page.totalPages = res?.data?.length
+    })
+  }
+  resetFilter(){
+    this.inputName.nativeElement.value=''
+    if(this.user.roles ==='mturkers'){
+      this.getAllTaskByUser()
+    }
+    if(this.user.roles !=='mturkers'){
+      this.getAllTask()
+    }
   }
 }
 

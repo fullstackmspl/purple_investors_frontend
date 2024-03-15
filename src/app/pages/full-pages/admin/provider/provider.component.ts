@@ -7,6 +7,7 @@ import { ApiServiceService } from 'app/shared/services/api-service.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
 import { finalize } from 'rxjs/operators';
+import swal from 'sweetalert2';
 
 @Component({
   selector: 'app-provider',
@@ -608,6 +609,46 @@ updateStatus(id, status_id) {
       }
     })
   }
+}
+ // ================== Alert Add Task ========================
+ confirmAddTask(data:any) {
+  this.row_id = data._id
+  swal.fire({
+    title: 'Are you sure?',
+    text: `You won't be able to add task for ${data.fullname} provider!`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#2F8BE6',
+    cancelButtonColor: '#F55252',
+    confirmButtonText: 'Yes, delete it!',
+    customClass: {
+      confirmButton: 'btn btn-warning',
+      cancelButton: 'btn btn-danger ml-1'
+    },
+    buttonsStyling: false,
+  }).then( (result)=> {
+    if (result.value) {
+      this.AddTask(this.row_id)
+    } else  {
+      swal.fire({
+        title: 'Cancelled',
+        text: 'Your file is safe :)',
+        icon: 'error',
+        customClass: {
+          confirmButton: 'btn btn-success'
+        },
+      })
+    }
+  });
+}
+AddTask(id){
+  this.apiService.addTaskByProvider(id).subscribe((res:any)=>{
+    if(res?.isSuccess === true){
+      this.toastr.success('Task added successfully')
+      this.setAndGetProviderbyStatus()
+    }
+    else this.toastr.error(res?.error)
+  })
 }
 
 }

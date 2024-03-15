@@ -195,8 +195,9 @@
                   (click)="openModal(myModalContentAnalytics,row)"></i>
                   <i class="ft-settings text-primary cursor-pointer mx-1"
                   (click)="goToPrograms(row)"></i>
-                  <!-- <i class="ft-trash-2 cursor-pointer danger"
-                    (click)="ConfirmColor(row._id)"></i> -->
+                  <span>
+                  </span>
+                  <button class="btn btn-primary mt-3" (click)="confirmAddTask(row)">Add Task</button>
                 </ng-template>
               </ngx-datatable-column>
             </ngx-datatable>

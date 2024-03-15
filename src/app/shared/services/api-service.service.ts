@@ -435,6 +435,27 @@ getAllQueue(id:any,status:any,sort:any,page_size:any,page_number:any): Observabl
   });
   return subject.asObservable();
 }
-
+// ----------------------- Add Task ---------------------------------------------------
+addTaskByProvider(id): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.post(`${this.root}/task/createTaskByProviderId/${id}`,'').subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
+// ----------------------- Task Filter ---------------------------------------------------
+taskFilter(search:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.get(`${this.root}/task/searchTask?fullname=${search}`).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
 
 }
