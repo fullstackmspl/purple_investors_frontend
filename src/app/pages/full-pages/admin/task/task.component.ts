@@ -787,11 +787,11 @@ export class TaskComponent implements OnInit {
   }
   openLinkProgram(){
     // window.open('https://heyletsplay.sharepoint.com/:w:/s/Product/ESDkUWuV0i5HuR2bVnfgc58B7IPI7d5qjoFwb5j4KxW5bQ?e=QLbsTu', '_blank');
-    window.open('https://docs.google.com/document/d/1O_IL47KaJrgsLFbtNQ5l47R5Ck29NNfVgzbcHjd3Ulw/edit', '_blank');
+    window.open('https://docs.google.com/document/d/1b8_DedUUJ75BvdbwxTc9ErGEEXLEWznuDP1idURcuJA/edit', '_blank');
   }
   openLinkProvider(){
     // window.open('https://heyletsplay.sharepoint.com/:w:/s/Product/EdAeg6ffe7tLuPOHrBKR2p0BrWnyUPUh_AWF9wrS_TfglA?e=ipQecL', '_blank');
-    window.open('https://docs.google.com/document/d/1IKmfUYDH7HFiLZnFWoSm7vMB0Xl4nO9CHK2EQydSLDk/edit', '_blank');
+    window.open('https://docs.google.com/document/d/1nKTghoJwi10ZzsbDh3a_6GCtZEx9sZutTLGXFZcNhPA/edit', '_blank');
   }
 
   taskSearch(search){
