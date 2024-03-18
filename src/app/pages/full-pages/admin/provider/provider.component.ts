@@ -98,6 +98,11 @@ export class ProviderComponent implements OnInit {
     { name: 'Archived', _id: 'Archived' },
   ]
   activeTab:any
+  users_list=[]
+  input_option ={}
+  task_Assign = null
+  task_Review = null
+  provider_name: any;
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
@@ -111,6 +116,7 @@ export class ProviderComponent implements OnInit {
   ngOnInit(): void {
     this.setAndGetProviderbyStatus()
     this.getAllCity()
+    this.getOnlyUsers()
   }
   activeProviderTab(tab) {
 
@@ -613,6 +619,7 @@ updateStatus(id, status_id) {
  // ================== Alert Add Task ========================
  confirmAddTask(data:any) {
   this.row_id = data._id
+  
   swal.fire({
     title: 'Are you sure?',
     text: `You won't be able to add task for ${data.fullname} provider!`,
@@ -628,7 +635,7 @@ updateStatus(id, status_id) {
     buttonsStyling: false,
   }).then( (result)=> {
     if (result.value) {
-      this.AddTask(this.row_id)
+      // this.AddTask(this.row_id)
     } else  {
       swal.fire({
         title: 'Cancelled',
@@ -641,14 +648,54 @@ updateStatus(id, status_id) {
     }
   });
 }
-AddTask(id){
-  this.apiService.addTaskByProvider(id).subscribe((res:any)=>{
+AddTask(){
+
+  this.apiService.addTaskByProvider(this.row_id,this.task_Assign,this.task_Review).subscribe((res:any)=>{
     if(res?.isSuccess === true){
+      this.modalService.dismissAll()
       this.toastr.success('Task added successfully')
       this.setAndGetProviderbyStatus()
     }
     else this.toastr.error(res?.error)
   })
+}
+getOnlyUsers(){
+    this.apiService.getAllUsers(1000,1).subscribe((res: any) => {
+      this.users_list = res?.data?.data
+      let task_assign = this.users_list.filter((item)=> item.fullname === 'Mike')
+      let task_review = this.users_list.filter((item)=> item.fullname === 'Sophie')
+
+      this.task_Assign = task_assign[0]._id
+      this.task_Review = task_review[0]._id
+    })
+  }
+taskAssign(){
+  this.task_Assign
+  console.log('this.task_Assign =>',this.task_Assign)
+}
+taskReview(){
+  this.task_Review
+  console.log('this.task_Review =>',this.task_Review)
+
+}
+taskModal(content,data){
+  this.row_id = data._id
+  this.provider_name = data.fullname
+  const modalOptions: NgbModalOptions = {
+    size: '550', // 'sm', 'lg', or 'xl'
+    backdrop: 'static',
+  };
+  const modalRef = this.modalService.open(content,modalOptions);
+  modalRef.result.then((result) => {
+    this.task_Assign = null
+    this.task_Review = null
+    this.row_id = null
+  }, (reason) => {
+    this.task_Assign = null
+    this.task_Review = null
+    this.row_id = null
+  });
+
 }
 
 }

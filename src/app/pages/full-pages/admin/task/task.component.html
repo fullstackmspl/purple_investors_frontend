@@ -20,7 +20,7 @@
                     <div class="col-flex-2 mb-1 position-relative">
                       <input id="ngx-filter-ref"
                         class="form-control form-control-sm d-inline-block width-300 ml-1 rounded-right shadow searchInput"
-                        type="text" placeholder="Search" #name (keydown.enter)="taskSearch(searchVal)" [(ngModel)]="searchVal" />
+                        type="text" placeholder="Search By Provider Name" #name (keydown.enter)="taskSearch(searchVal)" [(ngModel)]="searchVal" />
                       <button class="btn search-btn glow position-absolute" (click)="taskSearch(searchVal)">
                         <i class="ft-search text-white cursor-pointer"></i>
                       </button>
@@ -47,7 +47,20 @@
               <div class="d-flex my-2">
                 <a class="mx-1 text-primary" (click)="openLinkProgram()">Program Guidelines </a>
                 <a class="mx-1 text-primary"  (click)="openLinkProvider()">Provider Guidelines</a>
+                <div class="col-12 col-sm-12 col-md-4 col-lg-4">
+                  <ng-select class="city-select"
+                  [items]="city_List"
+                  bindLabel="city"
+                  bindValue="_id"
+                  placeholder="Select City"
+                  [(ngModel)]="cityId"
+                  (change)="searchProvider()"
+                  required
+                  >
+                </ng-select>
+                </div>
               </div>
+              
               
           </div>
             <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="50"
@@ -68,7 +81,7 @@
                       <p class="font-medium-1 line-height-1 mb-0">
                         {{ row?.name || row?.fullname }}
                       </p>
-                      <div class="mt-2">
+                      <div class="mt-2" *ngIf="user.roles !=='mturkers'">
                         <p [matMenuTriggerFor]="task_status">
                           <span class="cursor-pointer" *ngIf="row?.status == 'completed'" [ngClass]="{'badge badge-pill bg-light-success':row?.status == 'completed'}">{{row?.status}}
                           </span>
@@ -98,6 +111,19 @@
                             </div>
                         </mat-menu>
                       </div>
+                      <div class="mt-2" *ngIf="user.roles ==='mturkers'">
+                        <p>
+                          <span *ngIf="row?.status == 'completed'" [ngClass]="{'badge badge-pill bg-light-success':row?.status == 'completed'}">{{row?.status}}
+                          </span>
+                          <span *ngIf="row?.status == 'open'" [ngClass]="{'badge badge-pill bg-light-success':row?.status == 'open'}">{{row?.status}}
+                          </span>
+                          <span *ngIf="row?.status == 'rejected'" [ngClass]="{'badge badge-pill bg-light-danger':row?.status == 'rejected'}">{{row?.status}}
+                          </span>
+                          <span *ngIf="row?.status == 'in-review'" [ngClass]="{'badge-pill bg-light-warning':row?.status == 'in-review'}">{{row?.status}}
+                          </span>
+                        </p>
+                       
+                      </div>
                     </div>
                   </div>
                 </ng-template>
@@ -109,7 +135,8 @@
               </ngx-datatable-column>
               <ngx-datatable-column name="Task Assign" prop="user" [width]="10">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
-                  <p class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.user[0]?._id,row?._id,'Task Assign')">{{row?.user[0]?.fullname}}</p>
+                  <p *ngIf="row?.user[0]?.fullname" class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.user[0]?._id,row?._id,'Task Assign')">{{row?.user[0]?.fullname}}</p>
+                  <p *ngIf="row?.user?.fullname" class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.user[0]?._id,row?._id,'Task Assign')">{{row?.user?.fullname}}</p>
                 </ng-template>
               </ngx-datatable-column>
               <ngx-datatable-column name="Task Review" prop="reviewUserId" [width]="10">
@@ -191,7 +218,7 @@
                   </span> -->
                   <!-- <i class="ft-edit text-primary cursor-pointer mx-1"
                   (click)="openModal(myModalContent,row?._id,row)"></i> -->
-                  <i class="ft-trash-2 cursor-pointer danger mx-1"
+                  <i *ngIf="user.roles !=='mturkers'" class="ft-trash-2 cursor-pointer danger mx-1"
                     (click)="confirmDelete(row._id)"></i>
                   <i class="ft-eye text-primary cursor-pointer mx-1"
                   (click)="openModalView(myModalContentView,row)"></i>

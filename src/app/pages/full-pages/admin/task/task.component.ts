@@ -107,6 +107,9 @@ export class TaskComponent implements OnInit {
   isAnalyticsEdit : boolean=false
   @ViewChild('name') inputName
   searchVal :any
+  cityId:string;
+  city_List =[]
+
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
@@ -132,9 +135,13 @@ export class TaskComponent implements OnInit {
       working_hour: ['', ],
       budget: ['', ]
     });
-
+    this.getAllCity()
   }
-
+  getAllCity() {
+    this.apiService.getAllCity(1000, this.page.pageNumber + 1).subscribe((res: any) => {
+      this.city_List = res?.data?.user
+    })
+  }
   get rf() {
     return this.taskForm.controls;
   }
@@ -717,11 +724,24 @@ export class TaskComponent implements OnInit {
     this.modalService.dismissAll()
   }
 
-  openModalEdit(content,data) {
+  openModalEdit(content,data,prop) {
+    if(prop === 'basic data'){
+      this.isBasicEdit = true
+      this.provider = data.add_fields
+      // const fieldsToDelete = ['dob', 'gender', 'averageGoogleRating', 'averageYelpRating', 'bottomGoogleReviews', 'facebookNumberOfFollowers', 'facebookNumberOfLikes', 'facebookURL', 'googleReviewsURL', 'instagramProfileLink', 'mostRecentGoogleReviews', 'numberOfGoogleReviews', 'numberOfInstagramFollowers', 'numberOfYelpRatings', 'topGoogleReviews', 'yelpBottomReviews', 'yelpMostRecentReviews', 'yelpTopReviews', 'yelpProfileURL'];
+
+      // // Delete fields dynamically
+      // fieldsToDelete.forEach(fieldName => {
+      //   delete this.provider[fieldName];
+      // });
+    }
+    if(prop === 'advance data'){
+      this.isAnalyticsEdit = true
+      this.provider = data.add_fields
+    }
     this.row_data = data
-    console.log('data',data)
-    this.row_id = data._id
-    this.provider = data
+    this.task_id = data._id
+    this.row_id = data.add_fields._id
     const modalOptions: NgbModalOptions = {
       size: 'lg', // 'sm', 'lg', or 'xl'
       backdrop: 'static',
@@ -742,7 +762,11 @@ export class TaskComponent implements OnInit {
     });
   }
   updateBasicAnalyticProvider(){
-    if(this.row_id){
+    if(this.task_id && this.row_id){
+      let body = {
+        status: 'in-review'
+      }
+      this.apiService.updateTask(this.task_id,body).subscribe((res:any)=>{
       this.apiService.updateUser(this.row_id,this.provider).subscribe((res:any)=>{
         if(res?.isSuccess === true){
           this.toastr.success('provider update successfull')
@@ -758,6 +782,7 @@ export class TaskComponent implements OnInit {
         else this.toastr.error(res?.error)
         
       })
+    })
     }
   }
   openLinkProgram(){
@@ -778,20 +803,29 @@ export class TaskComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.taskFilter(search).subscribe((res:any)=>{
+    this.apiService.taskFilter(search,'',1,1000).subscribe((res:any)=>{
       this.spinner.hide()
-      this.rows = res?.data
-      this.page.totalPages = res?.data?.length
+      this.rows = res?.data.items
+      this.page.totalPages = res?.data?.totalCount
     })
   }
   resetFilter(){
     this.inputName.nativeElement.value=''
+    this.cityId = null
     if(this.user.roles ==='mturkers'){
       this.getAllTaskByUser()
     }
     if(this.user.roles !=='mturkers'){
       this.getAllTask()
     }
+  }
+  searchProvider(){
+    this.apiService.taskFilter('',this.cityId,1,1000).subscribe((res: any) => {
+      this.spinner.hide();
+      this.rows = res?.data.items
+      this.page.totalPages = res?.data?.totalCount
+     
+    })
   }
 }
 
