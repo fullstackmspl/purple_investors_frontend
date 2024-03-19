@@ -457,5 +457,16 @@ taskFilter(search:any,cityId:any,page_number,page_size): Observable<any> {
   });
   return subject.asObservable();
 }
+// ----------------------- Provider Filter ---------------------------------------------------
+providerFilter(search:any): Observable<any> {
+  const subject = new Subject<any>();
+  this.http.get(`${this.root}/user/searchProvider?fullname=${search}`).subscribe(res => {
+      this.userResponse = res;
+      subject.next(this.userResponse);
+  }, error => {
+      subject.next(error.error);
+  });
+  return subject.asObservable();
+}
 
 }

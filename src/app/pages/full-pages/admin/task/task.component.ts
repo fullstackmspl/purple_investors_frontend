@@ -134,6 +134,10 @@ export class TaskComponent implements OnInit {
     // if(this.user.roles !=='mturkers'){
     //   // this.getAllTask()
     // }
+    this.activatedRoute.queryParams
+      .subscribe((params: any) => {
+        this.activeTab = params?.status;
+      })
     this.setAndGetQueuebyStatus()
     this.getAllUsers()
     this.taskForm = this.formBuilder.group({

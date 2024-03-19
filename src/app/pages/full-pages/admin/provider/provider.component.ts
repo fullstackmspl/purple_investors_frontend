@@ -103,6 +103,9 @@ export class ProviderComponent implements OnInit {
   task_Assign = null
   task_Review = null
   provider_name: any;
+  searchVal
+  @ViewChild('name') inputName
+
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
@@ -196,11 +199,7 @@ export class ProviderComponent implements OnInit {
     //   this.getAllTag()
     // }
   }
-  resetFilter(){
-    // this.inputName.nativeElement.value=''
-    // this.selected_tag_cat_id ='all'
-    // this.getAllTag()
-  }
+ 
  
   openModal(content,data) {
     this.row_data = data
@@ -697,5 +696,23 @@ taskModal(content,data){
   });
 
 }
-
+providerSearch(search){
+  this.spinner.show(undefined,
+    {
+      type: 'ball-triangle-path',
+      size: 'medium',
+      bdColor: 'rgba(0, 0, 0, 0.8)',
+      color: '#fff',
+      fullScreen: true
+    });
+  this.apiService.providerFilter(search).subscribe((res:any)=>{
+    this.spinner.hide()
+    this.rows = res?.data
+      this.page.totalPages = res?.data?.length
+  })
+}
+resetFilter(){
+  this.inputName.nativeElement.value=''
+  this.setAndGetProviderbyStatus()
+}
 }
