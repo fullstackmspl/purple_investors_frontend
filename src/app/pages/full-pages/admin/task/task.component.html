@@ -9,15 +9,17 @@
             <!-- ngx-datatable-filter -->
             <fieldset class="form-group">
               <div class="row align-items-end mt-0 pagination-body">
-                <div class="col-12 col-sm-12 col-md-4 col-lg-4 mb-2">
-                  <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="40"
-                  [footerHeight]="40" rowHeight="auto" [limit]="limitRef" [rows]="rows" [externalPaging]="true"
-                  [count]="page.totalPages" [offset]="page.pageNumber" (page)="pageChangeData($event)"></ngx-datatable>
+                <div class="col-12 col-sm-12 col-md-5 col-lg-5 mt-1 mb-1">
+                  <div class="btn-group enrollment-list-btn-info" role="group" *ngFor="let status of status_List">
+                    <button id="status-btns" type="button"  class="btn"
+                      [ngClass]="{'btn-primary':activeTab==status?._id,'btn-outline-primary':activeTab!=status?._id}"
+                      (click)="activeTaskTab(status?._id)" *ngIf="user.roles === 'mturkers' && (status._id === 'open' || status._id === 'in-review') || user.roles !== 'mturkers'">{{status?.name}}</button>
+                  </div>
                 </div>
                 
-                <div class="col-12 col-sm-12 col-md-8 col-lg-8 mt-2 mb-1">
+                <div class="col-12 col-sm-12 col-md-7 col-lg-7 mt-1 mb-1">
                   <div class="row-flex">
-                    <div class="col-flex-2 mb-1 position-relative">
+                    <div class="col-flex-2 position-relative">
                       <input id="ngx-filter-ref"
                         class="form-control form-control-sm d-inline-block width-300 ml-1 rounded-right shadow searchInput"
                         type="text" placeholder="Search By Provider Name" #name (keydown.enter)="taskSearch(searchVal)" [(ngModel)]="searchVal" />
@@ -25,13 +27,13 @@
                         <i class="ft-search text-white cursor-pointer"></i>
                       </button>
                     </div>
-                    <div class="col-flex-2 mb-1">
+                    <div class="col-flex-2 ">
                       <button class="btn btn-primary btn-block users-list-clear glow mb-0" (click)="resetFilter()">
                         Reset
                         <i class="ft-filter text-white cursor-pointer"></i>
                       </button>
                     </div>
-                    <div class="col-flex-2 mb-1">
+                    <div class="col-flex-2 ">
                       <button type="reset" class="btn btn-primary btn-block users-list-clear glow mb-0"
                       (click)="openModal(myModalContent,'','')" placement="top" ngbTooltip="Add New">
                         +
@@ -39,27 +41,36 @@
                     </div>
                   </div>
                 </div>
+                <div class="col-12 col-sm-12 col-md-4 col-lg-4 mt-1 mb-1">
+                  <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="40"
+                  [footerHeight]="40" rowHeight="auto" [limit]="limitRef" [rows]="rows" [externalPaging]="true"
+                  [count]="page.totalPages" [offset]="page.pageNumber" (page)="pageChangeData($event)"></ngx-datatable>
+                </div>
+                <div class="col-12 col-sm-12 col-md-8 col-lg-8 mt-1 mb-1">
+                  <div class="d-flex">
+                    <a class="mx-1 text-primary" (click)="openLinkProgram()">Program Guidelines </a>
+                    <a class="mx-1 text-primary"  (click)="openLinkProvider()">Provider Guidelines</a>
+                    <div class="col">
+                      <ng-select class="city-select"
+                      [items]="city_List"
+                      bindLabel="city"
+                      bindValue="_id"
+                      placeholder="Select City"
+                      [(ngModel)]="cityId"
+                      (change)="searchProvider()"
+                      required
+                      >
+                    </ng-select>
+                    </div>
+                  </div>
+                </div>
               </div>
              
             </fieldset>
+           
             <div>
                 
-              <div class="d-flex my-2">
-                <a class="mx-1 text-primary" (click)="openLinkProgram()">Program Guidelines </a>
-                <a class="mx-1 text-primary"  (click)="openLinkProvider()">Provider Guidelines</a>
-                <div class="col-12 col-sm-12 col-md-4 col-lg-4">
-                  <ng-select class="city-select"
-                  [items]="city_List"
-                  bindLabel="city"
-                  bindValue="_id"
-                  placeholder="Select City"
-                  [(ngModel)]="cityId"
-                  (change)="searchProvider()"
-                  required
-                  >
-                </ng-select>
-                </div>
-              </div>
+             
               
               
           </div>
@@ -87,7 +98,7 @@
                           </span>
                           <span class="cursor-pointer" *ngIf="row?.status == 'open'" [ngClass]="{'badge badge-pill bg-light-success':row?.status == 'open'}">{{row?.status}}
                           </span>
-                          <span class="cursor-pointer" *ngIf="row?.status == 'rejected'" [ngClass]="{'badge badge-pill bg-light-danger':row?.status == 'rejected'}">{{row?.status}}
+                          <span class="cursor-pointer" *ngIf="row?.status == 'archived'" [ngClass]="{'badge badge-pill bg-light-danger':row?.status == 'archived'}">{{row?.status}}
                           </span>
                           <span class="cursor-pointer" *ngIf="row?.status == 'in-review'" [ngClass]="{'badge-pill bg-light-warning':row?.status == 'in-review'}">{{row?.status}}
                           </span>
@@ -103,9 +114,9 @@
                                 placement="top" *ngIf="status.name === 'completed'">{{status.name}}</span>
                               <span class="my-1" [ngClass]="{'bg-light-warning badge badge-pill':status.name === 'in-review'}"
                                 placement="top" *ngIf="status.name === 'in-review'">{{status.name}}</span>
-                              <span class="my-1" [ngClass]="{'bg-light-danger badge badge-pill':status.name === 'rejected'}"
+                              <span class="my-1" [ngClass]="{'bg-light-danger badge badge-pill':status.name === 'archived'}"
                                 placement="top"
-                                *ngIf="status.name === 'rejected'">{{status.name}}</span>
+                                *ngIf="status.name === 'archived'">{{status.name}}</span>
                               </span>
                             </button>
                             </div>
@@ -117,7 +128,7 @@
                           </span>
                           <span *ngIf="row?.status == 'open'" [ngClass]="{'badge badge-pill bg-light-success':row?.status == 'open'}">{{row?.status}}
                           </span>
-                          <span *ngIf="row?.status == 'rejected'" [ngClass]="{'badge badge-pill bg-light-danger':row?.status == 'rejected'}">{{row?.status}}
+                          <span *ngIf="row?.status == 'archived'" [ngClass]="{'badge badge-pill bg-light-danger':row?.status == 'archived'}">{{row?.status}}
                           </span>
                           <span *ngIf="row?.status == 'in-review'" [ngClass]="{'badge-pill bg-light-warning':row?.status == 'in-review'}">{{row?.status}}
                           </span>
@@ -135,13 +146,19 @@
               </ngx-datatable-column>
               <ngx-datatable-column name="Task Assign" prop="user" [width]="10">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
-                  <p *ngIf="row?.user[0]?.fullname" class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.user[0]?._id,row?._id,'Task Assign')">{{row?.user[0]?.fullname}}</p>
-                  <p *ngIf="row?.user?.fullname" class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.user[0]?._id,row?._id,'Task Assign')">{{row?.user?.fullname}}</p>
+                  <p *ngIf="row?.user[0]?.fullname && user.roles !=='mturkers'" class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.user[0]?._id,row?._id,'Task Assign')">{{row?.user[0]?.fullname}}</p>
+                  <p *ngIf="row?.user?.fullname && user.roles !=='mturkers'" class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.user[0]?._id,row?._id,'Task Assign')">{{row?.user?.fullname}}</p>
+
+                  <p *ngIf="row?.user[0]?.fullname && user.roles ==='mturkers'">{{row?.user[0]?.fullname}}</p>
+                  <p *ngIf="row?.user?.fullname && user.roles ==='mturkers'">{{row?.user?.fullname}}</p>
+
                 </ng-template>
               </ngx-datatable-column>
               <ngx-datatable-column name="Task Review" prop="reviewUserId" [width]="10">
                 <ng-template let-row="row" let-name="value" ngx-datatable-cell-template>
-                  <p class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.reviewUserId[0]?._id,row?._id,'Task Review')">{{row?.reviewUserId[0]?.fullname}}</p>
+                  <p *ngIf="user.roles !=='mturkers'" class="cursor-pointer" (click)="openModalForAssignTo(myModalAssignTo,row?.reviewUserId[0]?._id,row?._id,'Task Review')">{{row?.reviewUserId[0]?.fullname}}</p>
+
+                  <p *ngIf="user.roles ==='mturkers'">{{row?.reviewUserId[0]?.fullname}}</p>
                 </ng-template>
               </ngx-datatable-column>
               <!-- <ngx-datatable-column name="Status" prop="name" [width]="10">
@@ -220,7 +237,7 @@
                   (click)="openModal(myModalContent,row?._id,row)"></i> -->
                   <i *ngIf="user.roles !=='mturkers'" class="ft-trash-2 cursor-pointer danger mx-1"
                     (click)="confirmDelete(row._id)"></i>
-                  <i class="ft-eye text-primary cursor-pointer mx-1"
+                  <i *ngIf="user.roles !=='mturkers'" class="ft-eye text-primary cursor-pointer mx-1"
                   (click)="openModalView(myModalContentView,row)"></i>
                 </ng-template>
               </ngx-datatable-column>

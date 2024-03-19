@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { DatatableComponent, ColumnMode } from '@swimlane/ngx-datatable';
 import { ApiServiceService } from 'app/shared/services/api-service.service';
@@ -60,7 +61,7 @@ export class TaskComponent implements OnInit {
     {name:'open'},
     {name:'in-review'},
     {name:'completed'},
-    {name:'rejected'}
+    {name:'archived'}
   ]
   users_list=[]
   selected_user=null
@@ -109,22 +110,31 @@ export class TaskComponent implements OnInit {
   searchVal :any
   cityId:string;
   city_List =[]
-
+  status_List = [
+    { name: 'Open', _id: 'open' },
+    { name: 'In Review', _id: 'in-review' },
+    { name: 'Completed', _id: 'completed' },
+    { name:'Archived',_id:'archived'}
+  ]
+  activeTab: any;
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
                private spinner: NgxSpinnerService,private formBuilder : FormBuilder,
-               private ref: ChangeDetectorRef,private cdr: ChangeDetectorRef) {
+               private ref: ChangeDetectorRef,private cdr: ChangeDetectorRef,
+               private route: Router,private activatedRoute: ActivatedRoute, ) {
                 this.user = JSON.parse(localStorage.getItem('user'))
+                this.activeTaskTab('open')
                 }
 
   ngOnInit(): void {
-    if(this.user.roles ==='mturkers'){
-      this.getAllTaskByUser()
-    }
-    if(this.user.roles !=='mturkers'){
-      this.getAllTask()
-    }
+    // if(this.user.roles ==='mturkers'){
+    //   this.getAllTaskByUser()
+    // }
+    // if(this.user.roles !=='mturkers'){
+    //   // this.getAllTask()
+    // }
+    this.setAndGetQueuebyStatus()
     this.getAllUsers()
     this.taskForm = this.formBuilder.group({
       fullname: ['', Validators.required],
@@ -137,6 +147,47 @@ export class TaskComponent implements OnInit {
     });
     this.getAllCity()
   }
+  activeTaskTab(tab) {
+
+    const activetab = tab;
+    if (activetab !== '') {
+      this.route.navigate(
+        [],
+        { relativeTo: this.activatedRoute, queryParams: { status: activetab } }
+      );
+    }
+
+  }
+  setAndGetQueuebyStatus() {
+    this.activatedRoute.queryParams
+      .subscribe((params: any) => {
+        this.activeTab = params?.status;
+        switch (this.activeTab) {
+          case 'open':
+            if(this.user.roles !=='mturkers'){
+              this.getAllTask(this.activeTab);
+            }
+            else {
+              this.getAllTaskByUser(this.activeTab);
+            }
+            break;
+          case 'in-review':
+            if(this.user.roles !=='mturkers'){
+              this.getAllTask(this.activeTab);
+            }
+            else {
+              this.getAllTaskByUser(this.activeTab);
+            }
+            break
+          case 'completed':
+            this.getAllTask(this.activeTab);
+            break;
+            case 'archived':
+              this.getAllTask(this.activeTab);
+              break;
+        }
+      })
+  }
   getAllCity() {
     this.apiService.getAllCity(1000, this.page.pageNumber + 1).subscribe((res: any) => {
       this.city_List = res?.data?.user
@@ -145,7 +196,7 @@ export class TaskComponent implements OnInit {
   get rf() {
     return this.taskForm.controls;
   }
-  getAllTask(){
+  getAllTask(status){
     this.spinner.show(undefined,
       {
         type: 'ball-triangle-path',
@@ -154,15 +205,14 @@ export class TaskComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllTask(this.limitRef,this.activePage).subscribe((res: any) => {
+    this.apiService.getAllTask(this.limitRef,this.activePage,status).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.data
-      // this.rows.reverse()
       this.page.totalPages = res?.data?.TotalCount
 
     })
   }
-  getAllTaskByUser(){
+  getAllTaskByUser(status){
     this.spinner.show(undefined,
       {
         type: 'ball-triangle-path',
@@ -171,10 +221,9 @@ export class TaskComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getTaskByUserId(this.user._id,this.limitRef,this.page.pageNumber + 1).subscribe((res: any) => {
+    this.apiService.getTaskByUserId(this.user._id,this.limitRef,this.page.pageNumber + 1,status).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.items
-      // this.rows.reverse()
       this.page.totalPages = res?.data?.totalCount
 
     })
@@ -190,10 +239,9 @@ export class TaskComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllTask(this.limitRef,page.offset +1).subscribe((res: any) => {
+    this.apiService.getAllTask(this.limitRef,page.offset +1,this.activeTab).subscribe((res: any) => {
       this.spinner.hide()
       this.rows = res?.data?.data
-      // this.rows.reverse()
       this.page.totalPages = res?.data?.TotalCount
     })
   }
@@ -253,12 +301,13 @@ export class TaskComponent implements OnInit {
         if(res?.isSuccess === true){
           this.toastr.success('task added successfull!')
           this.modalService.dismissAll()
-          if(this.user.roles ==='mturkers'){
-            this.getAllTaskByUser()
-          }
-          if(this.user.roles !=='mturkers'){
-            this.getAllTask()
-          }
+          // if(this.user.roles ==='mturkers'){
+          //   this.getAllTaskByUser()
+          // }
+          // if(this.user.roles !=='mturkers'){
+            // this.getAllTask()
+            this.setAndGetQueuebyStatus()
+          // }
         }
         else this.toastr.error(res?.error)
       })
@@ -269,12 +318,14 @@ export class TaskComponent implements OnInit {
         if(res?.isSuccess === true){
           this.toastr.success('task update successfull!')
           this.modalService.dismissAll()
-          if(this.user.roles ==='mturkers'){
-            this.getAllTaskByUser()
-          }
-          if(this.user.roles !=='mturkers'){
-            this.getAllTask()
-          }
+          // if(this.user.roles ==='mturkers'){
+          //   this.getAllTaskByUser()
+          // }
+          // if(this.user.roles !=='mturkers'){
+            // this.getAllTask()
+            this.setAndGetQueuebyStatus()
+
+          // }
         }
         else this.toastr.error(res?.error)
       })
@@ -292,7 +343,9 @@ export class TaskComponent implements OnInit {
               confirmButton: 'btn btn-success'
             },
           })
-          this.getAllTask()
+          // this.getAllTask()
+          this.setAndGetQueuebyStatus()
+
         }
         else{
           this.toastr.error(res.error)
@@ -355,12 +408,14 @@ export class TaskComponent implements OnInit {
         if(res?.isSuccess === true){
           this.toastr.success('status update successfull!')
           this.modalService.dismissAll()
-          if(this.user.roles ==='mturkers'){
-            this.getAllTaskByUser()
-          }
-          if(this.user.roles !=='mturkers'){
-            this.getAllTask()
-          }
+          // if(this.user.roles ==='mturkers'){
+          //   this.getAllTaskByUser()
+          // }
+          // if(this.user.roles !=='mturkers'){
+            // this.getAllTask()
+            this.setAndGetQueuebyStatus()
+
+          // }
         }
         else this.toastr.error(res?.error)
       })
@@ -409,12 +464,14 @@ export class TaskComponent implements OnInit {
         if(res?.isSuccess === true){
           this.toastr.success(`${this.task_users} to update successfull!`)
           this.modalService.dismissAll()
-          if(this.user.roles ==='mturkers'){
-            this.getAllTaskByUser()
-          }
-          if(this.user.roles !=='mturkers'){
-            this.getAllTask()
-          }
+          // if(this.user.roles ==='mturkers'){
+          //   this.getAllTaskByUser()
+          // }
+          // if(this.user.roles !=='mturkers'){
+            // this.getAllTask()
+            this.setAndGetQueuebyStatus()
+
+          // }
         }
         else this.toastr.error(res?.error)
       })
@@ -483,12 +540,14 @@ export class TaskComponent implements OnInit {
             this.spinner.hide()
             this.toastr.success("provider update successfull!")
             this.modalService.dismissAll()
-            if(this.user.roles ==='mturkers'){
-              this.getAllTaskByUser()
-            }
-            if(this.user.roles !=='mturkers'){
-              this.getAllTask()
-            }
+            // if(this.user.roles ==='mturkers'){
+            //   this.getAllTaskByUser()
+            // }
+            // if(this.user.roles !=='mturkers'){
+              // this.getAllTask()
+            this.setAndGetQueuebyStatus()
+
+            // }
           }
           else{ 
             this.toastr.error(res?.error) 
@@ -518,12 +577,14 @@ export class TaskComponent implements OnInit {
           this.spinner.hide()
           this.toastr.success("provider update successfull!")
           this.modalService.dismissAll()
-          if(this.user.roles ==='mturkers'){
-            this.getAllTaskByUser()
-          }
-          if(this.user.roles !=='mturkers'){
-            this.getAllTask()
-          }
+          // if(this.user.roles ==='mturkers'){
+          //   this.getAllTaskByUser()
+          // }
+          // if(this.user.roles !=='mturkers'){
+            // this.getAllTask()
+            this.setAndGetQueuebyStatus()
+
+          // }
         }
         else{ 
           this.toastr.error(res?.error) 
@@ -772,12 +833,14 @@ export class TaskComponent implements OnInit {
           this.toastr.success('provider update successfull')
           this.spinner.hide()
           this.modalService.dismissAll()
-          if(this.user.roles ==='mturkers'){
-            this.getAllTaskByUser()
-          }
-          if(this.user.roles !=='mturkers'){
-            this.getAllTask()
-          }
+          // if(this.user.roles ==='mturkers'){
+          //   this.getAllTaskByUser()
+          // }
+          // if(this.user.roles !=='mturkers'){
+            // this.getAllTask()
+            this.setAndGetQueuebyStatus()
+
+          // }
         }
         else this.toastr.error(res?.error)
         
@@ -812,12 +875,14 @@ export class TaskComponent implements OnInit {
   resetFilter(){
     this.inputName.nativeElement.value=''
     this.cityId = null
-    if(this.user.roles ==='mturkers'){
-      this.getAllTaskByUser()
-    }
-    if(this.user.roles !=='mturkers'){
-      this.getAllTask()
-    }
+    // if(this.user.roles ==='mturkers'){
+    //   this.getAllTaskByUser()
+    // }
+    // if(this.user.roles !=='mturkers'){
+      // this.getAllTask()
+      this.setAndGetQueuebyStatus()
+
+    // }
   }
   searchProvider(){
     this.apiService.taskFilter('',this.cityId,1,1000).subscribe((res: any) => {
