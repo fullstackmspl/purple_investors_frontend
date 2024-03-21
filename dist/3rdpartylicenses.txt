@@ -372,6 +372,9 @@ THE SOFTWARE.
 @ng-select/ng-select
 MIT
 
+@ngrx/store
+MIT
+
 @ngx-translate/core
 MIT
 

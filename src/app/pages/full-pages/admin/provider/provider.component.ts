@@ -2,10 +2,14 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChil
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { Store } from '@ngrx/store';
 import { DatatableComponent, ColumnMode } from '@swimlane/ngx-datatable';
+import { setPageNumber } from 'app/App Store/actions/pageChange.actions';
+import { AppState } from 'app/App Store/state';
 import { ApiServiceService } from 'app/shared/services/api-service.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import swal from 'sweetalert2';
 
@@ -106,14 +110,35 @@ export class ProviderComponent implements OnInit {
   searchVal
   @ViewChild('name') inputName
 
+  pageNumberSubscription : Subscription
+  pageNo
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
                private router:Router,private activatedRoute: ActivatedRoute,
                private spinner: NgxSpinnerService,private formBuilder : FormBuilder,
-               private cdr: ChangeDetectorRef) { 
+               private cdr: ChangeDetectorRef, private store: Store<AppState>) { 
                 this.user = JSON.parse(localStorage.getItem('user'))
-                this.activeProviderTab('Unverfied')
+
+                this.activatedRoute.queryParams
+                .subscribe((params: any) => {
+                  this.activeTab = params['status'];
+                  this.pageNo = +params['page'];
+                  if(this.pageNo>0){
+                    this.setPage(this.pageNo);
+                  }
+                  else this.page.pageNumber = this.pageNo?this.pageNo-1:0
+                })
+                this.pageNumberSubscription = this.store.select(state => state.page.pageNumber)
+                .subscribe(pageNumber => {
+                  this.page.pageNumber = pageNumber;
+                  if(pageNumber !==undefined){
+                    this.page.pageNumber = pageNumber ?  pageNumber-1 :0
+                  }
+                });
+
+                if(!this.activeTab) this.activeProviderTab('Unverfied',this.pageNo?this.pageNo:1)
+
                 }
 
   ngOnInit(): void {
@@ -121,13 +146,16 @@ export class ProviderComponent implements OnInit {
     this.getAllCity()
     this.getOnlyUsers()
   }
-  activeProviderTab(tab) {
-
+  setPage(pageNumber: number) {
+    this.store.dispatch(setPageNumber({ pageNumber }));
+  }
+  activeProviderTab(tab,page) {
+    if(page<1){ page =1}
     const activetab = tab;
     if (activetab !== '') {
       this.router.navigate(
         [],
-        { relativeTo: this.activatedRoute, queryParams: { status: activetab } }
+        { relativeTo: this.activatedRoute, queryParams: { status: activetab ,  page : page },queryParamsHandling: 'merge' }
       );
     }
 
@@ -162,7 +190,7 @@ export class ProviderComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllProviders(this.cityId,this.selected_filter,status,this.limitRef, this.activePage).subscribe((res: any) => {
+    this.apiService.getAllProviders(this.cityId,this.selected_filter,status,this.limitRef, this.page.pageNumber + 1).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.data
       this.page.totalPages = res?.data?.TotalCount
@@ -173,6 +201,11 @@ export class ProviderComponent implements OnInit {
   
   pageChangeData(page:any){
     this.activePage = page.offset + 1
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: { page: page.offset +1 },
+      queryParamsHandling: 'merge' // keep existing query params
+    });
     this.spinner.show(undefined,
       {
         type: 'ball-triangle-path',
@@ -183,23 +216,12 @@ export class ProviderComponent implements OnInit {
       });
     this.apiService.getAllProviders(this.cityId,this.selected_filter,this.activeTab,this.limitRef,page.offset + 1).subscribe((res: any) => {
       this.spinner.hide();
+      this.setPage(page.offset + 1)
       this.rows = res?.data?.data
       this.page.totalPages = res?.data?.TotalCount
      
     })
   }
-  getTagsFilter(data:any){
-    // let search=data
-    // if(search){
-    //   this.apiService.getTagSearch(search).subscribe((res:any)=>{
-    //     this.rows=res.data
-    //   })
-    // }
-    // else{
-    //   this.getAllTag()
-    // }
-  }
- 
  
   openModal(content,data) {
     this.row_data = data
@@ -291,71 +313,13 @@ export class ProviderComponent implements OnInit {
     let jsonString = this.json_data.match(/\{.*\}/s);
     this.provider = JSON.parse(jsonString)
     this.provider.roles = 'purpleprovider'
-    // let jsonString = this.json_data.match(/\{.*\}/s);
-    // this.provider = JSON.parse(jsonString)
-    // this.provider.roles = 'purpleprovider'
     for (let key in this.provider) {
       if (this.provider.hasOwnProperty(key)) {
         this.provider[key]=this.convertToString(this.provider[key])
       }
   }
   }
-  details(data){
-    try {
-    
-      //  this.apiService.addUser(this.provider).subscribe((res:any)=>{
-      //    if(res?.isSuccess === true){
-      //      this.toastr.success('provider registered successfull!')
-      //      this.modalService.dismissAll()
-      //    }
-      //    else this.toastr.error(res?.error)
-      //    this.modalService.dismissAll();
-      //  })
-     
-    } catch (error) {
-     console.error('Error parsing JSON:', error);
-    }
-   }
-//  openModalForProvider(content,id,data) {
-//   this.spinner.show(undefined,
-//     {
-//       type: 'ball-triangle-path',
-//       size: 'medium',
-//       bdColor: 'rgba(0, 0, 0, 0.8)',
-//       color: '#fff',
-//       fullScreen: true
-//     });
-  
-//   if (this.newMessage.trim() !== '') {
-//     // const exactMsg = `${this.newMessage} Please find name, email, phoneNumber and Locations (with lat lng), - from Open AI API in json format with fields as it is "fullname, email, phone_number, location:{coordinates:[lat,lng]}, address "`
-//     const exactMsg2 =`${this.newMessage}  Google Reviews URL,Number of Google Reviews,Average Google Rating,3 Top (Highest rated) Google reviews,3 Bottom (Lowest rated) Google reviews,3 Most Recent Google Reviews, Facebook URL,Facebook Number of Followers,Facebook Number of likes,Yelp Profile URL,Number of Yelp ratings,Average Yelp rating, 3 Yelp Top (Highest rated) reviews,3 Yelp Bottom (Lowest rated) reviews,3 Yelp Most Recent Reviews,Instagram Profile Link,Number of Instagram Followers  and i need fields as it is "fullname, email, phone_number, location, address, roles, averageGoogleRating, averageYelpRating, bottomGoogleReviews, facebookNumberOfFollowers, facebookNumberOfLikes, facebookURL, googleReviewsURL, instagramProfileLink, mostRecentGoogleReviews, numberOfGoogleReviews, numberOfInstagramFollowers, numberOfYelpRatings, topGoogleReviews, yelpBottomReviews, yelpMostRecentReviews, yelpTopReviews, yelpProfileURL from Open AI API in json format"`
-//     this.messages.push({ sender: 'You', text: this.newMessage, isMe: true });
-//     this.apiService.chatgptSearch('6578625ec5e9c2b1c8909c58',this.user._id,exactMsg2).subscribe((res:any)=>{
-//       if(res?.isSuccess){
-//         this.spinner.hide()
-//         // this.ngZone.run(() => {
-//           const data = res?.data[0]?.message?.content;
-//           this.json_data = data
-//           this.messages.push({ sender: 'ChatGpt', text:  data.match(/\{.*\}/s)&&data.match(/\{.*\}/s).length?this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])):data , isMe: false });
-//           this.newMessage = ''; 
-//         // });
-//         this.setProvider()
-//           this.cdr.detectChanges();
-//       }
-//       else this.toastr.error(res?.error)
-//     })
-//   }
-    
-//     const modalOptions: NgbModalOptions = {
-//       size: 'lg', // 'sm', 'lg', or 'xl'
-//       backdrop: 'static',
-//     };
-//     const modalRef = this.modalService.open(content,modalOptions);
-//     modalRef.result.then((result) => {
 
-//     }, (reason) => {
-//     });
-//   }
 goToPrograms(user) {
   this.router.navigate(['/programs-list', user._id]);
 }
@@ -393,11 +357,6 @@ openModalForProvider(content, id,row_data) {
             if (res?.isSuccess) {
               const data = res?.data[0]?.message?.content;
               this.json_data = data;
-              // this.messages.push({
-              //   sender: 'ChatGpt',
-              //   text: data.match(/\{.*\}/s) && data.match(/\{.*\}/s).length ? this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])) : data,
-              //   isMe: false
-              // });
               this.newMessage = '';
   
               this.setProvider();
@@ -466,11 +425,6 @@ openModalForProvider(content, id,row_data) {
             if (res?.isSuccess) {
               const data = res?.data;
               this.json_data = data;
-              // this.messages.push({
-              //   sender: 'ChatGpt',
-              //   text: data.match(/\{.*\}/s) && data.match(/\{.*\}/s).length ? this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])) : data,
-              //   isMe: false
-              // });
               this.newMessage = '';
               this.cdr.detectChanges();
 
@@ -570,7 +524,6 @@ closeModal(){
   this.modalService.dismissAll()
 }
 async setAddress(addressData) {
-  // console.log('address =>>',addressData)
   this.provider.location= {type:"Point",coordinates:[addressData[0].lng,addressData[0].lat]}
   this.provider.address= addressData[1].formatted_address
 
@@ -582,7 +535,7 @@ this.provider.location = addressData || null;
 
 }
 getAllCity() {
-  this.apiService.getAllCity(1000, this.page.pageNumber + 1).subscribe((res: any) => {
+  this.apiService.getAllCity(1000,1).subscribe((res: any) => {
     this.city_List = res?.data?.user
   })
 }
@@ -661,11 +614,12 @@ AddTask(){
 getOnlyUsers(){
     this.apiService.getAllUsers(1000,1).subscribe((res: any) => {
       this.users_list = res?.data?.data
-      let task_assign = this.users_list.filter((item)=> item.fullname === 'Mike')
+      let task_assign = this.users_list.filter((item)=> item.email === 'mike@gmail.com')
       let task_review = this.users_list.filter((item)=> item.fullname === 'Sophie')
-
-      this.task_Assign = task_assign[0]._id
-      this.task_Review = task_review[0]._id
+      if(task_assign && task_review){
+        this.task_Assign = task_assign[0]._id
+        this.task_Review = task_review[0]._id
+      }
     })
   }
 taskAssign(){

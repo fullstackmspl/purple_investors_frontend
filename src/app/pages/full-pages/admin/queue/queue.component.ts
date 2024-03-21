@@ -2,13 +2,17 @@ import { ChangeDetectorRef, Component, OnInit, ViewChild, ViewEncapsulation } fr
 import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { Store } from '@ngrx/store';
 import { DatatableComponent, ColumnMode } from '@swimlane/ngx-datatable';
+import { setPageNumber } from 'app/App Store/actions/pageChange.actions';
+import { AppState } from 'app/App Store/state';
 import { Queue } from 'app/shared/models/queue.model';
 import { ApiServiceService } from 'app/shared/services/api-service.service';
 import { WondrflyApiService } from 'app/shared/services/wondrfly-api.service';
 import { MarkdownService } from 'ngx-markdown';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 import swal from 'sweetalert2';
 
 const validateUrlCount = (control: FormControl) => {
@@ -73,7 +77,7 @@ export class QueueComponent implements OnInit {
     { name: 'Manual', _id: 'manual' },
     { name: 'Chatgpt', _id: 'chatgpt' }
   ]
-  chatgpt_queue = false
+  chatgpt_queue :boolean = false
   select_type = 'manual'
   select_url_count = 5
   url_count_list = Array.from({ length: 10 }, (_, i) => i + 1);
@@ -142,6 +146,9 @@ export class QueueComponent implements OnInit {
   ]
   selected_filter ='byName'
   queueType:any
+  
+  pageNumberSubscription : Subscription
+  pageNo
   constructor(public apiService: ApiServiceService,
     private modalService: NgbModal,
     public toastr: ToastrService,
@@ -149,17 +156,34 @@ export class QueueComponent implements OnInit {
     private cdr: ChangeDetectorRef, private route: Router,
     private activatedRoute: ActivatedRoute,
     private wondrflyapiservice: WondrflyApiService,
-    public markDown: MarkdownService) {
+    public markDown: MarkdownService, private store: Store<AppState>) {
     this.user = JSON.parse(localStorage.getItem('user'))
-    this.activeQueueTab('pending')
+
+    this.activatedRoute.queryParams
+    .subscribe((params: any) => {
+      this.activeTab = params['status'];
+      this.pageNo = +params['page'];
+      if(this.pageNo>0){
+        this.setPage(this.pageNo);
+      }
+      else this.page.pageNumber = this.pageNo?this.pageNo-1:0
+    })
+
+    this.pageNumberSubscription = this.store.select(state => state.page.pageNumber)
+    .subscribe(pageNumber => {
+      this.page.pageNumber = pageNumber;
+      if(pageNumber !==undefined){
+        this.page.pageNumber = pageNumber ?  pageNumber-1 :0
+      }
+    });
+    if(!this.activeTab ) this.activeQueueTab('pending',this.pageNo?this.pageNo:1)
+    
+   
 
   }
 
   ngOnInit(): void {
-    this.activatedRoute.queryParams
-      .subscribe((params: any) => {
-        this.activeTab = params?.status;
-      })
+    
     this.setAndGetQueuebyStatus()
     this.getAllCity()
     this.getTags()
@@ -174,14 +198,16 @@ export class QueueComponent implements OnInit {
   get rf() {
     return this.queueForm.controls;
   }
-
-  activeQueueTab(tab) {
-
+  setPage(pageNumber: number) {
+    this.store.dispatch(setPageNumber({ pageNumber }));
+  }
+  activeQueueTab(tab,page) {
+    if(page<1){ page =1}
     const activetab = tab;
     if (activetab !== '') {
       this.route.navigate(
         [],
-        { relativeTo: this.activatedRoute, queryParams: { status: activetab } }
+        { relativeTo: this.activatedRoute, queryParams: { status: activetab, page : page },queryParamsHandling: 'merge' }
       );
     }
 
@@ -208,7 +234,7 @@ export class QueueComponent implements OnInit {
   }
 
   getAllCity() {
-    this.apiService.getAllCity(1000, this.page.pageNumber + 1).subscribe((res: any) => {
+    this.apiService.getAllCity(1000, 1).subscribe((res: any) => {
       this.city_List = res?.data?.user
     })
   }
@@ -228,7 +254,7 @@ export class QueueComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllQueue(this.cityId,status,this.selected_filter, this.limitRef, this.activePage).subscribe((res: any) => {
+    this.apiService.getAllQueue(this.cityId,status,this.selected_filter, this.limitRef, this.page.pageNumber + 1).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.items
       this.page.totalPages = res?.data?.totalCount
@@ -238,6 +264,13 @@ export class QueueComponent implements OnInit {
 
   pageChangeData(page: any) {
     this.activePage = page.offset + 1
+
+    this.route.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: { page: page.offset +1 },
+      queryParamsHandling: 'merge' // keep existing query params
+    });
+
     this.spinner.show(undefined,
       {
         type: 'ball-triangle-path',
@@ -248,6 +281,7 @@ export class QueueComponent implements OnInit {
       });
     this.apiService.getAllQueue(this.cityId,this.activeTab,this.selected_filter, this.limitRef, page.offset + 1).subscribe((res: any) => {
       this.spinner.hide();
+      this.setPage(page.offset + 1)
       this.rows = res?.data?.items
       this.page.totalPages = res?.data?.totalCount
     })
@@ -321,8 +355,8 @@ export class QueueComponent implements OnInit {
     }
     if (rowdata) {
       this.row_id = rowdata?._id
-      this.row_name = rowdata.cityId[0].city
-      this.select_city = rowdata.cityId[0]?._id
+      this.row_name = rowdata.cityId.city
+      this.select_city = rowdata.cityId?._id
       this.queue_model.cityId = this.select_city
       this.select_status = rowdata.status
       this.queue_model.urls = rowdata.urls

@@ -34,6 +34,7 @@ import { ErrorInterceptor } from "./shared/interceptor/error";
 import { HeaderInterceptor } from "./shared/interceptor/header";
 import { LocalStorageService } from "./shared/services/local-storage.service";
 import { NgxDatatableModule } from "@swimlane/ngx-datatable";
+import { pageReducer } from "./App Store/reducers/pageChange.reducers";
 
 var firebaseConfig = {
   apiKey: "AIzaSyC9XfnIpwNoSv7cyAsoccFQ5EYPd7lZXrk", //YOUR_API_KEY
@@ -81,7 +82,8 @@ export function createTranslateLoader(http: HttpClient) {
     }),
     PerfectScrollbarModule,
     MarkdownModule.forRoot(),
-    NgxDatatableModule
+    NgxDatatableModule,
+    StoreModule.forRoot({ page: pageReducer}),
   ],
   providers: [
     AuthService,

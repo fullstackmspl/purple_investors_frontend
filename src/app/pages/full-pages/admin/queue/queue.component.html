@@ -13,7 +13,7 @@
                   <div class="btn-group enrollment-list-btn-info" role="group">
                     <button id="status-btns" type="button" *ngFor="let status of status_List" class="btn"
                       [ngClass]="{'btn-primary':activeTab==status?._id,'btn-outline-primary':activeTab!=status?._id}"
-                      (click)="activeQueueTab(status?._id)">{{status?.name}}</button>
+                      (click)="activeQueueTab(status?._id,0)">{{status?.name}}</button>
                   </div>
                 </div>
                 <div class="col-12 col-sm-12 col-md-7 col-lg-7 mt-1 ">
@@ -60,7 +60,7 @@
                   <div class="pagination">
                     <ngx-datatable class="bootstrap core-bootstrap" [columnMode]="ColumnMode.force" [headerHeight]="40"
                       [footerHeight]="40" rowHeight="auto" [limit]="limitRef" [rows]="rows" [externalPaging]="true"
-                      [count]="page.totalPages" [offset]="page.offset" (page)="pageChangeData($event)"></ngx-datatable>
+                      [count]="page.totalPages" [offset]="page.pageNumber" (page)="pageChangeData($event)"></ngx-datatable>
                   </div>
                 </div>
                 <div class="col-12 col-sm-12 col-md-7 col-lg-7">
@@ -292,7 +292,7 @@
 		<button type="button" [hidden]="chatgpt_queue" class="btn btn-primary" (click)="select_type=='chatgpt'?chatGptSearch():addQueue()">{{select_type=='chatgpt'?'Search':'Submit'}}</button>
     <button type="button" [hidden]="chatgpt_queue" class="btn btn-primary" (click)="select_type=='gemini'?geminiSearch():addQueue()">{{select_type=='gemini'?'Search':'Submit'}}</button>
 		<!-- <button *ngIf="row_id" type="button" class="btn btn-primary" (click)="updateUrl()">Submit</button> -->
-    <button type="button"*ngIf="chatgpt_queue" class="btn btn-primary" (click)="addQueue()">Submit</button>
+    <!-- <button type="button" *ngIf="chatgpt_queue" class="btn btn-primary" (click)="addQueue()">Submit</button> -->
 
 	  </div>
 	</ng-template>

@@ -2,10 +2,14 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChil
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { Store } from '@ngrx/store';
 import { DatatableComponent, ColumnMode } from '@swimlane/ngx-datatable';
+import { setPageNumber } from 'app/App Store/actions/pageChange.actions';
+import { AppState } from 'app/App Store/state';
 import { ApiServiceService } from 'app/shared/services/api-service.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import swal from 'sweetalert2';
 
@@ -117,27 +121,40 @@ export class TaskComponent implements OnInit {
     { name:'Archived',_id:'archived'}
   ]
   activeTab: any;
+  pageNumberSubscription : Subscription
+  pageNo
   constructor( public apiService:ApiServiceService,
                private modalService: NgbModal,
                public toastr: ToastrService,
                private spinner: NgxSpinnerService,private formBuilder : FormBuilder,
                private ref: ChangeDetectorRef,private cdr: ChangeDetectorRef,
-               private route: Router,private activatedRoute: ActivatedRoute, ) {
+               private route: Router,private activatedRoute: ActivatedRoute, private store: Store<AppState> ) {
+                
                 this.user = JSON.parse(localStorage.getItem('user'))
-                this.activeTaskTab('open')
+
+                this.activatedRoute.queryParams
+                .subscribe((params: any) => {
+                  this.activeTab = params['status'];
+                  this.pageNo = +params['page'];
+                  if(this.pageNo>0){
+                    this.setPage(this.pageNo);
+                  }
+                  else this.page.pageNumber = this.pageNo?this.pageNo-1:0
+                })
+                this.pageNumberSubscription = this.store.select(state => state.page.pageNumber)
+                .subscribe(pageNumber => {
+                  this.page.pageNumber = pageNumber;
+                  if(pageNumber !==undefined){
+                    this.page.pageNumber = pageNumber ?  pageNumber-1 :0
+                  }
+                });
+
+                if(!this.activeTab) this.activeTaskTab('open',this.pageNo?this.pageNo:1)
+
                 }
 
   ngOnInit(): void {
-    // if(this.user.roles ==='mturkers'){
-    //   this.getAllTaskByUser()
-    // }
-    // if(this.user.roles !=='mturkers'){
-    //   // this.getAllTask()
-    // }
-    this.activatedRoute.queryParams
-      .subscribe((params: any) => {
-        this.activeTab = params?.status;
-      })
+   
     this.setAndGetQueuebyStatus()
     this.getAllUsers()
     this.taskForm = this.formBuilder.group({
@@ -151,13 +168,16 @@ export class TaskComponent implements OnInit {
     });
     this.getAllCity()
   }
-  activeTaskTab(tab) {
-
+  setPage(pageNumber: number) {
+    this.store.dispatch(setPageNumber({ pageNumber }));
+  }
+  activeTaskTab(tab,page) {
+    if(page<1){ page =1}
     const activetab = tab;
     if (activetab !== '') {
       this.route.navigate(
         [],
-        { relativeTo: this.activatedRoute, queryParams: { status: activetab } }
+        { relativeTo: this.activatedRoute, queryParams: { status: activetab,page: page } }
       );
     }
 
@@ -193,7 +213,7 @@ export class TaskComponent implements OnInit {
       })
   }
   getAllCity() {
-    this.apiService.getAllCity(1000, this.page.pageNumber + 1).subscribe((res: any) => {
+    this.apiService.getAllCity(1000,1).subscribe((res: any) => {
       this.city_List = res?.data?.user
     })
   }
@@ -209,7 +229,7 @@ export class TaskComponent implements OnInit {
         color: '#fff',
         fullScreen: true
       });
-    this.apiService.getAllTask(this.limitRef,this.activePage,status).subscribe((res: any) => {
+    this.apiService.getAllTask(this.limitRef,this.page.pageNumber + 1,status).subscribe((res: any) => {
       this.spinner.hide();
       this.rows = res?.data?.data
       this.page.totalPages = res?.data?.TotalCount
@@ -235,6 +255,11 @@ export class TaskComponent implements OnInit {
 
   pageChangeData(page:any){
     this.activePage = page.offset +1
+    this.route.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: { page: page.offset +1 },
+      queryParamsHandling: 'merge' // keep existing query params
+    });
     this.spinner.show(undefined,
       {
         type: 'ball-triangle-path',
@@ -245,20 +270,10 @@ export class TaskComponent implements OnInit {
       });
     this.apiService.getAllTask(this.limitRef,page.offset +1,this.activeTab).subscribe((res: any) => {
       this.spinner.hide()
+      this.setPage(page.offset +1)
       this.rows = res?.data?.data
       this.page.totalPages = res?.data?.TotalCount
     })
-  }
-  getTagsFilter(data:any){
-    // let search=data
-    // if(search){
-    //   this.apiService.getTagSearch(search).subscribe((res:any)=>{
-    //     this.rows=res.data
-    //   })
-    // }
-    // else{
-    //   this.getAllTag()
-    // }
   }
   
   openModal(content,id,data) {
@@ -305,13 +320,7 @@ export class TaskComponent implements OnInit {
         if(res?.isSuccess === true){
           this.toastr.success('task added successfull!')
           this.modalService.dismissAll()
-          // if(this.user.roles ==='mturkers'){
-          //   this.getAllTaskByUser()
-          // }
-          // if(this.user.roles !=='mturkers'){
-            // this.getAllTask()
-            this.setAndGetQueuebyStatus()
-          // }
+          this.setAndGetQueuebyStatus()
         }
         else this.toastr.error(res?.error)
       })
@@ -322,14 +331,7 @@ export class TaskComponent implements OnInit {
         if(res?.isSuccess === true){
           this.toastr.success('task update successfull!')
           this.modalService.dismissAll()
-          // if(this.user.roles ==='mturkers'){
-          //   this.getAllTaskByUser()
-          // }
-          // if(this.user.roles !=='mturkers'){
-            // this.getAllTask()
-            this.setAndGetQueuebyStatus()
-
-          // }
+          this.setAndGetQueuebyStatus()
         }
         else this.toastr.error(res?.error)
       })
@@ -347,7 +349,6 @@ export class TaskComponent implements OnInit {
               confirmButton: 'btn btn-success'
             },
           })
-          // this.getAllTask()
           this.setAndGetQueuebyStatus()
 
         }
@@ -412,21 +413,14 @@ export class TaskComponent implements OnInit {
         if(res?.isSuccess === true){
           this.toastr.success('status update successfull!')
           this.modalService.dismissAll()
-          // if(this.user.roles ==='mturkers'){
-          //   this.getAllTaskByUser()
-          // }
-          // if(this.user.roles !=='mturkers'){
-            // this.getAllTask()
-            this.setAndGetQueuebyStatus()
-
-          // }
+          this.setAndGetQueuebyStatus()
         }
         else this.toastr.error(res?.error)
       })
     }
   }
   getAllUsers(){
-    this.apiService.getAllUsers(this.limitRef,this.page.pageNumber + 1).subscribe((res: any) => {
+    this.apiService.getAllUsers(1000,1).subscribe((res: any) => {
       this.users_list = res?.data?.data
     })
   }
@@ -468,14 +462,7 @@ export class TaskComponent implements OnInit {
         if(res?.isSuccess === true){
           this.toastr.success(`${this.task_users} to update successfull!`)
           this.modalService.dismissAll()
-          // if(this.user.roles ==='mturkers'){
-          //   this.getAllTaskByUser()
-          // }
-          // if(this.user.roles !=='mturkers'){
-            // this.getAllTask()
-            this.setAndGetQueuebyStatus()
-
-          // }
+          this.setAndGetQueuebyStatus()
         }
         else this.toastr.error(res?.error)
       })
@@ -544,14 +531,7 @@ export class TaskComponent implements OnInit {
             this.spinner.hide()
             this.toastr.success("provider update successfull!")
             this.modalService.dismissAll()
-            // if(this.user.roles ==='mturkers'){
-            //   this.getAllTaskByUser()
-            // }
-            // if(this.user.roles !=='mturkers'){
-              // this.getAllTask()
             this.setAndGetQueuebyStatus()
-
-            // }
           }
           else{ 
             this.toastr.error(res?.error) 
@@ -581,14 +561,7 @@ export class TaskComponent implements OnInit {
           this.spinner.hide()
           this.toastr.success("provider update successfull!")
           this.modalService.dismissAll()
-          // if(this.user.roles ==='mturkers'){
-          //   this.getAllTaskByUser()
-          // }
-          // if(this.user.roles !=='mturkers'){
-            // this.getAllTask()
-            this.setAndGetQueuebyStatus()
-
-          // }
+          this.setAndGetQueuebyStatus()
         }
         else{ 
           this.toastr.error(res?.error) 
@@ -638,13 +611,7 @@ export class TaskComponent implements OnInit {
               if (res?.isSuccess) {
                 const data = res?.data[0]?.message?.content;
                 this.json_data = data;
-                // this.messages.push({
-                //   sender: 'ChatGpt',
-                //   text: data.match(/\{.*\}/s) && data.match(/\{.*\}/s).length ? this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])) : data,
-                //   isMe: false
-                // });
                 this.newMessage = '';
-    
                 this.setProvider();
                 this.cdr.detectChanges();
                 this.provider.address = row_data?.address
@@ -711,13 +678,7 @@ export class TaskComponent implements OnInit {
               if (res?.isSuccess) {
                 const data = res?.data[0]?.message?.content;
                 this.json_data = data;
-                // this.messages.push({
-                //   sender: 'ChatGpt',
-                //   text: data.match(/\{.*\}/s) && data.match(/\{.*\}/s).length ? this.generateHTML(JSON.parse(data.match(/\{.*\}/s)[0])) : data,
-                //   isMe: false
-                // });
                 this.newMessage = '';
-    
                 this.setProvider();
                 this.cdr.detectChanges();
                 this.provider.address = row_data?.address
@@ -793,12 +754,6 @@ export class TaskComponent implements OnInit {
     if(prop === 'basic data'){
       this.isBasicEdit = true
       this.provider = data.add_fields
-      // const fieldsToDelete = ['dob', 'gender', 'averageGoogleRating', 'averageYelpRating', 'bottomGoogleReviews', 'facebookNumberOfFollowers', 'facebookNumberOfLikes', 'facebookURL', 'googleReviewsURL', 'instagramProfileLink', 'mostRecentGoogleReviews', 'numberOfGoogleReviews', 'numberOfInstagramFollowers', 'numberOfYelpRatings', 'topGoogleReviews', 'yelpBottomReviews', 'yelpMostRecentReviews', 'yelpTopReviews', 'yelpProfileURL'];
-
-      // // Delete fields dynamically
-      // fieldsToDelete.forEach(fieldName => {
-      //   delete this.provider[fieldName];
-      // });
     }
     if(prop === 'advance data'){
       this.isAnalyticsEdit = true
@@ -837,14 +792,7 @@ export class TaskComponent implements OnInit {
           this.toastr.success('provider update successfull')
           this.spinner.hide()
           this.modalService.dismissAll()
-          // if(this.user.roles ==='mturkers'){
-          //   this.getAllTaskByUser()
-          // }
-          // if(this.user.roles !=='mturkers'){
-            // this.getAllTask()
-            this.setAndGetQueuebyStatus()
-
-          // }
+          this.setAndGetQueuebyStatus()
         }
         else this.toastr.error(res?.error)
         
@@ -879,14 +827,7 @@ export class TaskComponent implements OnInit {
   resetFilter(){
     this.inputName.nativeElement.value=''
     this.cityId = null
-    // if(this.user.roles ==='mturkers'){
-    //   this.getAllTaskByUser()
-    // }
-    // if(this.user.roles !=='mturkers'){
-      // this.getAllTask()
-      this.setAndGetQueuebyStatus()
-
-    // }
+    this.setAndGetQueuebyStatus()
   }
   searchProvider(){
     this.apiService.taskFilter('',this.cityId,1,1000).subscribe((res: any) => {

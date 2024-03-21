@@ -13,7 +13,7 @@
                   <div class="btn-group enrollment-list-btn-info" role="group" *ngFor="let status of status_List">
                     <button id="status-btns" type="button"  class="btn"
                       [ngClass]="{'btn-primary':activeTab==status?._id,'btn-outline-primary':activeTab!=status?._id}"
-                      (click)="activeTaskTab(status?._id)" *ngIf="user.roles === 'mturkers' && (status._id === 'open' || status._id === 'in-review') || user.roles !== 'mturkers'">{{status?.name}}</button>
+                      (click)="activeTaskTab(status?._id,0)" *ngIf="user.roles === 'mturkers' && (status._id === 'open' || status._id === 'in-review') || user.roles !== 'mturkers'">{{status?.name}}</button>
                   </div>
                 </div>
                 
