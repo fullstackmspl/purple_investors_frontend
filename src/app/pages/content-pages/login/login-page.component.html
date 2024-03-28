@@ -17,7 +17,7 @@
                 </ngb-alert>
                 <form [formGroup]="loginForm"  (ngSubmit)="onSubmit()">
                   <div class="form-group">
-                    <input type="text" formControlName="email" class="form-control" placeholder="email"
+                    <input type="text" formControlName="email" name="email" class="form-control" placeholder="email"
                       [ngClass]="{ 'is-invalid': loginFormSubmitted && lf.email.invalid, 'is-valid': loginFormSubmitted && !lf.email.invalid }"
                       required>
                     <div *ngIf="loginFormSubmitted && (lf.email.invalid || lf.email.errors?.required)"

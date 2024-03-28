@@ -18,7 +18,7 @@
                 </div>
                 
                 <div class="col-12 col-sm-12 col-md-7 col-lg-7 mt-1 mb-1">
-                  <div class="row-flex">
+                  <div class="row-flex" *ngIf="user.roles !=='mturkers'">
                     <div class="col-flex-2 position-relative">
                       <input id="ngx-filter-ref"
                         class="form-control form-control-sm d-inline-block width-300 ml-1 rounded-right shadow searchInput"
@@ -50,7 +50,7 @@
                   <div class="d-flex">
                     <a class="mx-1 text-primary" (click)="openLinkProgram()">Program Guidelines </a>
                     <a class="mx-1 text-primary"  (click)="openLinkProvider()">Provider Guidelines</a>
-                    <div class="col">
+                    <div class="col" *ngIf="user.roles !=='mturkers'">
                       <ng-select class="city-select"
                       [items]="city_List"
                       bindLabel="city"
